@@ -1,11 +1,21 @@
 from projects import over_projects
 import re
 import safer
+import versy
 import yaml
+import subprocess
+import webbrowser
+
 
 LANGUAGE = re.compile(r"'Programming Language :: Python :: (\d\.\d)'")
 TRAVIS = re.compile(r'- python: (\d\.\d)-dev')
-DRY_RUN = True
+DRY_RUN = not True
+
+def run(*cmd):
+    print('$', *cmd)
+    if not DRY_RUN:
+        if (code := subprocess.run(cmd).returncode):
+            raise ValueError('Ooops', str(code))
 
 
 def update_setup(p, new_version='3.9'):
@@ -25,9 +35,7 @@ def update_setup(p, new_version='3.9'):
                 success = True
             fp.write(line)
 
-    if False:
-        print(filename, ': Added 3.9' if success else 'No change')
-
+    print(filename, ': Added 3.9' if success else 'No change')
     return filename
 
 
@@ -49,12 +57,21 @@ def update_travis(p, new_version='3.9'):
     return filename
 
 
-def commit(*files, new_version='3.9'):
+def commit(p, *files, new_version='3.9'):
+    run('git', 'commit', '-m', f'Enable Python {new_version}', *files)
+    run('git', 'push')
+    if not DRY_RUN:
+        versy(action='patch', push=True)
+    webbrowser.open(f'https://github.com/rec/{p.name}/commits/master')
 
 
 @over_projects
 def update(p):
-    commit(update_setup(p), update_travis(p))
+    if False:
+        commit(p, update_setup(p), update_travis(p))
+    else:
+        p.cwd()
+        run('git', 'restore', '.')
 
 
 if __name__ == '__main__':
