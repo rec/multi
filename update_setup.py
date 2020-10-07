@@ -10,7 +10,7 @@ def update_setup(p):
     setup = p / 'setup.py'
     latest = None
 
-    # with safer.writer(setup) as write:
+    with safer.writer(setup) as write:
     print(setup)
     for line in setup.open():
         if (match := LANGUAGE.search(line)):
