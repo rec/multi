@@ -7,6 +7,7 @@ LANGUAGE = re.compile(r"'Programming Language :: Python :: (\d\.\d)'")
 TRAVIS = re.compile(r'- python: (\d\.\d)-dev')
 DRY_RUN = True
 
+
 def update_setup(p, new_version='3.9'):
     filename = p / 'setup.py'
     success = False
@@ -27,6 +28,8 @@ def update_setup(p, new_version='3.9'):
     if False:
         print(filename, ': Added 3.9' if success else 'No change')
 
+    return filename
+
 
 def update_travis(p, new_version='3.9'):
     filename = p / '.travis.yml'
@@ -43,11 +46,15 @@ def update_travis(p, new_version='3.9'):
     else:
         print(filename, 'no change')
 
+    return filename
+
+
+def commit(*files, new_version='3.9'):
+
 
 @over_projects
 def update(p):
-    update_setup(p)
-    update_travis(p)
+    commit(update_setup(p), update_travis(p))
 
 
 if __name__ == '__main__':
