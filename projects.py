@@ -3,6 +3,7 @@ import functools
 import traceback
 
 PROJECTS = sorted(p.parent for p in Path('/code/').glob('*/setup.py'))
+CONTINUE_AFTER_FAIL = False
 
 
 def over_projects(f):
@@ -13,6 +14,8 @@ def over_projects(f):
             try:
                 results.append(f(p, *args, **kwargs))
             except Exception:
+                if CONTINUE_AFTER_FAIL:
+                    raise
                 traceback.print_exc()
 
     return wrapped

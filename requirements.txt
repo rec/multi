@@ -1,2 +1,3 @@
 editor
 safer
+pyyaml
