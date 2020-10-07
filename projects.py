@@ -1,5 +1,6 @@
 from pathlib import Path
 import functools
+import os
 import traceback
 
 PROJECTS = sorted(p.parent for p in Path('/code/').glob('*/setup.py'))
@@ -11,6 +12,7 @@ def over_projects(f):
     def wrapped(*args, **kwargs):
         results = []
         for p in PROJECTS:
+            os.chdir(p)
             try:
                 results.append(f(p, *args, **kwargs))
             except Exception:

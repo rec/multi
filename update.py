@@ -70,7 +70,6 @@ def update(p):
     if False:
         commit(p, update_setup(p), update_travis(p))
     else:
-        p.cwd()
         run('git', 'restore', '.')
 
 
