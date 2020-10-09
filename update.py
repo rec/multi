@@ -1,21 +1,13 @@
-from projects import over_projects
+from projects import over_projects, run
+import editor
 import re
 import safer
-import versy
-import yaml
-import subprocess
 import webbrowser
-
+import yaml
 
 LANGUAGE = re.compile(r"'Programming Language :: Python :: (\d\.\d)'")
 TRAVIS = re.compile(r'- python: (\d\.\d)-dev')
 DRY_RUN = not True
-
-def run(*cmd):
-    print('$', *cmd)
-    if not DRY_RUN:
-        if (code := subprocess.run(cmd).returncode):
-            raise ValueError('Ooops', str(code))
 
 
 def update_setup(p, new_version='3.9'):
@@ -41,6 +33,10 @@ def update_setup(p, new_version='3.9'):
 
 def update_travis(p, new_version='3.9'):
     filename = p / '.travis.yml'
+    editor(filename=filename)
+
+    if True:
+        return filename
 
     travis = yaml.safe_load(open(filename))
     include = travis.setdefault('matrix', {}).setdefault('include', [])
@@ -61,17 +57,10 @@ def commit(p, *files, new_version='3.9'):
     run('git', 'commit', '-m', f'Enable Python {new_version}', *files)
     run('git', 'push')
     if not DRY_RUN:
-        versy(action='patch', push=True)
+        run('versy', 'patch', '-pe')
     webbrowser.open(f'https://github.com/rec/{p.name}/commits/master')
 
 
 @over_projects
 def update(p):
-    if False:
-        commit(p, update_setup(p), update_travis(p))
-    else:
-        run('git', 'restore', '.')
-
-
-if __name__ == '__main__':
-    update()
+    commit(p, update_setup(p), update_travis(p))
