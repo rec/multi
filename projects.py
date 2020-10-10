@@ -9,7 +9,7 @@ PROJECTS = sorted(p.parent for p in Path('/code/').glob('*/setup.py'))
 CONTINUE_AFTER_FAIL = not False
 RUN_ONCE = not True
 SKIP = 'backer dedupe hardback scripta'
-DRY_RUN = False
+DRY_RUN = not True
 
 
 def run(*cmd):
