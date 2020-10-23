@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 from projects import over_projects
-from versy.version_file import version_file
+from versy.version_file import get_version_file
 import re
 import requests
 import subprocess
@@ -58,7 +58,7 @@ def is_dirty():
 
 def local_version(p):
     try:
-        return strip_quotes(version_file(None, p)[0])
+        return strip_quotes(get_version_file(None, p)[0])
     except Exception:
         return
 

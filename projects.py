@@ -35,6 +35,8 @@ def over_projects(f):
             if RUN_ONCE:
                 break
 
+    wrapped._over = True
+
     return wrapped
 
 
@@ -42,4 +44,7 @@ if __name__ == '__main__':
     import sys
 
     _, command, *args = sys.argv
-    getattr(__import__(command), command)(*args)
+    func = getattr(__import__(command), command)
+    if not getattr(func, '_over', False):
+        func = over_projects(func)
+    func(*args)
