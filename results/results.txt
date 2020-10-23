@@ -1,0 +1,56 @@
+backer: 0.7.0^
+cfgs: 0.10.2
+dedupe: 2.0.6^
+dek: 0.10.7
+doks: 0.10.3
+editor: 0.10.2
+gitz: 0.11.2
+hardback: 0.9.2!
+impall: 0.11.2
+kson*: 0.1.0!
+myers: 0.9.3
+nc: 0.9.5
+safer: 4.2.1
+scripta: 0.9.1^
+simp: 0.9.3
+sproc: 2.0.3
+tdir: 0.13.2
+versy*: 0.9.6!
+wolk: 0.9.3
+xmod: 1.1.2
+
+-----
+
+
+
+
+cfgs: 0.10.2
+doks: 0.10.3
+gitz: 0.11.2
+backer: 0.7.0^
+hardback: 0.9.2!
+myers: 0.9.3
+nc: 0.9.5
+scripta: 0.9.1^
+versy*: 0.9.6!
+
+To release
+
+impall: 0.11.2
+stroll: 0.9.4
+editor: 0.10.2
+dek: 0.10.7
+kson*: 0.1.0!
+tdir: 0.13.2
+simp: 0.9.3
+
+Released
+
+xmod: 1.1.2
+safer: 4.3.0
+
+
+To ignore
+
+dedupe: 2.0.6^
+sproc: 2.0.3

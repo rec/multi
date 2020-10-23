@@ -1,0 +1,23 @@
+1. Fix doks
+
+* Fix issue marked in "from_file"
+
+* Handle command line tools (simp)
+
+* Deal with wrapped functions better (stroll)
+  * functools.partial
+  * xmod
+
+* ../../ problem (safer)
+
+2. Document and release
+
+* kson
+
+3. Document and release:
+
+* stroll
+* tdir
+* dek
+* simp
+* impall
