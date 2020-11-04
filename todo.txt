@@ -1,11 +1,25 @@
+1. Fix setup.py for "released" versions.
+
+* OOOPS!
+
+
+3. Document and release:
+
+https://github.com/rec/doks/issues/13
+https://github.com/rec/doks/issues/14
+
+
+* simp - DONE
+* tdir - DONE
+* stroll
+* impall
+* dek
+
+
 1. Fix doks
 
-* Fix issue marked in "from_file"
-
-* Handle command line tools (simp)
-
 * Deal with wrapped functions better (stroll)
-  * functools.partial
+  * functools.partial DONE
   * xmod
 
 * ../../ problem (safer)
@@ -13,11 +27,3 @@
 2. Document and release
 
 * kson
-
-3. Document and release:
-
-* stroll
-* tdir
-* dek
-* simp
-* impall

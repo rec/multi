@@ -14,28 +14,28 @@ def strip_quotes(q):
     return q[1:-1] if (len(q) > 1 and q[0] == q[-1] and q[0] in '"\'') else q
 
 
-@over_projects
-def info(p):
+def _info(p):
     star = '*' if is_dirty() else ''
-    pypi = pypi_version(p)
-    top = top_version_if_any()
     local = local_version(p)
+    pypi = pypi_version(p)
+    if not pypi:
+        return f'{p.name}{star}: ({local})'
 
-    if pypi:
-        if pypi == top:
-            needs = ''
-        elif top == local:
-            needs = '^'
-        else:
-            needs = '!'
-        print(f'{p.name}{star}: {pypi}{needs}')
+    top = top_version_if_any()
+
+    if pypi == top:
+        needs = ''
+    elif top == local:
+        needs = '^'
     else:
-        print(f'{p.name}{star}: ({local})')
+        needs = '!'
+    # print(f'{local=} {pypi=} {top=}')
+    return f'{p.name}{star}: {pypi}{needs}'
 
 
-@over_projects
-def info2(p):
-    print(local_version(p))
+def info(p):
+    print(_info(p))
+
 
 
 def pypi_version(p):
@@ -58,7 +58,7 @@ def is_dirty():
 
 def local_version(p):
     try:
-        return strip_quotes(get_version_file(None, p)[0])
+        return strip_quotes(get_version_file(None, p)[1])
     except Exception:
         return
 
