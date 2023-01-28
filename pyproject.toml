@@ -9,7 +9,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 abbrev = "^1.0.1"
-typer = "^0.7.0"
+typer = {extras = ["all"], version = "^0.7.0"}
 dtyper = "^2.0.3"
 loady = "^1.8.12"
 tomlkit = "^0.11.6"

@@ -34,8 +34,10 @@ def _negate(f):
     return wrapped
 
 
-@app.callback()
-def main(
+@command()
+def run(
+    command: str = Argument('name'),
+    argv: tuple[str] = Argument(()),
     filter: str = Option(None),
     negate: bool = Option(False),
     projects: list[str] = Option(sorted(PROJECTS_DATA)),
@@ -51,12 +53,8 @@ def main(
 
     _FILTER[:] = [code]
 
-
-@command()
-def run(
-    command: str = Argument('name'),
-    argv: tuple[str] = Argument(()),
-):
+    print(command, argv)
+    assert False
     command = import_code('multi.commands.' + command)
     filter = _FILTER[0]
     projects = {k: PROJECTS_DATA[k] for k in _PROJECTS}
@@ -87,6 +85,24 @@ def _write():
 
 
 if MULTIPLE_COMMANDS:
+    @app.callback()
+    def main(
+        filter: str = Option(None),
+        negate: bool = Option(False),
+        projects: list[str] = Option(sorted(PROJECTS_DATA)),
+    ):
+        _PROJECTS[:] = projects
+        if filter:
+            code = import_code('multi.filters.' + filter)
+        else:
+            code = lambda *a, **ka: True
+
+        if negate and filter:
+            code = _negate(code)
+
+        _FILTER[:] = [code]
+
+
     @command(name='list')
     def _list():
         print(json.dumps(PROJECTS_DATA, indent=2))
