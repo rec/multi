@@ -1,3 +1,7 @@
 def is_poetry(project):
-    p = project.pyproject
-    return p.exists() and 'tool.poetry' in tomli.loads(p.read_text())
+    import json
+    import tomlkit
+
+    if (p := project.pyproject).exists():
+        t = tomlkit.loads(p.read_text())
+        return t.get('tool', {}).get('poetry', {})

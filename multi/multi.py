@@ -34,15 +34,21 @@ def _negate(f):
 @command()
 def run(
     command: str = Argument('name'),
-    filter: str = Option(None),
-    negate: bool = Option(False),
-    projects: list[str] = Option(sorted(PROJECTS_DATA)),
+    filter: str = Option(None, '--filter', '-f'),
+    negate: bool = Option(False, '--negate', '-n'),
+    projects: list[str] = Option(
+        sorted(PROJECTS_DATA),
+        '--projects', '-p'
+    ),
 ):
     command = import_code('multi.commands.' + command)
     if filter:
         filter = import_code('multi.filters.' + filter)
+        if negate:
+            filter = _negate(filter)
     else:
         filter = lambda p: True
+
 
     projects = {k: PROJECTS_DATA[k] for k in projects}
     success = True
@@ -53,7 +59,7 @@ def run(
             if filter(project) and command(project):
                 _write()
         except Exception as e:
-            print(e)
+            print('ERROR', e, file=sys.stderr)
             success = False
 
     sys.exit(not success)
