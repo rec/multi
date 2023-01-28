@@ -1,3 +1,4 @@
+from . project import Project
 from pathlib import Path
 from loady.importer import import_code
 from typer import Argument, Option, Typer
@@ -14,8 +15,6 @@ PROJECTS_FILE = ROOT / 'projects.json'
 PROJECTS_BACK_FILE = PROJECTS_FILE.with_suffix('.json.bak')
 PROJECTS_DATA = json.loads(PROJECTS_FILE.read_text())
 PROJECTS_BACK = copy.deepcopy(PROJECTS_DATA)
-_PROJECTS = []
-_FILTER = []
 MULTIPLE_COMMANDS = False
 
 app = Typer(
@@ -32,36 +31,26 @@ def _negate(f):
     return wrapped
 
 
-@app.callback()
-def main(
+@command()
+def run(
+    command: str = Argument('name'),
     filter: str = Option(None),
     negate: bool = Option(False),
     projects: list[str] = Option(sorted(PROJECTS_DATA)),
 ):
-    _PROJECTS[:] = projects
-    if filter:
-        code = import_code('multi.filters.' + filter)
-    else:
-        code = lambda *a, **ka: True
-
-    if negate and filter:
-        code = _negate(code)
-
-    _FILTER[:] = [code]
-
-
-@command()
-def run(
-    command: str = Argument('name'),
-):
     command = import_code('multi.commands.' + command)
-    projects = {k: PROJECTS_DATA[k] for k in _PROJECTS}
+    if filter:
+        filter = import_code('multi.filters.' + filter)
+    else:
+        filter = lambda p: True
+
+    projects = {k: PROJECTS_DATA[k] for k in projects}
     success = True
 
     for k, v in sorted(projects.items()):
+        project = Project(k, v, CODE_ROOT / k, ())
         try:
-            args = k, v, CODE_ROOT / k
-            if _FILTER[0](*args) and command(*args):
+            if filter(project) and command(project):
                 _write()
         except Exception as e:
             print(e)
@@ -83,10 +72,26 @@ def _write():
 
 
 if MULTIPLE_COMMANDS:
+    @app.callback()
+    def main(
+        filter: str = Option(None),
+        negate: bool = Option(False),
+        projects: list[str] = Option(sorted(PROJECTS_DATA)),
+    ):
+        _PROJECTS[:] = projects
+        if filter:
+            code = import_code('multi.filters.' + filter)
+        else:
+            code = lambda *a, **ka: True
+
+        if negate and filter:
+            code = _negate(code)
+
+        _FILTER[:] = [code]
+
     @command(name='list')
     def _list():
         print(json.dumps(PROJECTS_DATA, indent=2))
-
 
     @command(name='set')
     def _set(

@@ -1,9 +1,9 @@
 import json
 
 
-def name(project, settings, path):
+def name(project):
+    print(project.name)
+
+
+def show(project):
     print(project)
-
-
-def show(project, settings, path):
-    print(json.dumps(locals(), default=str, indent=4))
