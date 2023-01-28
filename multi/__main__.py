@@ -16,6 +16,7 @@ PROJECTS_DATA = json.loads(PROJECTS_FILE.read_text())
 PROJECTS_BACK = copy.deepcopy(PROJECTS_DATA)
 _PROJECTS = []
 _FILTER = []
+MULTIPLE_COMMANDS = False
 
 app = Typer(
     add_completion=False,
@@ -25,14 +26,48 @@ app = Typer(
 command = app.command
 
 
+def _negate(f):
+    def wrapped(*a, **ka):
+        return not f(*a, **ka)
+    return wrapped
+
+
 @app.callback()
 def main(
     filter: str = Option(None),
+    negate: bool = Option(False),
     projects: list[str] = Option(sorted(PROJECTS_DATA)),
 ):
     _PROJECTS[:] = projects
     if filter:
-        _FILTER[:] = import_code('multi.filters.' + filter)
+        code = import_code('multi.filters.' + filter)
+    else:
+        code = lambda *a, **ka: True
+
+    if negate and filter:
+        code = _negate(code)
+
+    _FILTER[:] = [code]
+
+
+@command()
+def run(
+    command: str = Argument('name'),
+):
+    command = import_code('multi.commands.' + command)
+    projects = {k: PROJECTS_DATA[k] for k in _PROJECTS}
+    success = True
+
+    for k, v in sorted(projects.items()):
+        try:
+            args = k, v, CODE_ROOT / k
+            if _FILTER[0](*args) and command(*args):
+                _write()
+        except Exception as e:
+            print(e)
+            success = False
+
+    sys.exit(not success)
 
 
 def _write_one(p, d):
@@ -47,58 +82,41 @@ def _write():
     _write_one(PROJECTS_FILE, PROJECTS_DATA)
 
 
-@command(name='list')
-def _list():
-    print(json.dumps(PROJECTS_DATA, indent=2))
+if MULTIPLE_COMMANDS:
+    @command(name='list')
+    def _list():
+        print(json.dumps(PROJECTS_DATA, indent=2))
 
 
-@command()
-def run(
-    command: str = Argument(...),
-):
-    f = import_code('multi.commands.' + command)
-    projects = {k: PROJECTS_DATA[k] for k in _PROJECTS}
-    success = True
-    for k, v in sorted(projects.items()):
-        try:
-            if f(k, v, CODE_ROOT / k):
-                _write()
-        except Exception as e:
-            print(e)
-            success = False
+    @command(name='set')
+    def _set(
+        arguments: list[str] = Argument(...),
+    ):
+        def arg(a):
+            name, *value = (i.strip() for i in a.split('=', maxsplit=1))
+            if not value:
+                return
 
-    sys.exit(not success)
+            *first, last = name.split('.')
+            if not first:
+                return
 
+            d = PROJECTS_DATA
+            for k in first:
+                d = d.setdefault(k, {})
 
-@command(name='set')
-def _set(
-    arguments: list[str] = Argument(...),
-):
-    def arg(a):
-        name, *value = (i.strip() for i in a.split('=', maxsplit=1))
-        if not value:
-            return
+            return d, last, value
 
-        *first, last = name.split('.')
-        if not first:
-            return
+        args = [(a, arg(a)) for a in arguments]
+        if missing := [k for k, v in args if not v]:
+            print(f'{missing = }', file=sys.stderr)
+            sys.exit(-1)
 
-        d = PROJECTS_DATA
-        for k in first:
-            d = d.setdefault(k, {})
+        for a, (d, last, value) in args:
+            d[last] = value
+            print('Set', a)
 
-        return d, last, value
-
-    args = [(a, arg(a)) for a in arguments]
-    if missing := [k for k, v in args if not v]:
-        print(f'{missing = }', file=sys.stderr)
-        sys.exit(-1)
-
-    for a, (d, last, value) in args:
-        d[last] = value
-        print('Set', a)
-
-    _write()
+        _write()
 
 
 if __name__ == '__main__':
