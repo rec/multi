@@ -1,7 +1,9 @@
+from . project import Project
 from pathlib import Path
 from loady.importer import import_code
 from typer import Argument, Option, Typer
 import copy
+import datacls
 import json
 import sys
 
@@ -53,15 +55,17 @@ def main(
 @command()
 def run(
     command: str = Argument('name'),
+    argv: tuple[str] = Argument(()),
 ):
     command = import_code('multi.commands.' + command)
+    filter = _FILTER[0]
     projects = {k: PROJECTS_DATA[k] for k in _PROJECTS}
     success = True
 
     for k, v in sorted(projects.items()):
+        project = Project(k, v, CODE_ROOT / k, argv)
         try:
-            args = k, v, CODE_ROOT / k
-            if _FILTER[0](*args) and command(*args):
+            if filter(project) and command(project):
                 _write()
         except Exception as e:
             print(e)
@@ -117,7 +121,3 @@ if MULTIPLE_COMMANDS:
             print('Set', a)
 
         _write()
-
-
-if __name__ == '__main__':
-    app(standalone_mode=False)
