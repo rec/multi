@@ -5,16 +5,13 @@ import subprocess
 run = partial(subprocess.run, text=True, check=True)
 
 
+
 def name(project):
     print(project.name)
 
 
 def version(project):
-    if project.is_poetry:
-        version = project.pyproject()['tool']['poetry']['version']
-    else:
-        version = '?'
-    print(f'{project.name:12}: {version}')
+    print(f'{project.name:12}: {project.version()}')
 
 
 def add_poetry(project):
