@@ -1,0 +1,29 @@
+{
+    "abbrev": {},
+    "backer": {},
+    "bbcprc": {},
+    "blocks": {},
+    "cfgs": {},
+    "datacls": {},
+    "def_main": {},
+    "dek": {},
+    "dtyper": {},
+    "editor": {},
+    "hardback": {},
+    "impall": {},
+    "loady": {},
+    "nc": {},
+    "nmr": {},
+    "plur": {},
+    "runs": {
+        "comment": "move into sproc? or vice-versa?"
+    },
+    "safer": {},
+    "sproc": {
+        "comment": "take from e.run?"
+    },
+    "tdir": {},
+    "vl8": {},
+    "wavemap": {},
+    "xmod": {}
+}
