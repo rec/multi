@@ -204,6 +204,37 @@ files = [
 ]
 
 [[package]]
+name = "datacls"
+version = "4.5.0"
+description = "Slightly improved, backward compatible dataclasses"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "datacls-4.5.0-py3-none-any.whl", hash = "sha256:3e0762210fb532fe2a5cac6d08a046b686609ff9de86f5572f5cf44549a1a84f"},
+    {file = "datacls-4.5.0.tar.gz", hash = "sha256:d8f4694526a0938e643bf6a62b1d03eac3873df52f001d50982ce3682f38e474"},
+]
+
+[package.dependencies]
+dtyper = "*"
+xmod = "*"
+
+[[package]]
+name = "dek"
+version = "1.0.2"
+description = "🎴 dek: the decorator-decorator 🎴"
+category = "main"
+optional = false
+python-versions = ">=3.7,<4.0"
+files = [
+    {file = "dek-1.0.2-py3-none-any.whl", hash = "sha256:c3731f73b38ef0c636d5101e1eac60a79a03823359a2d57a632b8a308e60545b"},
+    {file = "dek-1.0.2.tar.gz", hash = "sha256:1648069e60734936dcce1fedf201176b9af703d355442e9d0be1018dcdfa74c2"},
+]
+
+[package.dependencies]
+xmod = ">=1.3.2,<2.0.0"
+
+[[package]]
 name = "dtyper"
 version = "2.0.3"
 description = "⌨️dtyper: Call typer commands or make dataclasses from them ⌨"
@@ -545,7 +576,22 @@ files = [
 [package.extras]
 test = ["pytest (>=3.0.0)"]
 
+[[package]]
+name = "xmod"
+version = "1.3.2"
+description = "Create and recursively fill a temporary directory"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "xmod-1.3.2-py3-none-any.whl", hash = "sha256:a95b0b3d3d67481d33dc1bb53abb88775d26e967e5a2280033030fe25a147f3f"},
+    {file = "xmod-1.3.2.tar.gz", hash = "sha256:3c844020a6b74d614ae0cf3d474098f4d035e1669ce2807ed08ef2f6ca3937fb"},
+]
+
+[package.dependencies]
+dek = "*"
+
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "58168ca2c9a55ae9ffb3dbd5a94149618ac1778a5a3e33be9f5ea3d9be3f7d42"
+content-hash = "f938e3930e0f75ed3b104dfae0c022ce348385a6f70d709e83a31ca795fceb7d"
