@@ -26,6 +26,18 @@ def status(project):
         print(r)
 
 
+def main(project):
+    try:
+        print(project.run('git checkout main'))
+    except Exception:
+        print(project.run('git checkout master'))
+
+
+def branch(project):
+    branch = project.run('git rev-parse --abbrev-ref HEAD').strip()
+    print(f'{project.name:12}: {branch}')
+
+
 def add_poetry(project):
     p = project.pyproject
 
