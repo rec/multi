@@ -107,6 +107,18 @@ class Project:
 
         return '?'
 
+    def branch(self):
+        return self.run('git rev-parse --abbrev-ref HEAD').strip()
+
+    @cached_property
+    def url(self):
+        return f'https://github.com/rec/{self.name}'
+
+    def open_url(self, *parts):
+        import webbrowser
+
+        webbrowser.open('/'.join((self.url, *parts)))
+
     @cached_property
     def all(self):
         return {k: getattr(self, k) for k in _ALL_PROPS}

@@ -34,8 +34,12 @@ def main(project):
 
 
 def branch(project):
-    branch = project.run('git rev-parse --abbrev-ref HEAD').strip()
-    print(f'{project.name:12}: {branch}')
+    print(f'{project.name:12}: {project.branch()}')
+
+
+def open_branches(project):
+    if project.branch() != 'main':
+        project.open_url('settings/branches')
 
 
 def add_poetry(project):
