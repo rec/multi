@@ -20,6 +20,12 @@ def setup(project):
         print(project.run('git', 'push'))
 
 
+def status(project):
+    if r := project.run('git status --porcelain').rstrip():
+        print(project.name + ':')
+        print(r)
+
+
 def add_poetry(project):
     p = project.pyproject()
 
