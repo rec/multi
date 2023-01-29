@@ -6,8 +6,6 @@ import copy
 import json
 import sys
 
-__all__ = 'app', 'command'
-
 CODE_ROOT = Path('/code')
 
 ROOT = Path(__file__).parents[1]
@@ -23,12 +21,6 @@ app = Typer(
     help=f'')
 
 command = app.command
-
-
-def _negate(f):
-    def wrapped(*a, **ka):
-        return not f(*a, **ka)
-    return wrapped
 
 
 @command()
@@ -65,6 +57,12 @@ def run(
     sys.exit(not success)
 
 
+def _negate(f):
+    def wrapped(*a, **ka):
+        return not f(*a, **ka)
+    return wrapped
+
+
 def _write_one(p, d):
     p.write_text(json.dumps(d, indent=4) + '\n')
 
@@ -75,59 +73,6 @@ def _write():
         PROJECTS_BACK.clear()
 
     _write_one(PROJECTS_FILE, PROJECTS_DATA)
-
-
-if MULTIPLE_COMMANDS:
-    @app.callback()
-    def main(
-        filter: str = Option(None),
-        negate: bool = Option(False),
-        projects: list[str] = Option(sorted(PROJECTS_DATA)),
-    ):
-        _PROJECTS[:] = projects
-        if filter:
-            code = import_code('multi.filters.' + filter)
-        else:
-            code = lambda *a, **ka: True
-
-        if negate and filter:
-            code = _negate(code)
-
-        _FILTER[:] = [code]
-
-    @command(name='list')
-    def _list():
-        print(json.dumps(PROJECTS_DATA, indent=2))
-
-    @command(name='set')
-    def _set(
-        arguments: list[str] = Argument(...),
-    ):
-        def arg(a):
-            name, *value = (i.strip() for i in a.split('=', maxsplit=1))
-            if not value:
-                return
-
-            *first, last = name.split('.')
-            if not first:
-                return
-
-            d = PROJECTS_DATA
-            for k in first:
-                d = d.setdefault(k, {})
-
-            return d, last, value
-
-        args = [(a, arg(a)) for a in arguments]
-        if missing := [k for k, v in args if not v]:
-            print(f'{missing = }', file=sys.stderr)
-            sys.exit(-1)
-
-        for a, (d, last, value) in args:
-            d[last] = value
-            print('Set', a)
-
-        _write()
 
 
 if __name__ == '__main__':

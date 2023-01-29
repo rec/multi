@@ -22,6 +22,7 @@ class Project:
     def pyproject_file(self):
         return self.path / 'pyproject.toml'
 
+    @cached_property
     def pyproject(self):
         if not self.pyproject_file.exists():
             return {}
@@ -30,11 +31,24 @@ class Project:
 
     @cached_property
     def is_poetry(self):
-        return self.pyproject().get('tool', {}).get('poetry', {})
+        return self.pyproject.get('tool', {}).get('poetry', {})
 
+    @cached_property
+    def python_version(self):
+        if d := self.dependencies.get('python', None):
+            return d
+        return '?'
+
+    @cached_property
+    def dependencies(self):
+        if self.is_poetry:
+            return self.pyproject['tool']['poetry']['dependencies']
+        return {}
+
+    @cached_property
     def version(self):
         if self.is_poetry:
-            return self.pyproject()['tool']['poetry']['version']
+            return self.pyproject['tool']['poetry']['version']
 
         if v := _VERSIONS.get(self.name):
             return v

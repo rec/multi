@@ -5,13 +5,25 @@ import subprocess
 run = partial(subprocess.run, text=True, check=True)
 
 
-
 def name(project):
     print(project.name)
 
 
+def python_version(project):
+    print(f'{project.name:12}:', project.python_version)
+
+
 def version(project):
-    print(f'{project.name:12}: {project.version()}')
+    print(f'{project.name:12}:', project.version)
+
+
+def version(project):
+    print(f'{project.name:12}:', project.version)
+
+
+def dependencies(project):
+    print(f'{project.name:12}:', project.dependencies)
+
 
 
 def add_poetry(project):
@@ -20,7 +32,7 @@ def add_poetry(project):
     tool = p.setdefault('tool', {})
     tool['poetry'] = {
         'name': project.name,
-        'version': '{version}',
+        'version': project.version(),
         'description': '{description}',
         'authors': ['Tom Ritchford <tom@swirly.com>'],
         'license': 'MIT',
