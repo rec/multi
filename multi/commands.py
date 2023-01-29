@@ -37,3 +37,20 @@ def dependencies(project):
                 for line in fp:
                     print('   ', line.strip())
             print()
+
+
+def add_dotenv(project):
+    direnv = project.path / '.direnv'
+    envrc = project.path / '.envrc'
+
+    if direnv.exists() and envrc.exists():
+        return
+
+    gitignore = project.path / '.gitignore'
+    contents = gitignore.read_text() + '\n.direnv\n.envrc\n'
+    gitignore.write_text(contents)
+    msg = 'Add .direnv, .envrc to .gitignore'
+    project.run('git', 'commit', '.gitignore', '-m', msg)
+    project.run('git', 'push')
+
+    print(f'{project.name:10}:')
