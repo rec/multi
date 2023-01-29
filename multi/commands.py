@@ -12,25 +12,25 @@ def prop(project):
 
 
 def setup(project):
-    s = project.run('git status --porcelain')
+    s = project.run_out('git status --porcelain')
     lines = [i.strip() for i in s.splitlines()]
     if 'M setup.py' in lines:
         msg = 'Add icons to description in setup.py'
-        print(project.run('git', 'commit', 'setup.py', '-m', msg))
-        print(project.run('git', 'push'))
+        project.run('git', 'commit', 'setup.py', '-m', msg)
+        project.run('git', 'push')
 
 
 def status(project):
-    if r := project.run('git status --porcelain').rstrip():
+    if r := project.run_out('git status --porcelain').rstrip():
         print(project.name + ':')
         print(r)
 
 
 def main(project):
     try:
-        print(project.run('git checkout main'))
+        project.run('git checkout main')
     except Exception:
-        print(project.run('git checkout master'))
+        project.run('git checkout master')
 
 
 def branch(project):

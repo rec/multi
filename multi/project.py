@@ -4,6 +4,9 @@ import datacls
 import json
 import sys
 import tomlkit
+import subprocess
+import webbrowser
+
 
 _VERSIONS = {
     'bbcprc': '0.1.0',
@@ -108,35 +111,32 @@ class Project:
         return '?'
 
     def branch(self):
-        return self.run('git rev-parse --abbrev-ref HEAD').strip()
+        return self.run_out('git rev-parse --abbrev-ref HEAD').strip()
 
     @cached_property
     def url(self):
         return f'https://github.com/rec/{self.name}'
 
     def open_url(self, *parts):
-        import webbrowser
-
         webbrowser.open('/'.join((self.url, *parts)))
 
     @cached_property
     def all(self):
         return {k: getattr(self, k) for k in _ALL_PROPS}
 
-    def run(self, *args, **kwargs):
+    def run_out(self, *args, **kwargs):
         """Run and return stdout as a string on success, else ''"""
-        import subprocess
+        kwargs.setdefault('stdout', subprocess.PIPE)
+        if r := self.run(*args, **kwargs):
+            return r.stdout
+        return ''
 
+    def run(self, *args, **kwargs):
         kwargs.setdefault('check', True)
         kwargs.setdefault('text', True)
-        kwargs.setdefault('stderr', None)
-        kwargs.setdefault('stdout', subprocess.PIPE)
         kwargs.setdefault('cwd', self.path)
 
         if len(args) == 1 and isinstance(args[0], str):
             args = args[0].split()
 
-        if r := subprocess.run(args, **kwargs):
-            return r.stdout
-
-        return ''
+        return subprocess.run(args, **kwargs)
