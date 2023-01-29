@@ -40,12 +40,22 @@ def dependencies(project):
 
 
 def add_dotenv(project):
+    import os
+
     direnv = project.path / '.direnv'
     envrc = project.path / '.envrc'
 
     if direnv.exists() and envrc.exists():
         return
 
+    print('cd', project.path)
+    if True:
+        return
+
     print(f'{project.name:10}:')
-    version = project.dependencies['python'].strip('>').strip('=').strip('^')
-    envrc.write_text(f'layout python python{version}\n')
+
+    project.run('direnv allow')
+    cmd = f'cd {project.path} && direnv exec {project.path} poetry install'
+    cmd = f'direnv exec {project.path} which python'
+    #project.run('bash', '-c', cmd, cwd=os.getcwd())
+    project.run(cmd)
