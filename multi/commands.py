@@ -19,3 +19,21 @@ def status(project):
 
 def branch(project):
     print(f'{project.name:12}: {project.branch()}')
+
+
+def dependencies(project):
+    has_deps = len(project.dependencies) > 1
+    if has_deps:
+        return
+    reqs_file = project.path / 'requirements.txt'
+    test_reqs_file = project.path / 'test_requirements.txt'
+    has_reqs = reqs_file.exists()
+    has_test = test_reqs_file.exists()
+
+    for f in reqs_file, test_reqs_file:
+        if f.exists():
+            print(project.name + ':', f.name)
+            with f.open() as fp:
+                for line in fp:
+                    print('   ', line.strip())
+            print()
