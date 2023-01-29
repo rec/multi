@@ -5,25 +5,12 @@ import subprocess
 run = partial(subprocess.run, text=True, check=True)
 
 
-def name(project):
-    print(project.name)
+def prop(project):
+    res = {k: getattr(project, k) for k in project.argv}
+    if len(res) == 1:
+        res = res.popitem()[1]
 
-
-def python_version(project):
-    print(f'{project.name:12}:', project.python_version)
-
-
-def version(project):
-    print(f'{project.name:12}:', project.version)
-
-
-def version(project):
-    print(f'{project.name:12}:', project.version)
-
-
-def dependencies(project):
-    print(f'{project.name:12}:', project.dependencies)
-
+    print(f'{project.name:12}:', res)
 
 
 def add_poetry(project):
@@ -32,13 +19,13 @@ def add_poetry(project):
     tool = p.setdefault('tool', {})
     tool['poetry'] = {
         'name': project.name,
-        'version': project.version(),
-        'description': '{description}',
+        'version': project.version,
+        'description': project.description,
         'authors': ['Tom Ritchford <tom@swirly.com>'],
         'license': 'MIT',
-        'readme': 'README.md',
+        'readme': project.readme, # 'README.md',
         'dependences': {
-            'python': '^{python_version}',
+            'python': project.python_version,
         },
     }
 

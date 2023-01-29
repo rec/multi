@@ -30,7 +30,7 @@ class Project:
         return tomlkit.loads(self.pyproject_file.read_text())
 
     @cached_property
-    def is_poetry(self):
+    def poetry(self):
         return self.pyproject.get('tool', {}).get('poetry', {})
 
     @cached_property
@@ -41,14 +41,30 @@ class Project:
 
     @cached_property
     def dependencies(self):
-        if self.is_poetry:
-            return self.pyproject['tool']['poetry']['dependencies']
-        return {}
+        return self.poetry.get('dependencies', {})
+
+    @cached_property
+    def description(self):
+        return self.poetry.get('description', {})
+
+    def read(self, *files):
+        for file in files:
+            with (self.path / file).open() as fp:
+                yield from fp
+
+    @cached_property
+    def readme(self):
+        if r := self.poetry.get('readme', None):
+            return r
+        for r in 'README.md', 'README.rst':
+            if (self.path / r).exists():
+                return r
+        return '?'
 
     @cached_property
     def version(self):
-        if self.is_poetry:
-            return self.pyproject['tool']['poetry']['version']
+        if self.poetry:
+            return self.poetry['version']
 
         if v := _VERSIONS.get(self.name):
             return v
@@ -56,12 +72,11 @@ class Project:
         for path in self.path.rglob('VERSION'):
             return path.read_text().strip()
 
-        for path in self.path.rglob('*.py'):
-            for line in path.read_text().splitlines():
-                e, _, version = line.strip().partition('__version__ = ')
-                version = version.strip("'")
-                if version and version != 'unknown' and not e:
-                    return version
+        for line in self.read(*self.path.rglob('*.py')):
+            e, _, version = line.strip().partition('__version__ = ')
+            version = version.strip("'")
+            if version and version != 'unknown' and not e:
+                return version
 
         if self.name == 'vl8':
             return '0.2.0'

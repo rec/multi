@@ -26,6 +26,7 @@ command = app.command
 @command()
 def run(
     command: str = Argument('name'),
+    argv: list[str] = Argument(None),
     filter: str = Option(None, '--filter', '-f'),
     negate: bool = Option(False, '--negate', '-n'),
     projects: list[str] = Option(
@@ -33,7 +34,6 @@ def run(
         '--projects', '-p'
     ),
 ):
-    command = import_code('multi.commands.' + command)
     if filter:
         filter = import_code('multi.filters.' + filter)
         if negate:
@@ -41,12 +41,13 @@ def run(
     else:
         filter = lambda p: True
 
+    command = import_code('multi.commands.' + command)
 
     projects = {k: PROJECTS_DATA[k] for k in projects}
     success = True
 
     for k, v in sorted(projects.items()):
-        project = Project(k, v, CODE_ROOT / k, ())
+        project = Project(k, v, CODE_ROOT / k, argv)
         try:
             if filter(project) and command(project):
                 _write()
