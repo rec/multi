@@ -27,9 +27,12 @@ def status(project):
 
 
 def add_poetry(project):
-    p = project.pyproject()
+    p = project.pyproject
 
     tool = p.setdefault('tool', {})
+    if 'poetry' in tool:
+        return
+
     tool['poetry'] = {
         'name': project.name,
         'version': project.version,
@@ -37,7 +40,7 @@ def add_poetry(project):
         'authors': ['Tom Ritchford <tom@swirly.com>'],
         'license': 'MIT',
         'readme': project.readme, # 'README.md',
-        'dependences': {
+        'dependencies': {
             'python': project.python_version,
         },
     }
@@ -47,4 +50,12 @@ def add_poetry(project):
         'build-backend': 'poetry.core.masonry.api',
     }
 
-    project.pyproject_file.write_text(tomlkit.dumps(p))
+    file = project.pyproject_file
+    file.write_text(tomlkit.dumps(p))
+    project.run('poetry lock')
+
+    files = 'poetry.lock', 'pyproject.toml'
+    project.run('git', 'add', *files)
+    msg = f'Teach {project.name} about poetry'
+    project.run('git', 'commit', '-m', msg, *files)
+    project.run('git', 'push')
