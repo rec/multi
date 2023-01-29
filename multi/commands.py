@@ -37,9 +37,14 @@ def branch(project):
     print(f'{project.name:12}: {project.branch()}')
 
 
-def open_branches(project):
-    if project.branch() != 'main':
-        project.open_url('settings/branches')
+def rename_main(project):
+    if project.branch() == 'main':
+        return
+
+    project.run('git branch -m master main')
+    project.run('git fetch -p origin')
+    project.run('git branch -u origin/main main')
+    project.run('git remote set-head origin -a')
 
 
 def add_poetry(project):
