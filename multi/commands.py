@@ -12,14 +12,12 @@ def prop(project):
 
 
 def setup(project):
-    print('\n', project.name, ':', sep='')
     s = project.run('git status --porcelain')
-    if True:
-        return print(s)
-
     lines = [i.strip() for i in s.splitlines()]
-    # if 'M setup.py' in lines:
-
+    if 'M setup.py' in lines:
+        msg = 'Add icons to description in setup.py'
+        print(project.run('git', 'commit', 'setup.py', '-m', msg))
+        print(project.run('git', 'push'))
 
 
 def add_poetry(project):
