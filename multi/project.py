@@ -12,9 +12,10 @@ _VERSIONS = {
 }
 
 _DESCS = {
-    'bbcprc': '🎙 Process the entire BBC sound archive 🎙',
+    'bbcprc': '🎙 The voice of Beeb 🎙',
     'blocks': '⬜🟩🟦🟥 Solve a block puzzle I found in Utrecht Lunetten 🟥🟦🟩⬜',
     'cfgs': '🍇 Implements the XDG standard for persistent files 🍇',
+    'hardback': 'Hardcopy backups of digital data',
     'loady': 'Load Python libraries, JSON and raw text dynamically from git',
 }
 
