@@ -110,3 +110,21 @@ class Project:
     @cached_property
     def all(self):
         return {k: getattr(self, k) for k in _ALL_PROPS}
+
+    def run(self, *args, **kwargs):
+        """Run and return stdout as a string on success, else ''"""
+        import subprocess
+
+        kwargs.setdefault('check', True)
+        kwargs.setdefault('text', True)
+        kwargs.setdefault('stderr', None)
+        kwargs.setdefault('stdout', subprocess.PIPE)
+        kwargs.setdefault('cwd', self.path)
+
+        if len(args) == 1 and isinstance(args[0], str):
+            args = args[0].split()
+
+        if r := subprocess.run(args, **kwargs):
+            return r.stdout
+
+        return ''

@@ -54,6 +54,7 @@ def run(
         except Exception as e:
             print('ERROR', e, file=sys.stderr)
             success = False
+            raise
 
     sys.exit(not success)
 

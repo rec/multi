@@ -2,8 +2,6 @@ from functools import partial
 import tomlkit
 import subprocess
 
-run = partial(subprocess.run, text=True, check=True)
-
 
 def prop(project):
     res = {k: getattr(project, k) for k in project.argv}
@@ -11,6 +9,17 @@ def prop(project):
         res = res.popitem()[1]
 
     print(f'{project.name:12}:', res)
+
+
+def setup(project):
+    print('\n', project.name, ':', sep='')
+    s = project.run('git status --porcelain')
+    if True:
+        return print(s)
+
+    lines = [i.strip() for i in s.splitlines()]
+    # if 'M setup.py' in lines:
+
 
 
 def add_poetry(project):
