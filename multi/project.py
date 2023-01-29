@@ -18,6 +18,13 @@ _DESCS = {
     'loady': 'Load Python libraries, JSON and raw text dynamically from git',
 }
 
+_ALL_PROPS = [
+    'description',
+    'python_version',
+    'readme',
+    'version',
+]
+
 
 @datacls
 class Project:
@@ -98,3 +105,7 @@ class Project:
             return '0.2.0'
 
         return '?'
+
+    @cached_property
+    def all(self):
+        return {k: getattr(self, k) for k in _ALL_PROPS}
