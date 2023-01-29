@@ -2,6 +2,7 @@ from functools import cached_property
 from pathlib import Path
 import datacls
 import json
+import sys
 import tomlkit
 
 _VERSIONS = {
@@ -35,9 +36,7 @@ class Project:
 
     @cached_property
     def python_version(self):
-        if d := self.dependencies.get('python', None):
-            return d
-        return '?'
+        return self.dependencies.get('python', '^3.7')
 
     @cached_property
     def dependencies(self):
@@ -45,20 +44,24 @@ class Project:
 
     @cached_property
     def description(self):
-        return self.poetry.get('description', {})
+        if r := self.poetry.get('description', None):
+            return r
 
     def read(self, *files):
         for file in files:
-            with (self.path / file).open() as fp:
-                yield from fp
+            if (f := self.path / file).exists():
+                with f.open() as fp:
+                    yield from fp
 
     @cached_property
     def readme(self):
         if r := self.poetry.get('readme', None):
             return r
+
         for r in 'README.md', 'README.rst':
             if (self.path / r).exists():
                 return r
+
         return '?'
 
     @cached_property
