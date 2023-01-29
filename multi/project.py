@@ -11,6 +11,13 @@ _VERSIONS = {
     'vl8': '0.2.0',
 }
 
+_DESCS = {
+    'bbcprc': '🎙 Process the entire BBC sound archive 🎙',
+    'blocks': '⬜🟩🟦🟥 Solve a block puzzle I found in Utrecht Lunetten 🟥🟦🟩⬜',
+    'cfgs': '🍇 Implements the XDG standard for persistent files 🍇',
+    'loady': 'Load Python libraries, JSON and raw text dynamically from git',
+}
+
 
 @datacls
 class Project:
@@ -44,8 +51,14 @@ class Project:
 
     @cached_property
     def description(self):
+        if r := _DESCS.get(self.name):
+            return r
         if r := self.poetry.get('description', None):
             return r
+
+        parts = [i.partition('=') for i in self.read('setup.py')]
+        descs = (v for k, _, v in parts if k.strip() == 'description')
+        return next(descs, '?').strip().strip(',').strip("'")
 
     def read(self, *files):
         for file in files:
