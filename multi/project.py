@@ -169,3 +169,7 @@ class Project:
         self.run('git', 'add', *files)
         self.run('git', 'commit', '-m', msg, *files)
         self.run('git', 'push')
+
+    @cached_property
+    def is_singleton(self):
+        return (self.path / self.name).with_suffix('.py').exists()

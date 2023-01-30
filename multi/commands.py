@@ -37,6 +37,11 @@ def run_in(project):
     print()
 
 
+def single(project):
+    if project.is_singleton:
+        print(project.name + ':')
+
+
 def web(project):
     url = '/'.join((f'https://github.com/rec/{project.name}', *project.argv))
     webbrowser.open(url, 1)
