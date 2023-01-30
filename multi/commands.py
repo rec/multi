@@ -1,6 +1,12 @@
 from functools import partial
+from pathlib import Path
 import tomlkit
+import shlex
 import subprocess
+
+ROOT = Path(__file__).parents[1]
+SCRIPTS = ROOT / 'scripts'
+RUN_SH = str(SCRIPTS / 'run.sh')
 
 
 def prop(project):
@@ -19,6 +25,24 @@ def status(project):
 
 def branch(project):
     print(f'{project.name:12}: {project.branch()}')
+
+
+def run(project):
+    print(project.name + ':')
+    project.run(*project.argv)
+    print()
+
+
+def run_in(project):
+    print(project.name + ':')
+    project.run(RUN_SH, *project.argv)
+    print()
+
+
+def bash(project):
+    print(project.name + ':')
+    project.run('bash', '-c', shlex.join(project.argv))
+    print()
 
 
 def dependencies(project):
