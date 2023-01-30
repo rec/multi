@@ -7,6 +7,9 @@ import tomlkit
 import subprocess
 import webbrowser
 
+ROOT = Path(__file__).parents[1]
+SCRIPTS = ROOT / 'scripts'
+RUN_SH = str(SCRIPTS / 'run.sh')
 
 _VERSIONS = {
     'bbcprc': '0.1.0',
@@ -110,6 +113,10 @@ class Project:
 
         return '?'
 
+    @cached_property
+    def python_path(self):
+        return max(self.path.glob('.direnv/python-3.*.*/bin/python'))
+
     def branch(self):
         return self.run_out('git rev-parse --abbrev-ref HEAD').strip()
 
@@ -140,3 +147,10 @@ class Project:
             args = args[0].split()
 
         return subprocess.run(args, **kwargs)
+
+    def run_in(self, *args, out=False, **kwargs):
+        method = self.run_out if out else self.run
+        return method(RUN_SH, *args, **kwargs)
+
+    def poet(self, *args, out=False, **kwargs):
+        return self.run_in('poetry', '--no-ansi', *args, **kwargs)
