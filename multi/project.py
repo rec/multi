@@ -153,4 +153,6 @@ class Project:
         return method(RUN_SH, *args, **kwargs)
 
     def poet(self, *args, out=False, **kwargs):
-        return self.run_in('poetry', '--no-ansi', *args, **kwargs)
+        return self.run_in(
+            'arch', '-arm64', 'poetry', '--no-ansi', *args, **kwargs
+        )

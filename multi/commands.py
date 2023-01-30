@@ -62,12 +62,13 @@ def dependencies(project):
 def add_dependencies(project):
     print(project.name + ':')
     has_deps = len(project.dependencies) > 1
-    if has_deps:
+    if has_deps and False:
         return
 
     reqs_file = project.path / 'requirements.txt'
     test_reqs_file = project.path / 'test_requirements.txt'
 
+    print(test_reqs_file, test_reqs_file.exists())
     parts = ['pyproject.toml', 'poetry.lock']
     if r := list(_read_req(reqs_file, project.python_version)):
         project.poet('add', *r)
@@ -103,6 +104,14 @@ def add_d(project):
         print(test_reqs_file)
         print(s)
         print()
+
+
+def list_d(project):
+    reqs_file = project.path / 'requirements.txt'
+    test_reqs_file = project.path / 'test_requirements.txt'
+    re, te = reqs_file.exists(), test_reqs_file.exists()
+    if re or te:
+        print(project.name, re, te)
 
 
 def _read_req(p, python_version):
