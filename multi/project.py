@@ -52,7 +52,7 @@ class Project:
         return tomlkit.loads(self.pyproject_file.read_text())
 
     @cached_property
-    def poetry(self):
+    def poetry_data(self):
         return self.pyproject.get('tool', {}).get('poetry', {})
 
     @cached_property
@@ -61,13 +61,13 @@ class Project:
 
     @cached_property
     def dependencies(self):
-        return self.poetry.get('dependencies', {})
+        return self.poetry_data.get('dependencies', {})
 
     @cached_property
     def description(self):
         if r := _DESCS.get(self.name):
             return r
-        if r := self.poetry.get('description', None):
+        if r := self.poetry_data.get('description', None):
             return r
 
         parts = [i.partition('=') for i in self.read('setup.py')]
@@ -82,7 +82,7 @@ class Project:
 
     @cached_property
     def readme(self):
-        if r := self.poetry.get('readme', None):
+        if r := self.poetry_data.get('readme', None):
             return r
 
         for r in 'README.md', 'README.rst':
@@ -93,8 +93,8 @@ class Project:
 
     @cached_property
     def version(self):
-        if self.poetry:
-            return self.poetry['version']
+        if self.poetry_data:
+            return self.poetry_data['version']
 
         if v := _VERSIONS.get(self.name):
             return v
@@ -133,12 +133,13 @@ class Project:
 
     def run_out(self, *args, **kwargs):
         """Run and return stdout as a string on success, else ''"""
-        kwargs.setdefault('stdout', subprocess.PIPE)
-        if r := self.run(*args, **kwargs):
-            return r.stdout
-        return ''
+        kwargs.setdefault('out', True)
+        return self.run(*args, **kwargs)
 
-    def run(self, *args, **kwargs):
+    def run(self, *args, out=False, **kwargs):
+        if out:
+            kwargs.setdefault('stdout', subprocess.PIPE)
+
         kwargs.setdefault('check', True)
         kwargs.setdefault('text', True)
         kwargs.setdefault('cwd', self.path)
@@ -146,13 +147,25 @@ class Project:
         if len(args) == 1 and isinstance(args[0], str):
             args = args[0].split()
 
-        return subprocess.run(args, **kwargs)
+        r = subprocess.run(args, **kwargs)
+        if not out:
+            return r
+        elif r:
+            return r.stdout
+        else:
+            return ''
 
-    def run_in(self, *args, out=False, **kwargs):
-        method = self.run_out if out else self.run
-        return method(RUN_SH, *args, **kwargs)
+    def run_in(self, *args, **kwargs):
+        return self.run(RUN_SH, *args, **kwargs)
 
-    def poet(self, *args, out=False, **kwargs):
-        return self.run_in(
-            'arch', '-arm64', 'poetry', '--no-ansi', *args, **kwargs
-        )
+    def run_arm(self, *args, **kwargs):
+        return self.run_in('arch', '-arm64', *args, **kwargs)
+
+    def poetry(self, *args, out=False, **kwargs):
+        return self.run_arm('poetry', '--no-ansi', *args, **kwargs)
+
+    def commit(self, msg, *files):
+        files = [str(i) for i in files]
+        self.run('git', 'add', *files)
+        self.run('git', 'commit', '-m', msg, *files)
+        self.run('git', 'push')

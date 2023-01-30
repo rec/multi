@@ -112,12 +112,12 @@ def add_dependencies(project):
     print(test_reqs_file, test_reqs_file.exists())
     parts = ['pyproject.toml', 'poetry.lock']
     if r := list(_read_req(reqs_file, project.python_version)):
-        project.poet('add', *r)
+        project.poetry('add', *r)
         reqs_file.unlink()
         parts.append(str(reqs_file))
 
     if s := list(_read_req(test_reqs_file, project.python_version)):
-        project.poet('add', '--dev', *s)
+        project.poetry('add', '--dev', *s)
         test_reqs_file.unlink()
         parts.append(str(test_reqs_file))
 

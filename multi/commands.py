@@ -4,6 +4,8 @@ import shlex
 import subprocess
 import webbrowser
 
+PROJECT_FILES = 'poetry.lock', 'pyproject.toml'
+
 
 def prop(project):
     res = {k: getattr(project, k) for k in project.argv}
@@ -44,3 +46,22 @@ def bash(project):
     print(project.name + ':')
     project.run('bash', '-c', shlex.join(project.argv))
     print()
+
+
+def poetry(project):
+    print(project.name + ':')
+    project.poetry(*project.argv)
+    print()
+
+
+def add_mkdocs(project):
+    try:
+        print(project.name + ':')
+        project.poetry(
+            'add', '--dev', 'mkdocs', 'mkdocstrings[python]', 'mkdocs-material'
+        )
+        project.commit('Add files for mkdirs', *PROJECT_FILES)
+        success = True
+    finally:
+        if not 'success' in locals():
+            project.run('git', 'reset', '--hard', 'HEAD')
