@@ -60,6 +60,7 @@ def dependencies(project):
 
 
 def add_dependencies(project):
+    print(project.name + ':')
     has_deps = len(project.dependencies) > 1
     if has_deps:
         return
@@ -67,14 +68,13 @@ def add_dependencies(project):
     reqs_file = project.path / 'requirements.txt'
     test_reqs_file = project.path / 'test_requirements.txt'
 
-    # python_path = f'--python={project.python_path}'
     parts = ['pyproject.toml', 'poetry.lock']
-    if r := _read(reqs_file):
+    if r := list(_read_req(reqs_file, project.python_version)):
         project.poet('add', *r)
         reqs_file.unlink()
         parts.append(str(reqs_file))
 
-    if s := _read(test_reqs_file):
+    if s := list(_read_req(test_reqs_file, project.python_version)):
         project.poet('add', '--dev', *s)
         test_reqs_file.unlink()
         parts.append(str(test_reqs_file))
@@ -85,5 +85,34 @@ def add_dependencies(project):
         project.run('git', 'push')
 
 
-def _read(p):
-    return p.read_text().splitlines() if p.exists() else []
+def add_d(project):
+    has_deps = len(project.dependencies) > 1
+    if has_deps:
+        return
+
+    reqs_file = project.path / 'requirements.txt'
+    test_reqs_file = project.path / 'test_requirements.txt'
+
+    parts = ['pyproject.toml', 'poetry.lock']
+    if r := list(_read_req(reqs_file, project.python_version)):
+        print(reqs_file)
+        print(r)
+        print()
+
+    if s := list(_read_req(test_reqs_file, project.python_version)):
+        print(test_reqs_file)
+        print(s)
+        print()
+
+
+def _read_req(p, python_version):
+    if not p.exists():
+        return
+
+    to_delete = 'doks', 'versy'
+    for line in p.read_text().splitlines():
+        line = line.strip()
+        if line and line not in to_delete:
+            if line == 'flake8' and python_version.endswith('3.7'):
+                line = 'flake8@5.0.4'
+            yield line
