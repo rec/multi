@@ -2,6 +2,7 @@ from functools import partial
 import tomlkit
 import shlex
 import subprocess
+import webbrowser
 
 
 def prop(project):
@@ -32,6 +33,11 @@ def run_in(project):
     print(project.name + ':')
     project.run_in(*project.argv)
     print()
+
+
+def web(project):
+    url = '/'.join((f'https://github.com/rec/{project.name}', *project.argv))
+    webbrowser.open(url, 1)
 
 
 def bash(project):
