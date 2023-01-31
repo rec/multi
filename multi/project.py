@@ -12,6 +12,15 @@ SCRIPTS = Path(__file__).parents[1] / 'scripts'
 RUN_SH = str(SCRIPTS / 'run.sh')
 
 
+@datacls
+class Opener:
+    url: str
+
+    def __call__(self, *parts, new=1, autoraise=True):
+        webbrowser.open('/'.join((self.url, *parts)), 1)
+
+
+
 @datacls(order=True)
 class Project:
     name: str
@@ -60,11 +69,20 @@ class Project:
         return self.run_out('git rev-parse --abbrev-ref HEAD').strip()
 
     @cached_property
-    def url(self):
+    def server_url(self):
+        return f'http://127.0.0.1:{8000 + self.index}'
+
+    @cached_property
+    def git_url(self):
         return f'https://github.com/rec/{self.name}'
 
-    def open_url(self, *parts):
-        webbrowser.open('/'.join((self.url, *parts)))
+    @cached_property
+    def open_git(self):
+        return Opener(self.git_url)
+
+    @cached_property
+    def open_server(self):
+        return Opener(self.server_url)
 
     @cached_property
     def is_singleton(self):
