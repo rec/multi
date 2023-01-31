@@ -12,7 +12,29 @@ def prop(project, *argv):
     if len(res) == 1:
         res = res.popitem()[1]
 
-    print(f'{project.name:12}:', res)
+    print(f'{project.name:10}:', res)
+
+
+def poetry(project, *argv):
+    data = project.poetry_data
+
+    def get_address(a):
+        d = data
+        for part in a and a.split('.'):
+            try:
+                d = d[part]
+            except TypeError:
+                try:
+                    d = getattr(d, part)
+                except AttributeError:
+                     return
+        yield d
+
+    result = {a: v for a in argv or [''] for v in get_address(a)}
+    if len(result) == 1 and len(argv) <= 1:
+        _, result = result.popitem()
+
+    print(f'{project.name:10}:', result)
 
 
 def status(project, *argv):
@@ -53,7 +75,7 @@ def bash(project, *argv):
     print()
 
 
-def poetry(project, *argv):
+def run_poetry(project, *argv):
     print(project.name + ':')
     project.poetry(*argv)
     print()
