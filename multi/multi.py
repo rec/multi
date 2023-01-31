@@ -1,19 +1,18 @@
 from . project import Project
 from pathlib import Path
-from loady.importer import import_code
 from typer import Argument, Option, Typer
 import copy
 import json
 import sys
 
 CODE_ROOT = Path('/code')
-
 ROOT = Path(__file__).parents[1]
 PROJECTS_FILE = ROOT / 'projects.json'
 PROJECTS_BACK_FILE = PROJECTS_FILE.with_suffix('.json.bak')
 PROJECTS_DATA = json.loads(PROJECTS_FILE.read_text())
 PROJECTS_BACK = copy.deepcopy(PROJECTS_DATA)
 PROJECTS = {k: Project(k, v, CODE_ROOT / k) for k, v in PROJECTS_DATA.items()}
+MULTI = PROJECTS['multi']
 
 app = Typer(
     add_completion=False,
@@ -32,27 +31,35 @@ def run(
     negate: bool = Option(False, '--negate', '-n'),
     projects: list[str] = Option(sorted(PROJECTS), '--projects', '-p'),
 ):
-    command = import_code('multi.commands.' + command)
-    if not filter:
-        filter = lambda *_: True
-    else:
-        filter = import_code('multi.filters.' + filter)
-        if negate:
-            filter = _negate(filter)
+    from multi import commands, filters
 
-    success = True
+    cmd = _get_callable(commands, command)
+
+    if not filter:
+        filt = lambda *_: True
+    else:
+        filt = _get_callable(filters, filter)
+        if negate:
+            filt = _negate(filt)
+
     for project in sorted(PROJECTS[k] for k in projects):
         try:
-            if filter(project) and command(project, *argv):
+            if filt(project) and cmd(project, *argv):
                 _write()
         except Exception as e:
             if not continue_after_error:
                 raise
             print('ERROR', e, file=sys.stderr)
-            success = False
+            fail = True
+
+    sys.exit('fail' in locals())
 
 
-    sys.exit(not success)
+def _get_callable(o, name):
+    if callable(f := getattr(o, name, None)):
+        return f
+    print(f'ERROR: {name} is not callable')
+    sys.exit(-1)
 
 
 def _negate(f):
