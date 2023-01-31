@@ -47,9 +47,9 @@ def run(
     success = True
 
     for k, v in sorted(projects.items()):
-        project = Project(k, v, CODE_ROOT / k, argv)
+        project = Project(k, v, CODE_ROOT / k)
         try:
-            if filter(project) and command(project):
+            if filter(project) and command(project, *argv):
                 _write()
         except Exception as e:
             print('ERROR', e, file=sys.stderr)

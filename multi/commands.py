@@ -7,66 +7,57 @@ import webbrowser
 PROJECT_FILES = 'poetry.lock', 'pyproject.toml'
 
 
-def prop(project):
-    res = {k: getattr(project, k) for k in project.argv}
+def prop(project, *argv):
+    res = {k: getattr(project, k) for k in argv}
     if len(res) == 1:
         res = res.popitem()[1]
 
     print(f'{project.name:12}:', res)
 
 
-def status(project):
+def status(project, *argv):
     if r := project.run_out('git status --porcelain').rstrip():
         print(project.name + ':')
         print(r)
 
 
-def branch(project):
+def branch(project, *argv):
     print(f'{project.name:12}: {project.branch()}')
 
 
-def run(project):
+def run(project, *argv):
     print(project.name + ':')
-    project.run(*project.argv)
+    project.run(*argv)
     print()
 
 
-def run_in(project):
+def run_in(project, *argv):
     print(project.name + ':')
-    project.run_in(*project.argv)
+    project.run_in(*argv)
     print()
 
 
-def single(project):
+def single(project, *argv):
     if project.is_singleton:
         print(project.name + ':')
 
 
-def web(project):
-    url = '/'.join((f'https://github.com/rec/{project.name}', *project.argv))
+def web(project, *argv):
+    url = '/'.join((f'https://github.com/rec/{project.name}', *argv))
     webbrowser.open(url, 1)
 
 
-def bash(project):
+def bash(project, *argv):
     print(project.name + ':')
-    project.run('bash', '-c', shlex.join(project.argv))
+    project.run('bash', '-c', shlex.join(argv))
     print()
 
 
-def poetry(project):
+def poetry(project, *argv):
     print(project.name + ':')
-    project.poetry(*project.argv)
+    project.poetry(*argv)
     print()
 
 
-def add_mkdocs(project):
-    try:
-        print(project.name + ':')
-        project.poetry(
-            'add', '--dev', 'mkdocs', 'mkdocstrings[python]', 'mkdocs-material'
-        )
-        project.commit('Add files for mkdirs', *PROJECT_FILES)
-        success = True
-    finally:
-        if not 'success' in locals():
-            project.run('git', 'reset', '--hard', 'HEAD')
+def add_mkdocs(project, *argv):
+    pass

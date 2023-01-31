@@ -38,7 +38,6 @@ class Project:
     name: str
     settings: dict
     path: Path
-    argv: tuple
 
     @cached_property
     def pyproject_file(self):
