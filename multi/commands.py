@@ -2,10 +2,19 @@ import threading
 import tomlkit
 import shlex
 import subprocess
+import sys
 import webbrowser
 
 PROJECT_FILES = 'poetry.lock', 'pyproject.toml'
 NONE = object()
+
+
+def _exit(*args):
+    # Elsewhere.
+    if args:
+        print(*args, file=sys.stderr)
+        exit(-1)
+    exit(0)
 
 
 def _p(project, *args):
@@ -37,18 +46,33 @@ def prop(project, *argv):
 
 
 def call(project, func, *args):
+    _p(project)
     try:
         f = _getattrs(project, [func])
         result = f(*args)
+        if result is not None:
+            print(result)
     except Exception as e:
-        result = e
+        print(e)
 
-    _p(project, result)
+
+def assign(project, *argv):
+    parts = [(k, v) for k, _, v in a.partition('=') for a in argv]
+    if bad := sorted(a for a, (k, v) in zip(argv, parts) if not (k and v)):
+        raise ValueError(f'No assignments in {bad}')
+
+    with project.writer() as multi:
+        for k, v in parts:
+            *rest, last = k.split('.')
+            m = multi
+            for i in rest:
+                m = m.setdefault(i, {})
+            m[last] = v
 
 
 def status(project, *argv):
     if r := project.run_out('git status --porcelain').rstrip():
-        _(project)
+        _p(project)
         print(r)
 
 

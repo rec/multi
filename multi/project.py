@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 from functools import cached_property
 from pathlib import Path
 import datacls
@@ -38,6 +39,12 @@ class Project:
     @cached_property
     def multi(self):  # My data
         return self.pyproject.setdefault('tool', {}).setdefault('multi', {})
+
+    @cached_property
+    def git(self):
+        from . git import Git
+
+        return Git(self.run)
 
     @cached_property
     def run(self):
