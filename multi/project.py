@@ -33,10 +33,10 @@ _ALL_PROPS = [
 ]
 
 
-@datacls
+@datacls(order=True)
 class Project:
     name: str
-    settings: dict
+    settings: dict = datacls.field(compare=False)
     path: Path
 
     @cached_property

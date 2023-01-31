@@ -13,7 +13,7 @@ PROJECTS_FILE = ROOT / 'projects.json'
 PROJECTS_BACK_FILE = PROJECTS_FILE.with_suffix('.json.bak')
 PROJECTS_DATA = json.loads(PROJECTS_FILE.read_text())
 PROJECTS_BACK = copy.deepcopy(PROJECTS_DATA)
-MULTIPLE_COMMANDS = False
+PROJECTS = {k: Project(k, v, CODE_ROOT / k) for k, v in PROJECTS_DATA.items()}
 
 app = Typer(
     add_completion=False,
@@ -27,34 +27,30 @@ command = app.command
 def run(
     command: str = Argument('name'),
     argv: list[str] = Argument(None),
+    continue_after_error: bool = Option(True, '--continue-after-error', '-c'),
     filter: str = Option(None, '--filter', '-f'),
     negate: bool = Option(False, '--negate', '-n'),
-    projects: list[str] = Option(
-        sorted(PROJECTS_DATA),
-        '--projects', '-p'
-    ),
+    projects: list[str] = Option(sorted(PROJECTS), '--projects', '-p'),
 ):
-    if filter:
+    command = import_code('multi.commands.' + command)
+    if not filter:
+        filter = lambda *_: True
+    else:
         filter = import_code('multi.filters.' + filter)
         if negate:
             filter = _negate(filter)
-    else:
-        filter = lambda p: True
 
-    command = import_code('multi.commands.' + command)
-
-    projects = {k: PROJECTS_DATA[k] for k in projects}
     success = True
-
-    for k, v in sorted(projects.items()):
-        project = Project(k, v, CODE_ROOT / k)
+    for project in sorted(PROJECTS[k] for k in projects):
         try:
             if filter(project) and command(project, *argv):
                 _write()
         except Exception as e:
+            if not continue_after_error:
+                raise
             print('ERROR', e, file=sys.stderr)
             success = False
-            raise
+
 
     sys.exit(not success)
 
