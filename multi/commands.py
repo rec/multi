@@ -1,60 +1,66 @@
-from functools import partial
+import threading
 import tomlkit
 import shlex
 import subprocess
 import webbrowser
 
 PROJECT_FILES = 'poetry.lock', 'pyproject.toml'
+NONE = object()
+
+
+def _p(project, *args):
+    print(f'{project.name:10}: ', *args)
+
+
+def _getattr(data, a):
+    for part in a and a.split('.'):
+        try:
+            data = data[part]
+        except Exception:
+            try:
+                data = getattr(data, part)
+            except AttributeError:
+                return
+    yield data
+
+
+def _getattrs(data, argv):
+    return {a: d for a in argv or [''] for d in _getattr(data, a)}
+
+
+def _pop(result, argv):
+    if len(result) == 1 and len(argv) == 1:
+        return result.popitem()[1]
+    return result
 
 
 def prop(project, *argv):
-    res = {k: getattr(project, k) for k in argv}
-    if len(res) == 1:
-        res = res.popitem()[1]
-
-    print(f'{project.name:10}:', res)
+    _p(project, _pop(_getattrs(project, argv), argv))
 
 
-def poetry(project, *argv):
-    data = project.poetry_data
-
-    def get_address(a):
-        d = data
-        for part in a and a.split('.'):
-            try:
-                d = d[part]
-            except TypeError:
-                try:
-                    d = getattr(d, part)
-                except AttributeError:
-                     return
-        yield d
-
-    result = {a: v for a in argv or [''] for v in get_address(a)}
-    if len(result) == 1 and len(argv) <= 1:
-        _, result = result.popitem()
-
-    print(f'{project.name:10}:', result)
+def call(project, *argv):
+    res = _getattrs(project, argv)
+    _p(project, res)
 
 
 def status(project, *argv):
     if r := project.run_out('git status --porcelain').rstrip():
-        print(project.name + ':')
+        _(project)
         print(r)
 
 
 def branch(project, *argv):
-    print(f'{project.name:12}: {project.branch()}')
+    _print(project, project.branch())
 
 
 def run(project, *argv):
-    print(project.name + ':')
+    _print(project)
     project.run(*argv)
     print()
 
 
 def run_in(project, *argv):
-    print(project.name + ':')
+    _print(project)
     project.run_in(*argv)
     print()
 
@@ -79,6 +85,30 @@ def run_poetry(project, *argv):
     print(project.name + ':')
     project.poetry(*argv)
     print()
+
+
+def mkdocs(project, *argv):
+    from . import multi
+
+    path = str(multi.MULTI.bin_path / 'mkdocs')
+    project.run(path, *argv)
+
+
+def serve(project, *argv):
+    finished = None
+
+    def target():
+        import time
+
+        time.sleep(0.5)
+        webbrowser.open('http://127.0.0.1:8000/', 2)
+
+    threading.Thread(target=target).start()
+
+    if project.is_singleton:
+        argv = '-w', project.name + '.py', *argv
+
+    mkdocs(project, 'serve', *argv)
 
 
 def add_mkdocs(project, *argv):
