@@ -33,7 +33,7 @@ class Project:
         return self.pyproject.setdefault('tool', {}).setdefault('poetry', {})
 
     @cached_property
-    def multi(self):
+    def multi(self):  # My data
         return self.pyproject.setdefault('tool', {}).setdefault('multi', {})
 
     @cached_property

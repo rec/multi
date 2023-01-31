@@ -25,22 +25,25 @@ def _getattr(data, a):
 
 
 def _getattrs(data, argv):
-    return {a: d for a in argv or [''] for d in _getattr(data, a)}
+    result = {a: d for a in argv or [''] for d in _getattr(data, a)}
 
-
-def _pop(result, argv):
     if len(result) == 1 and len(argv) == 1:
         return result.popitem()[1]
     return result
 
 
 def prop(project, *argv):
-    _p(project, _pop(_getattrs(project, argv), argv))
+    _p(project, getattrs(project, argv))
 
 
-def call(project, *argv):
-    res = _getattrs(project, argv)
-    _p(project, res)
+def call(project, func, *args):
+    try:
+        f = _getattrs(project, [func])
+        result = f(*args)
+    except Exception as e:
+        result = e
+
+    _p(project, result)
 
 
 def status(project, *argv):
@@ -59,9 +62,9 @@ def run(project, *argv):
     print()
 
 
-def run_in(project, *argv):
+def bash(project, *argv):
     _print(project)
-    project.run_in(*argv)
+    project.run.bash(*argv)
     print()
 
 
@@ -73,12 +76,6 @@ def single(project, *argv):
 def web(project, *argv):
     url = '/'.join((f'https://github.com/rec/{project.name}', *argv))
     webbrowser.open(url, 1)
-
-
-def bash(project, *argv):
-    print(project.name + ':')
-    project.run('bash', '-c', shlex.join(argv))
-    print()
 
 
 def run_poetry(project, *argv):
