@@ -2,8 +2,7 @@ import subprocess
 from pathlib import Path
 import datacls
 
-ROOT = Path(__file__).parents[1]
-SCRIPTS = ROOT / 'scripts'
+SCRIPTS = Path(__file__).parents[1] / 'scripts'
 RUN_SH = str(SCRIPTS / 'run.sh')
 
 

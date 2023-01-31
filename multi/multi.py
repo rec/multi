@@ -5,19 +5,25 @@ import copy
 import json
 import sys
 
-CODE_ROOT = Path('/code')
-ROOT = Path(__file__).parents[1]
-PROJECTS_FILE = ROOT / 'projects.json'
-PROJECTS_BACK_FILE = PROJECTS_FILE.with_suffix('.json.bak')
-PROJECTS_DATA = json.loads(PROJECTS_FILE.read_text())
-PROJECTS_BACK = copy.deepcopy(PROJECTS_DATA)
-PROJECTS = {k: Project(k, v, CODE_ROOT / k) for k, v in PROJECTS_DATA.items()}
+_NAMES = [
+    "abbrev", "backer", "blocks", "cfgs",
+    "datacls", "def_main", "dek", "dtyper",
+
+    "editor", "hardback", "impall", "loady",
+    "multi", "nc", "nmr", "plur",
+
+    "runs", "safer", "sproc", "tdir",
+    "vl8", "wavemap", "xmod",
+]
+
+
+PROJECTS = {k: Project(k, i) for i, k in enumerate(_NAMES)}
 MULTI = PROJECTS['multi']
 
 app = Typer(
     add_completion=False,
     context_settings={"help_option_names": ["-h", "--help"]},
-    help=f'')
+)
 
 command = app.command
 
@@ -78,6 +84,7 @@ def _write():
         PROJECTS_BACK.clear()
 
     _write_one(PROJECTS_FILE, PROJECTS_DATA)
+
 
 
 if __name__ == '__main__':

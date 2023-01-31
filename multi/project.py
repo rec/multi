@@ -6,16 +6,19 @@ import sys
 import tomlkit
 import webbrowser
 
-ROOT = Path(__file__).parents[1]
-SCRIPTS = ROOT / 'scripts'
+CODE_ROOT = Path('/code')
+SCRIPTS = Path(__file__).parents[1] / 'scripts'
 RUN_SH = str(SCRIPTS / 'run.sh')
 
 
 @datacls(order=True)
 class Project:
     name: str
-    settings: dict = datacls.field(compare=False)
-    path: Path
+    index: int
+
+    @cached_property
+    def path(self):
+        return CODE_ROOT / self.name
 
     @cached_property
     def pyproject_file(self):

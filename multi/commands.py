@@ -33,7 +33,7 @@ def _getattrs(data, argv):
 
 
 def prop(project, *argv):
-    _p(project, getattrs(project, argv))
+    _p(project, _getattrs(project, argv))
 
 
 def call(project, func, *args):
