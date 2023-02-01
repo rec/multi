@@ -4,7 +4,6 @@ import tomlkit
 import shlex
 import subprocess
 import sys
-import webbrowser
 
 PROJECT_FILES = 'poetry.lock', 'pyproject.toml'
 NONE = object()
@@ -78,17 +77,17 @@ def status(project, *argv):
 
 
 def branch(project, *argv):
-    _print(project, project.branch())
+    _p(project, project.branch())
 
 
 def run(project, *argv):
-    _print(project)
+    _p(project)
     project.run(*argv)
     print()
 
 
 def bash(project, *argv):
-    _print(project)
+    _p(project)
     project.run.bash(*argv)
     print()
 
@@ -96,11 +95,6 @@ def bash(project, *argv):
 def single(project, *argv):
     if project.is_singleton:
         print(project.name + ':')
-
-
-def web(project, *argv):
-    url = '/'.join((f'https://github.com/rec/{project.name}', *argv))
-    webbrowser.open(url, 1)
 
 
 def run_poetry(project, *argv):

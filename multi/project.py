@@ -35,6 +35,10 @@ class Project:
         return self.path / 'pyproject.toml'
 
     @cached_property
+    def user(self):
+        return 'timedata-org' if self.name == 'loady' else 'rec'
+
+    @cached_property
     def pyproject(self):
         return tomlkit.loads(self.pyproject_file.read_text())
 
@@ -74,7 +78,7 @@ class Project:
 
     @cached_property
     def git_url(self):
-        return f'https://github.com/rec/{self.name}'
+        return f'https://github.com/{self.user}/{self.name}'
 
     @cached_property
     def open_git(self):
