@@ -9,38 +9,6 @@ PROJECT_FILES = 'poetry.lock', 'pyproject.toml'
 NONE = object()
 
 
-def _exit(*args):
-    # Elsewhere.
-    if args:
-        print(*args, file=sys.stderr)
-        exit(-1)
-    exit(0)
-
-
-def _p(project, *args):
-    print(f'{project.name:10}: ', *args)
-
-
-def _getattr(data, a):
-    for part in a and a.split('.'):
-        try:
-            data = data[part]
-        except Exception:
-            try:
-                data = getattr(data, part)
-            except AttributeError:
-                return
-    yield data
-
-
-def _getattrs(data, argv):
-    result = {a: d for a in argv or [''] for d in _getattr(data, a)}
-
-    if len(result) == 1 and len(argv) == 1:
-        return result.popitem()[1]
-    return result
-
-
 def prop(project, *argv):
     _p(project, _getattrs(project, argv))
 
@@ -128,3 +96,35 @@ def serve(project, *argv):
 
 def add_mkdocs(project, *argv):
     pass
+
+
+def _exit(*args):
+    # Elsewhere.
+    if args:
+        print(*args, file=sys.stderr)
+        exit(-1)
+    exit(0)
+
+
+def _p(project, *args):
+    print(f'{project.name:10}: ', *args)
+
+
+def _getattr(data, a):
+    for part in a and a.split('.'):
+        try:
+            data = data[part]
+        except Exception:
+            try:
+                data = getattr(data, part)
+            except AttributeError:
+                return
+    yield data
+
+
+def _getattrs(data, argv):
+    result = {a: d for a in argv or [''] for d in _getattr(data, a)}
+
+    if len(result) == 1 and len(argv) == 1:
+        return result.popitem()[1]
+    return result
