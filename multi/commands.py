@@ -47,14 +47,14 @@ def prop(project, *argv):
 
 
 def call(project, func, *args):
-    _p(project)
     try:
         f = _getattrs(project, [func])
         result = f(*args)
-        if result is not None:
-            print(result)
     except Exception as e:
-        print(e)
+        result = e
+
+    if result is not None:
+        _p(project, result)
 
 
 def assign(project, *argv):
