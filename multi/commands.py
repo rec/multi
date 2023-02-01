@@ -1,4 +1,5 @@
 import threading
+import time
 import tomlkit
 import shlex
 import subprocess
@@ -118,18 +119,17 @@ def mkdocs(project, *argv):
 def serve(project, *argv):
     finished = None
 
-    def target():
-        import time
-
-        time.sleep(0.5)
-        webbrowser.open('http://127.0.0.1:8000/', 2)
-
-    threading.Thread(target=target).start()
-
     if project.is_singleton:
         argv = '-w', project.name + '.py', *argv
 
-    mkdocs(project, 'serve', *argv)
+    def target():
+        mkdocs(project, 'serve', f'--dev-addr={project.server_url}', *argv)
+
+    threading.Thread(target=target, daemon=True).start()
+
+    time.sleep(0.5)
+    project.open_server()
+    return True
 
 
 def add_mkdocs(project, *argv):

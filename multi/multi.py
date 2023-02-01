@@ -4,6 +4,7 @@ from typer import Argument, Option, Typer
 import copy
 import json
 import sys
+import time
 
 _NAMES = [
     'abbrev', 'backer', 'blocks', 'cfgs',
@@ -49,10 +50,12 @@ def run(
         if negate:
             filt = _negate(filt)
 
+    wait_at_end = False
+
     for project in sorted(PROJECTS[k] for k in projects):
         try:
             if filt(project):
-                cmd(project, *argv)
+                wait_at_end = cmd(project, *argv) or wait_at_end
 
             if commit:
                 pass
@@ -62,6 +65,13 @@ def run(
                 raise
             print('ERROR', e, file=sys.stderr)
             fail = True
+
+    if wait_at_end:
+        try:
+            while True:
+                time.sleep(1)
+        except KeyboardInterrupt:
+            print('Done')
 
     sys.exit('fail' in locals())
 

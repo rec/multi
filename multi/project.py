@@ -70,7 +70,7 @@ class Project:
 
     @cached_property
     def server_url(self):
-        return f'http://127.0.0.1:{8000 + self.index}'
+        return f'127.0.0.1:{7000 + self.index}'
 
     @cached_property
     def git_url(self):
@@ -82,7 +82,7 @@ class Project:
 
     @cached_property
     def open_server(self):
-        return Opener(self.server_url)
+        return Opener('http://' + self.server_url)
 
     @cached_property
     def is_singleton(self):
