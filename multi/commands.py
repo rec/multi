@@ -5,15 +5,21 @@ import shlex
 import subprocess
 import sys
 
-PROJECT_FILES = 'poetry.lock', 'pyproject.toml'
+PYPROJECT = 'pyproject.toml'
+PROJECT_FILES = 'poetry.lock', PYPROJECT
 NONE = object()
 
 
-def fix_desc(project):
-    import pyperclip as pc
-    pc.copy(project.poetry['description'])
-    project.open_git()
-    input('Press return to continue')
+def bump_version(project, rule_or_version, *notes):
+    project.poetry('version', rule_or_version)
+    project.reload()
+
+    version = 'v' + project.poetry['version']
+    project.git.commit(f'Update to version {version}', PYPROJECT)
+    project.git('tag', version)
+    project.git('push', '--tag')
+    notes = ' '.join(notes).strip() or f'Version {version}'
+    project.arm('gh', 'release', 'create', '--notes', notes)
 
 
 def prop(project, *argv):

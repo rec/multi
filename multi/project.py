@@ -1,3 +1,4 @@
+from argparse import Namespace
 from contextlib import contextmanager
 from functools import cached_property
 from pathlib import Path
@@ -26,6 +27,12 @@ class Project:
     name: str
     index: int
 
+    RELOAD = 'description_parts', 'multi', 'poetry', 'pyproject_file'
+
+    def reload(self):
+        for r in RELOAD:
+            delattr(self, re)
+
     @cached_property
     def path(self):
         return CODE_ROOT / self.name
@@ -52,11 +59,13 @@ class Project:
 
     @cached_property
     def poetry(self):
-        return self.pyproject.setdefault('tool', {}).setdefault('poetry', {})
+        p = self.pyproject.setdefault('tool', {}).setdefault('poetry', {})
+        return Namespace(p)
 
     @cached_property
     def multi(self):  # My data
-        return self.pyproject.setdefault('tool', {}).setdefault('multi', {})
+        p = self.pyproject.setdefault('tool', {}).setdefault('multi', {})
+        return Namespace(p)
 
     @cached_property
     def git(self):

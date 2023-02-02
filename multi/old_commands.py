@@ -1,3 +1,10 @@
+def fix_desc(project):
+    import pyperclip as pc
+    pc.copy(project.poetry['description'])
+    project.open_git()
+    input('Press return to continue')
+
+
 EMOJIS = {
     'datacls': '🗂',
     'def_main': '🗣',
