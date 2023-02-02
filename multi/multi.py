@@ -18,6 +18,7 @@ _NAMES = [
 ]
 
 
+
 PROJECTS = {k: Project(k, i) for i, k in enumerate(_NAMES)}
 MULTI = PROJECTS['multi']
 

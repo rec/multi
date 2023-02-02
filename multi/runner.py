@@ -3,7 +3,7 @@ from pathlib import Path
 import datacls
 
 SCRIPTS = Path(__file__).parents[1] / 'scripts'
-RUN_SH = str(SCRIPTS / 'run.sh')
+RUN_BASH = str(SCRIPTS / 'run.sh')
 
 
 @datacls

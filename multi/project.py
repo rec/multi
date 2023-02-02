@@ -42,6 +42,11 @@ class Project:
     def pyproject(self):
         return tomlkit.loads(self.pyproject_file.read_text())
 
+    @contextmanager
+    def writer(self):
+        yield self.pyproject
+        self.write()
+
     def write(self):
         self.pyproject_file.write_text(tomlkit.dumps(self.pyproject))
 
