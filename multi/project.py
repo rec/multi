@@ -28,7 +28,8 @@ class Project:
 
     def reload(self):
         for r in self.RELOAD:
-            delattr(self, r)
+            if r in self.__dict__:
+                del self.__dict__[r]
 
     @cached_property
     def path(self):
@@ -81,7 +82,7 @@ class Project:
         return max(self.path.glob('.direnv/python-3.*.*/bin'))
 
     def branch(self):
-        return self.run_out('git rev-parse --abbrev-ref HEAD').strip()
+        return self.run.out('git', 'rev-parse', '--abbrev-ref', 'HEAD').strip()
 
     @cached_property
     def server_url(self):
@@ -112,6 +113,16 @@ class Project:
         from . import projects
 
         return projects.color(self.name)
+
+    @cached_property
+    def git_tag(self):
+        tags = [i.strip() for i in self.run.out('git', 'tag').splitlines()]
+        tags = [i[1:] for i in tags if i.startswith('v')]
+        tags = [i.strip('.') for i in tags]
+        tags = [[int(j) for j in i.split('.')] for i in tags]
+        if tags:
+            v0, v1, v2 = max(tags)
+            return f'v{v0}.{v1}.{v2}'
 
 
 def _split_description(d):

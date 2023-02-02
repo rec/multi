@@ -1,5 +1,6 @@
 import threading
 import time
+import subprocess
 import sys
 
 PYPROJECT = 'pyproject.toml'
@@ -22,12 +23,12 @@ def bump_version(project, rule_or_version, *notes):
     project.run.poetry('version', rule_or_version)
     project.reload()
 
-    version = 'v' + project.poetry['version']
+    version = 'v' + project.poetry.version
     project.git.commit(f'Update to version {version}', PYPROJECT)
     project.git('tag', version)
-    project.git('push', '--tag')
+    project.git('push', '--tag', '--force-with-lease')
     notes = ' '.join(notes).strip() or f'Version {version}'
-    project.gh('release', 'create', '--notes', notes)
+    project.run.gh('release', 'create', '--notes', notes)
 
 
 def prop(project, *argv):
@@ -35,15 +36,17 @@ def prop(project, *argv):
 
 
 def call(project, func, *args):
+    print(project.name + ':')
     try:
         f = _getattrs(project, [func])
         result = f(*args)
     except Exception as e:
         result = e
+        raise
 
-    if result is not None:
-        _p(project, result)
-
+    if not isinstance(result, (type(None), subprocess.CompletedProcess)):
+        print(result)
+    print()
 
 def assign(project, *argv):
     parts = [(k, v) for a in argv for k, _, v in a.partition('=')]
@@ -60,7 +63,7 @@ def assign(project, *argv):
 
 
 def status(project, *argv):
-    if r := project.run_out('git status --porcelain').rstrip():
+    if r := project.git.out('status', '--porcelain').rstrip():
         _p(project)
         print(r)
 

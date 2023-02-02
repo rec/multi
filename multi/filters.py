@@ -4,3 +4,7 @@ def is_dirty(project):
 
 def has_emoji(project):
     return not project.poetry['description'].isascii()
+
+
+def needs_release(project):
+    return project.git_tag != 'v' + project.poetry.version
