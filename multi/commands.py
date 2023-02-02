@@ -1,3 +1,4 @@
+from pathlib import Path
 import threading
 import time
 import subprocess
@@ -6,6 +7,42 @@ import sys
 PYPROJECT = 'pyproject.toml'
 PROJECT_FILES = 'poetry.lock', PYPROJECT
 NONE = object()
+MKDOCS = Path(__file__).parents[1] / 'mkdocs'
+
+
+def add_mkdocs(project, *argv):
+    print(project.name, end=': \n')
+    docs = sorted(i for i in MKDOCS.rglob('*') if not i.name.startswith('.'))
+    if not docs:
+        raise ValueError
+    for doc in docs:
+        if doc.is_dir():
+            doc.relative_to(MKDOCS).mkdir(exist_ok=True)
+            continue
+
+        contents = doc.read_text()
+        if '.tpl' in doc.suffixes:
+            contents = contents.format(project = project)
+
+            suffixes = ''.join(s for s in doc.suffixes if s != '.tpl')
+            while doc.suffix:
+                doc = doc.with_suffix('')
+            doc = doc.with_suffix(suffixes)
+
+        rel = project.path / doc.relative_to(MKDOCS)
+        if False:
+            rel.write_text(contents)
+        else:
+            print(doc.relative_to(MKDOCS), end=' \n')
+
+    print()
+
+
+def mkdocs(project, *argv):
+    from . multi import MULTI
+
+    path = str(multi.MULTI.bin_path / 'mkdocs')
+    project.run(path, *argv)
 
 
 def tweak_github(project):
@@ -47,6 +84,7 @@ def call(project, func, *args):
     if not isinstance(result, (type(None), subprocess.CompletedProcess)):
         print(result)
     print()
+
 
 def assign(project, *argv):
     parts = [(k, v) for a in argv for k, _, v in a.partition('=')]
@@ -95,13 +133,6 @@ def run_poetry(project, *argv):
     print()
 
 
-def mkdocs(project, *argv):
-    from . import multi
-
-    path = str(multi.MULTI.bin_path / 'mkdocs')
-    project.run(path, *argv)
-
-
 def serve(project, *argv):
     if project.is_singleton:
         argv = '-w', project.name + '.py', *argv
@@ -114,10 +145,6 @@ def serve(project, *argv):
     time.sleep(0.5)
     project.open_server()
     return True
-
-
-def add_mkdocs(project, *argv):
-    pass
 
 
 def _exit(*args):
