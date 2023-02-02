@@ -106,7 +106,16 @@ class Project:
 
     @cached_property
     def description_parts(self):
-        return _split_description(self.poetry.description)
+        d = self.poetry.description
+        items = list(enumerate(d))
+
+        begin = next(i for i, c in items if c.isascii())
+        end = next(i for i, c in reversed(items) if c.isascii())
+
+        if end == len(d) - 1:
+            end = len(d)
+
+        return d[:begin].strip(), d[begin:end].strip(), d[end:].strip()
 
     @cached_property
     def color(self):
@@ -124,14 +133,7 @@ class Project:
             v0, v1, v2 = max(tags)
             return f'v{v0}.{v1}.{v2}'
 
-
-def _split_description(d):
-    items = list(enumerate(d))
-
-    begin = next(i for i, c in items if c.isascii())
-    end = next(i for i, c in reversed(items) if c.isascii())
-
-    if end == len(d) - 1:
-        end = len(d)
-
-    return d[:begin].strip(), d[begin:end].strip(), d[end:].strip()
+    @cached_property
+    def site_name(self):
+        e1, desc, e2 = self.description_parts
+        return f'{e1}: `{self.name}`: {desc} {e2}'
