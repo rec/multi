@@ -9,6 +9,13 @@ PROJECT_FILES = 'poetry.lock', 'pyproject.toml'
 NONE = object()
 
 
+def fix_desc(project):
+    import pyperclip as pc
+    pc.copy(project.poetry['description'])
+    project.open_git()
+    input('Press return to continue')
+
+
 def prop(project, *argv):
     _p(project, _getattrs(project, argv))
 
