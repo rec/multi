@@ -14,6 +14,7 @@ dtyper = "^2.0.3"
 loady = "^1.8.12"
 tomlkit = "^0.11.6"
 datacls = "^4.5.0"
+pyperclip = "^1.8.2"
 
 
 [tool.poetry.group.dev.dependencies]

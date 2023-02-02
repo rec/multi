@@ -708,6 +708,17 @@ files = [
 markdown = ">=3.2"
 
 [[package]]
+name = "pyperclip"
+version = "1.8.2"
+description = "A cross-platform clipboard module for Python. (Only handles plain text for now.)"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "pyperclip-1.8.2.tar.gz", hash = "sha256:105254a8b04934f0bc84e9c24eb360a591aaf6535c9def5f29d92af107a9bf57"},
+]
+
+[[package]]
 name = "python-dateutil"
 version = "2.8.2"
 description = "Extensions to the standard Python datetime module"
@@ -1079,4 +1090,4 @@ dek = "*"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "7c998df5281c8de71a7d224767d1dd89768db1e441ba425f96c76cf137fe8e06"
+content-hash = "658c9f46ae0eb163f1fb3096a8183a2593767086f47ee53616293d2ed02d31f1"
