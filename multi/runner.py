@@ -42,6 +42,9 @@ class Runner:
     def poetry(self, *args, **kwargs):
         return self.arm('poetry', '--no-ansi', *args, **kwargs)
 
+    def gh(self, *args, **kwargs):
+        return self.arm('gh', *args, **kwargs)
+
     def commit(self, msg, *files):
         files = [str(i) for i in files]
         self('git', 'add', *files)

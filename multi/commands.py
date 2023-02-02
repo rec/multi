@@ -7,6 +7,17 @@ PROJECT_FILES = 'poetry.lock', PYPROJECT
 NONE = object()
 
 
+def tweak_github(project):
+    project.run.gh(
+        'repo',
+        'edit',
+        '--enable-merge-commit=false',
+        '--enable-rebase-merge',
+        '--enable-squash-merge=false',
+    )
+    _p(project)
+
+
 def bump_version(project, rule_or_version, *notes):
     project.run.poetry('version', rule_or_version)
     project.reload()
@@ -16,7 +27,7 @@ def bump_version(project, rule_or_version, *notes):
     project.git('tag', version)
     project.git('push', '--tag')
     notes = ' '.join(notes).strip() or f'Version {version}'
-    project.arm('gh', 'release', 'create', '--notes', notes)
+    project.gh('release', 'create', '--notes', notes)
 
 
 def prop(project, *argv):
