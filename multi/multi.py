@@ -31,7 +31,6 @@ def run(
     for name in (p for p in projects if p not in exclude):
         project = PROJECTS[name]
         try:
-            print('ONE', filt(project), cmd)
             if filt(project) and cmd(project, *argv):
                 wait_at_end = True
 

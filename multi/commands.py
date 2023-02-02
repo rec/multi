@@ -11,10 +11,9 @@ MKDOCS = Path(__file__).parents[1] / 'mkdocs'
 
 
 def add_mkdocs(project, *argv):
-    print(project.name, end=': \n')
+    _p(project, end=' ')
     docs = sorted(i for i in MKDOCS.rglob('*') if not i.name.startswith('.'))
-    if not docs:
-        raise ValueError
+
     for doc in docs:
         if doc.is_dir():
             doc.relative_to(MKDOCS).mkdir(exist_ok=True)
@@ -33,7 +32,9 @@ def add_mkdocs(project, *argv):
         if False:
             rel.write_text(contents)
         else:
-            print(doc.relative_to(MKDOCS), end=' \n')
+            print(doc.relative_to(MKDOCS), end=' ')
+            print()
+            print(contents)
 
     print()
 
@@ -155,8 +156,8 @@ def _exit(*args):
     exit(0)
 
 
-def _p(project, *args):
-    print(f'{project.name:10}: ', *args)
+def _p(project, *args, **kwargs):
+    print(f'{project.name:10}: ', *args, **kwargs)
 
 
 def _getattr(data, a):
