@@ -1,8 +1,5 @@
 from . project import Project
-from pathlib import Path
 from typer import Argument, Option, Typer
-import copy
-import json
 import sys
 import time
 
@@ -16,8 +13,6 @@ _NAMES = [
     'plur', 'runs', 'safer', 'sproc',
     'tdir', 'vl8', 'wavemap', 'xmod',
 ]
-
-
 
 PROJECTS = {k: Project(k, i) for i, k in enumerate(_NAMES)}
 MULTI = PROJECTS['multi']
@@ -45,7 +40,8 @@ def run(
     cmd = _get_callable(commands, command)
 
     if not filter:
-        filt = lambda *_: True
+        def filt(*_):
+            return True
     else:
         filt = _get_callable(filters, filter)
         if negate:

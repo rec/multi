@@ -3,8 +3,6 @@ from contextlib import contextmanager
 from functools import cached_property
 from pathlib import Path
 import datacls
-import json
-import sys
 import tomlkit
 import webbrowser
 
@@ -21,7 +19,6 @@ class Opener:
         webbrowser.open('/'.join((self.url, *parts)), 1)
 
 
-
 @datacls(order=True)
 class Project:
     name: str
@@ -30,8 +27,8 @@ class Project:
     RELOAD = 'description_parts', 'multi', 'poetry', 'pyproject_file'
 
     def reload(self):
-        for r in RELOAD:
-            delattr(self, re)
+        for r in self.RELOAD:
+            delattr(self, r)
 
     @cached_property
     def path(self):

@@ -1,8 +1,5 @@
 import threading
 import time
-import tomlkit
-import shlex
-import subprocess
 import sys
 
 PYPROJECT = 'pyproject.toml'
@@ -38,7 +35,7 @@ def call(project, func, *args):
 
 
 def assign(project, *argv):
-    parts = [(k, v) for k, _, v in a.partition('=') for a in argv]
+    parts = [(k, v) for a in argv for k, _, v in a.partition('=')]
     if bad := sorted(a for a, (k, v) in zip(argv, parts) if not (k and v)):
         raise ValueError(f'No assignments in {bad}')
 
@@ -92,8 +89,6 @@ def mkdocs(project, *argv):
 
 
 def serve(project, *argv):
-    finished = None
-
     if project.is_singleton:
         argv = '-w', project.name + '.py', *argv
 

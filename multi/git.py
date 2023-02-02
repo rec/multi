@@ -1,5 +1,4 @@
 import subprocess
-from pathlib import Path
 from typing import Callable
 import datacls
 
@@ -19,7 +18,7 @@ class Git:
 
     def is_dirty(self):
         try:
-            self('diff-index', '--quiet', 'HEAD','--')
+            self('diff-index', '--quiet', 'HEAD', '--')
             return False
         except subprocess.CalledProcessError:
             return True
