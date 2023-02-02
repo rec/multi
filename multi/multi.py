@@ -1,4 +1,5 @@
 from . project import Project
+from functools import wraps
 from typer import Argument, Option, Typer
 import sys
 import time
@@ -29,33 +30,23 @@ command = app.command
 def run(
     command: str = Argument('name'),
     argv: list[str] = Argument(None),
-    commit: str = Option('', '--commit', '-c'),
-    continue_after_error: bool = Option(True, '--continue-after-error', '-e'),
+    continue_after_error: bool = Option(False, '--continue-after-error', '-e'),
+    exclude: list[str] = Option((), '--exclude', '-e'),
     filter: str = Option(None, '--filter', '-f'),
     negate: bool = Option(False, '--negate', '-n'),
     projects: list[str] = Option(sorted(PROJECTS), '--projects', '-p'),
 ):
-    from multi import commands, filters
+    from multi import commands
 
     cmd = _get_callable(commands, command)
-
-    if not filter:
-        def filt(*_):
-            return True
-    else:
-        filt = _get_callable(filters, filter)
-        if negate:
-            filt = _negate(filt)
-
+    filt = _make_filter(filter, negate)
     wait_at_end = False
 
-    for project in sorted(PROJECTS[k] for k in projects):
+    for name in (p for p in projects if p not in exclude):
+        project = PROJECTS[name]
         try:
-            if filt(project):
-                wait_at_end = cmd(project, *argv) or wait_at_end
-
-            if commit:
-                pass
+            if filt(project) and cmd(project, *argv):
+                wait_at_end = True
 
         except Exception as e:
             if not continue_after_error:
@@ -80,9 +71,20 @@ def _get_callable(o, name):
     sys.exit(-1)
 
 
-def _negate(f):
+def _make_filter(filter, negate):
+    from multi import filters
+
+    if not filter:
+        return lambda *_: True
+
+    filt = _get_callable(filters, filter)
+    if not negate:
+        return filt
+
+    @wraps(filt)
     def wrapped(*a, **ka):
-        return not f(*a, **ka)
+        return not filt(*a, **ka)
+
     return wrapped
 
 

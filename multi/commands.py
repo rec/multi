@@ -8,7 +8,7 @@ NONE = object()
 
 
 def bump_version(project, rule_or_version, *notes):
-    project.poetry('version', rule_or_version)
+    project.run.poetry('version', rule_or_version)
     project.reload()
 
     version = 'v' + project.poetry['version']
@@ -77,7 +77,7 @@ def single(project, *argv):
 
 def run_poetry(project, *argv):
     print(project.name + ':')
-    project.poetry(*argv)
+    project.run.poetry(*argv)
     print()
 
 

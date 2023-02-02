@@ -57,12 +57,12 @@ class Project:
     @cached_property
     def poetry(self):
         p = self.pyproject.setdefault('tool', {}).setdefault('poetry', {})
-        return Namespace(p)
+        return Namespace(**p)
 
     @cached_property
     def multi(self):  # My data
         p = self.pyproject.setdefault('tool', {}).setdefault('multi', {})
-        return Namespace(p)
+        return Namespace(**p)
 
     @cached_property
     def git(self):
@@ -105,11 +105,10 @@ class Project:
 
     @cached_property
     def description_parts(self):
-        return _split_description(self.poetry['description'])
+        return _split_description(self.poetry.description)
 
 
 def _split_description(d):
-    print(d)
     items = list(enumerate(d))
 
     begin = next(i for i, c in items if c.isascii())
