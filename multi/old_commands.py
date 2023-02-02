@@ -1,3 +1,64 @@
+EMOJIS = {
+    'datacls': '🗂',
+    'def_main': '🗣',
+    'hardback': '📓',
+    'impall': '🛎',
+    'loady': '🛍',
+    'nmr': '🌐',
+    'multi': '📚',
+}
+
+DESCS = {
+    'blocks':  'Solve a block puzzle',
+    'cfgs':  'XDG standard config files',
+    'datacls':  'Adds a little to dataclasses',
+    'def_main':  'A decorator for main',
+    'dek':  'The decorator-decorator',
+    'dtyper':  'Call or make dataclasses from `typer` commands',
+    'editor':  'Open the default text editor',
+    'gitz':  'Tiny useful git commands, some dangerous',
+    'hardback':  'Hardcopy backups of digital data',
+    'impall':  'Test-import all modules below a given root',
+    'loady':  'Load Python code and data from git',
+    'multi':  'Manage all my other projects',
+    'nmr':  'Name all canonical things',
+    'plur':  'Simple universal word pluralizer',
+    'runs':  'Run a block of text as a subprocess',
+    'safer':  'A safer file opener',
+    'sproc':  'Subprocesseses for subhumanses',
+    'tdir':  'Create and fill a temporary directory',
+    'vl8':  'Perturbed audio',
+    'xmod':  'Turn an object into a module',
+}
+
+
+def fix_desc(project):
+    desc = project.poetry['description'].strip()
+
+    items = list(enumerate(desc))
+    begin = next(i for i, c in items if c.isascii())
+    end = next(i for i, c in reversed(items) if c.isascii())
+
+    if begin:
+        e1 = desc[:begin].strip()
+        e2 = desc[end + 1:].strip()
+        desc = desc[begin:end + 1].strip()
+    else:
+        e1 = e2 = EMOJIS[project.name]
+
+    desc = DESCS.get(project.name, desc)
+    desc = f'{e1} {desc} {e2}'
+    if project.poetry['description'] == desc:
+        return
+
+    _p(project, 'Changed:', desc)
+    project.poetry['description'] = desc
+    project.write()
+    project.run.poetry('lock')
+    msg = 'Standardize project description'
+    project.git.commit(msg, 'pyproject.toml', *PROJECT_FILES)
+
+
 def setup(project):
     s = project.run_out('git status --porcelain')
     lines = [i.strip() for i in s.splitlines()]

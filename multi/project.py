@@ -96,3 +96,20 @@ class Project:
     @cached_property
     def is_singleton(self):
         return (self.path / self.name).with_suffix('.py').exists()
+
+    @cached_property
+    def description_parts(self):
+        return _split_description(self.poetry['description'])
+
+
+def _split_description(d):
+    print(d)
+    items = list(enumerate(d))
+
+    begin = next(i for i, c in items if c.isascii())
+    end = next(i for i, c in reversed(items) if c.isascii())
+
+    if end == len(d) - 1:
+        end = len(d)
+
+    return d[:begin].strip(), d[begin:end].strip(), d[end:].strip()
