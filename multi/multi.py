@@ -1,22 +1,8 @@
-from . project import Project
+from . projects import PROJECTS
 from functools import wraps
 from typer import Argument, Option, Typer
 import sys
 import time
-
-_NAMES = [
-    'abbrev', 'backer', 'blocks', 'cfgs',
-    'datacls', 'def_main', 'dek', 'dtyper',
-
-    'editor', 'gitz', 'hardback', 'impall',
-    'loady', 'multi', 'nc', 'nmr',
-
-    'plur', 'runs', 'safer', 'sproc',
-    'tdir', 'vl8', 'wavemap', 'xmod',
-]
-
-PROJECTS = {k: Project(k, i) for i, k in enumerate(_NAMES)}
-MULTI = PROJECTS['multi']
 
 app = Typer(
     add_completion=False,

@@ -107,6 +107,12 @@ class Project:
     def description_parts(self):
         return _split_description(self.poetry.description)
 
+    @cached_property
+    def color(self):
+        from . import projects
+
+        return projects.color(self.name)
+
 
 def _split_description(d):
     items = list(enumerate(d))
