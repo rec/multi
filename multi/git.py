@@ -17,6 +17,7 @@ class Git:
         self('commit', '-m', msg, *files)
         self('push')
 
+    @property
     def is_dirty(self):
         try:
             self('diff-index', '--quiet', 'HEAD', '--')
@@ -25,5 +26,5 @@ class Git:
             return True
 
     def status(self):
-        if self.is_dirty():
+        if self.is_dirty:
             self('status')

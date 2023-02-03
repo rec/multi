@@ -1,3 +1,13 @@
+def old_files(project):
+    if files := _glob(project, 'setup.*', 'MANIFEST*', 'requirements*.txt'):
+        if True:
+            _p(project, *files)
+            return
+        project.git('rm', *files)
+        project.git.commit('Remove old files', *files)
+        _p(project, 'Removed', *files)
+
+
 def bump_version(project, rule_or_version, *notes):
     project.run.poetry('version', rule_or_version)
     project.reload()

@@ -5,7 +5,7 @@ import shlex
 
 SCRIPTS = Path(__file__).parents[1] / 'scripts'
 RUN_BASH = str(SCRIPTS / 'run.sh')
-VERBOSE = True
+VERBOSE = False
 
 @datacls
 class Runner:

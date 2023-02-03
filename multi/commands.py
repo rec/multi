@@ -19,15 +19,6 @@ def clean_dir(project):
     print('poetry --no-ansi install')
 
 
-def old_files(project):
-    if files := _glob(project, 'setup.*', 'MANIFEST*', 'requirements*.txt'):
-        if True:
-            _p(project, *files)
-            return
-        project.git('rm', *files)
-        project.git.commit('Remove old files', *files)
-        _p(project, 'Removed', *files)
-
 def _glob(project, *globs):
     return sorted(f for g in globs for f in project.path.glob(g))
 
