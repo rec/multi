@@ -18,22 +18,27 @@ def clean_dir(project):
     print('direnv reload')
     print('poetry --no-ansi install')
 
+
 def old_files(project):
-    glob(project, 'setup.*', 'MANIFEST*', 'requirements*.txt')
-    _p(project, *files)
+    if files := _glob(project, 'setup.*', 'MANIFEST*', 'requirements*.txt'):
+        if True:
+            _p(project, *files)
+            return
+        project.git('rm', *files)
+        project.git.commit('Remove old files', *files)
+        _p(project, 'Removed', *files)
+
+def _glob(project, *globs):
+    return sorted(f for g in globs for f in project.path.glob(g))
 
 
 def cat(project, *globs):
-    glob = project.path.glob
-    files = sorted(f for g in globs for f in glob(g))
-    for f in files:
+    for f in _glob(project, *globs):
         print(f'\n{f}:\n{f.read_text().rstrip()}')
 
 
 def glob(project, *globs):
-    glob = project.path.glob
-    files = sorted(f for g in globs for f in glob(g))
-    _p(project, *files)
+    _p(project, *_glob(project, *globs))
 
 
 def add_mkdocs(project, *argv):

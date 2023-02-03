@@ -11,8 +11,9 @@ class Git:
         return self.run('git', *a, **ka)
 
     def commit(self, msg, *files):
-        files = [str(i) for i in files]
-        self('add', *files)
+        if exist := [f for f in files if f.exists()]:
+            self('add', *exist)
+
         self('commit', '-m', msg, *files)
         self('push')
 

@@ -16,6 +16,7 @@ class Runner:
             args = args[0]
             if isinstance(args, str):
                 args = shlex.split(args)
+        args = [str(a) for a in args]
 
         if out:
             kwargs.setdefault('stdout', subprocess.PIPE)
@@ -23,9 +24,6 @@ class Runner:
         kwargs.setdefault('check', True)
         kwargs.setdefault('text', True)
         kwargs.setdefault('cwd', self.path)
-
-        if len(args) == 1 and isinstance(args[0], str):
-            args = args[0].split()
 
         if arm:
             args = 'arch', '-arm64', *args
