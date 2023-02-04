@@ -11,6 +11,18 @@ NONE = object()
 MKDOCS = Path(__file__).parents[1] / 'mkdocs'
 DRY_RUN = True
 MKDOCS_BINARY = str(projects.MULTI.bin_path / 'mkdocs')
+RENAMED = 'backer', 'def_main', 'hardback', 'impall', 'nc', 'nmr', 'vl8'
+
+
+def pull_rename(project):
+    if project.branch() == 'rst-to-md':
+        project.git('switch', 'main')
+
+        if project.name in RENAMED:
+            project.git('merge', 'rst-to-md')
+            project.git('push')
+
+        project.git('delete', 'rst-to-md')
 
 
 def rename_readme(project):
@@ -37,8 +49,10 @@ def rename_readme(project):
 
 
 def open_readme(project):
-    project.open_git()
-    project.open_git(f'tree/rst-to-md')
+    if project.branch() == 'rst-to-md':
+        print(project.name + ':')
+        project.open_git()
+        project.open_git(f'tree/rst-to-md')
 
 
 def readme(project):
@@ -197,7 +211,7 @@ def serve(project, *args):
 
 
 def name(project):
-    print(project.name + ':')
+    print(project.site_name)
 
 
 def _exit(*args):

@@ -2,6 +2,10 @@ def is_dirty(project):
     return project.git.is_dirty
 
 
+def is_singleton(project):
+    return project.is_singleton
+
+
 def has_emoji(project):
     return not project.poetry['description'].isascii()
 
