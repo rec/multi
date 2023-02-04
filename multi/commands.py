@@ -38,11 +38,10 @@ def add_mkdocs(project, *argv):
     docs = sorted(i for i in MKDOCS.rglob('*') if not i.name.startswith('.'))
 
     written = [f for d in docs for f in _write_doc(project, d)]
-
+    assert written
     project.run(MKDOCS_BINARY, 'build')
     # msg = 'Add mkdocs documentation'
     # project.git.commit(msg, 'doc/', *written)
-
 
 
 def _write_doc(project, doc):
@@ -51,7 +50,7 @@ def _write_doc(project, doc):
 
     contents = doc.read_text()
     if '.tpl' in doc.suffixes:
-        contents = contents.format(project = project)
+        contents = contents.format(project=project)
 
         suffixes = ''.join(s for s in doc.suffixes if s != '.tpl')
         while doc.suffix:
@@ -62,11 +61,6 @@ def _write_doc(project, doc):
     rel.parent.mkdir(exist_ok=True)
     rel.write_text(contents)
     yield rel
-
-
-def mkdocs(project, *argv):
-    assert False
-    project.run(path, *argv)
 
 
 def tweak_github(project):

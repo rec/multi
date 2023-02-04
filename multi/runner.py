@@ -7,6 +7,7 @@ SCRIPTS = Path(__file__).parents[1] / 'scripts'
 RUN_BASH = str(SCRIPTS / 'run.sh')
 VERBOSE = False
 
+
 @datacls
 class Runner:
     path: Path | None = None
