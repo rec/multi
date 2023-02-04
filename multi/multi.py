@@ -19,7 +19,7 @@ def run(
     argv: list[str] = Argument(None),
     continue_after_error: bool = Option(False, '--continue-after-error', '-e'),
     exclude: list[str] = Option((), '--exclude', '-e'),
-    filter: str = Option(None, '--filter', '-f'),
+    filter: list[str] = Option(None, '--filter', '-f'),
     negate: bool = Option(False, '--negate', '-n'),
     projects: list[str] = Option(sorted(PROJECTS), '--projects', '-p'),
     verbose: bool = Option(configs.verbose, '--verbose', '-v'),
@@ -29,7 +29,7 @@ def run(
     configs.verbose = verbose
 
     cmd = _get_callable(commands, command)
-    filt = _make_filter(filter, negate)
+    filt = _make_filters(filter, negate)
     wait_at_end = False
 
     projects = [i for p in projects for i in p.split(':')]
@@ -63,6 +63,15 @@ def _get_callable(o, name):
     print(f'ERROR: {name} is not callable ({o=}, {f=})')
     raise ValueError()
     sys.exit(-1)
+
+
+def _make_filters(filters, negate):
+    filters = [_make_filter(f, negate) for f in filters]
+
+    def filter(project):
+        return all(f(project) for f in filters)
+
+    return filter
 
 
 def _make_filter(filter, negate):

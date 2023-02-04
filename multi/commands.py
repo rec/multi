@@ -16,12 +16,28 @@ RENAMED = 'backer', 'def_main', 'hardback', 'impall', 'nc', 'nmr', 'vl8'
 assert configs
 
 
+def remove_tag(project, *tags):
+    removed = False
+    for tag in tags:
+        try:
+            project.tags.remove(tag)
+            removed = True
+        except ValueError:
+            pass
+
+    if removed:
+        if not project.tags:
+            del project.poetry['tags']
+        project.write()
+        _p(project, 'Tags:', *project.tags)
+
+
 def add_tag(project, *tags):
     if tags:
         with project.writer():
             project.tags.extend(tags)
-            msg = f'Add tags {", ".join(tags)} to {PYPROJECT}'
-        project.commit(msg, PYPROJECT)
+            msg = f'Set multi.tags to {", ".join(tags)} in {PYPROJECT}'
+        project.git.commit(msg, PYPROJECT)
         _p(project, 'Tags:', *project.tags)
 
 

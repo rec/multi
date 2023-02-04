@@ -16,3 +16,11 @@ def needs_release(project):
 
 def is_rst(project):
     return project.poetry['readme'].endswith('.rst')
+
+
+def is_md(project):
+    return project.poetry['readme'].endswith('.md')
+
+
+def has_tags(project, *tags):
+    return set(project.tags) & set(tags)
