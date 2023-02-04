@@ -1,3 +1,4 @@
+from . import configs
 import subprocess
 from pathlib import Path
 import datacls
@@ -5,14 +6,13 @@ import shlex
 
 SCRIPTS = Path(__file__).parents[1] / 'scripts'
 RUN_BASH = str(SCRIPTS / 'run.sh')
-VERBOSE = False
 
 
 @datacls
 class Runner:
     path: Path | None = None
 
-    def __call__(self, *args, out=False, verbose=VERBOSE, arm=True, **kwargs):
+    def __call__(self, *args, out=False, arm=True, **kwargs):
         if len(args) == 1:
             args = args[0]
             if isinstance(args, str):
@@ -29,7 +29,7 @@ class Runner:
         if arm:
             args = 'arch', '-arm64', *args
 
-        if verbose:
+        if configs.verbose:
             print('$', *args)
         r = subprocess.run(args, **kwargs)
         if not out:

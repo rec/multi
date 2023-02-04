@@ -1,3 +1,4 @@
+from . import configs
 from . projects import PROJECTS
 from functools import wraps
 from typer import Argument, Option, Typer
@@ -21,8 +22,11 @@ def run(
     filter: str = Option(None, '--filter', '-f'),
     negate: bool = Option(False, '--negate', '-n'),
     projects: list[str] = Option(sorted(PROJECTS), '--projects', '-p'),
+    verbose: bool = Option(configs.verbose, '--verbose', '-v'),
 ):
     from multi import commands
+
+    configs.verbose = verbose
 
     cmd = _get_callable(commands, command)
     filt = _make_filter(filter, negate)

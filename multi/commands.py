@@ -1,4 +1,4 @@
-from . import projects
+from . import configs, projects
 from pathlib import Path
 import threading
 import time
@@ -15,22 +15,30 @@ MKDOCS_BINARY = str(projects.MULTI.bin_path / 'mkdocs')
 
 def rename_readme(project):
     src = project.poetry['readme']
-    if src.endswith('.rst'):
+    if not src.endswith('.rst'):
         return
 
+    print(project.name + ':\n')
     root = src.removesuffix('.rst')
     target = root + '.md'
     tmp = root + '-tmp.md'
 
-    project.git('new', 'rst-to-md')
-    project.run(f'pandoc {src} -f rst -t md -o {tmp}'.split())
+    branch_name = 'rst-to-md'
+    project.git('new', branch_name)
+    project.run(f'pandoc {src} -f rst -t markdown -o {tmp}'.split())
     project.git('mv', src, target)
     project.run('mv', tmp, target)
     project.poetry['readme'] = target
     project.write()
+    project.run.poetry('lock')
 
     msg = 'Convert README.rst to README.md'
-    project.git.commit(msg, src, target, PYPROJECT)
+    project.git.commit(msg, src, target, *PROJECT_FILES)
+
+
+def open_readme(project):
+    project.open_git()
+    project.open_git(f'tree/rst-to-md')
 
 
 def readme(project):

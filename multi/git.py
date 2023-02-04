@@ -1,4 +1,5 @@
 import subprocess
+from pathlib import Path
 from typing import Callable
 import datacls
 
@@ -11,6 +12,7 @@ class Git:
         return self.run('git', *a, **ka)
 
     def commit(self, msg, *files):
+        files = [Path(f) for f in files]
         if exist := [f for f in files if f.exists()]:
             self('add', *exist)
 
