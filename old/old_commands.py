@@ -1,3 +1,37 @@
+def pull_rename(project):
+    if project.branch() == 'rst-to-md':
+        project.git('switch', 'main')
+
+        if project.name in RENAMED:
+            project.git('merge', 'rst-to-md')
+            project.git('push')
+
+        project.git('delete', 'rst-to-md')
+
+
+def rename_readme(project):
+    src = project.poetry['readme']
+    if not src.endswith('.rst'):
+        return
+
+    print(project.name + ':\n')
+    root = src.removesuffix('.rst')
+    target = root + '.md'
+    tmp = root + '-tmp.md'
+
+    branch_name = 'rst-to-md'
+    project.git('new', branch_name)
+    project.run(f'pandoc {src} -f rst -t markdown -o {tmp}'.split())
+    project.git('mv', src, target)
+    project.run('mv', tmp, target)
+    project.poetry['readme'] = target
+    project.write()
+    project.run.poetry('lock')
+
+    msg = 'Convert README.rst to README.md'
+    project.git.commit(msg, src, target, *PROJECT_FILES)
+
+
 def old_files(project):
     if files := _glob(project, 'setup.*', 'MANIFEST*', 'requirements*.txt'):
         if True:
