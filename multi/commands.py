@@ -13,6 +13,31 @@ DRY_RUN = True
 MKDOCS_BINARY = str(projects.MULTI.bin_path / 'mkdocs')
 
 
+def rename_readme(project):
+    src = project.poetry['readme']
+    if src.endswith('.rst'):
+        return
+
+    root = src.removesuffix('.rst')
+    target = root + '.md'
+    tmp = root + '-tmp.md'
+
+    project.git('new', 'rst-to-md')
+    project.run(f'pandoc {src} -f rst -t md -o {tmp}'.split())
+    project.git('mv', src, target)
+    project.run('mv', tmp, target)
+    project.poetry['readme'] = target
+    project.write()
+
+    msg = 'Convert README.rst to README.md'
+    project.git.commit(msg, src, target, PYPROJECT)
+
+
+def readme(project):
+    if files := sorted(project.path.glob('README.*')):
+        project.run('wc', '-l', *files)
+
+
 def clean_dir(project):
     print(f'cd {project.path}')
     print('direnv reload')
@@ -78,7 +103,7 @@ def bump_version(project, rule_or_version, *notes):
     project.run.poetry('version', rule_or_version)
     project.reload()
 
-    version = 'v' + project.poetry.version
+    version = 'v' + project.poetry['version']
     project.git.commit(f'Update to version {version}', PYPROJECT)
     project.git('tag', version)
     project.git('push', '--tag', '--force-with-lease')
@@ -161,6 +186,10 @@ def serve(project, *args):
     time.sleep(0.5)
     project.open_server()
     return True
+
+
+def name(project):
+    print(project.name + ':')
 
 
 def _exit(*args):

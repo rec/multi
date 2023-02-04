@@ -7,4 +7,8 @@ def has_emoji(project):
 
 
 def needs_release(project):
-    return project.git_tag != 'v' + project.poetry.version
+    return project.git_tag != 'v' + project.poetry['version']
+
+
+def is_rst(project):
+    return project.poetry['readme'].endswith('.rst')
