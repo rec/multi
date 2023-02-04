@@ -32,7 +32,10 @@ def run(
     filt = _make_filter(filter, negate)
     wait_at_end = False
 
-    for name in (p for p in projects if p not in exclude):
+    projects = [i for p in projects for i in p.split(':')]
+    projects = [p for p in projects if p not in exclude]
+
+    for name in projects:
         project = PROJECTS[name]
         try:
             if filt(project) and cmd(project, *argv):
@@ -68,13 +71,12 @@ def _make_filter(filter, negate):
     if not filter:
         return lambda *_: True
 
-    filt = _get_callable(filters, filter)
-    if not negate:
-        return filt
+    first, *args = filter.split(':')
+    filt = _get_callable(filters, first)
 
     @wraps(filt)
-    def wrapped(*a, **ka):
-        return not filt(*a, **ka)
+    def wrapped(project):
+        return bool(filt(project, *args)) != bool(negate)
 
     return wrapped
 

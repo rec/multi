@@ -1,4 +1,3 @@
-from argparse import Namespace
 from contextlib import contextmanager
 from functools import cached_property
 from pathlib import Path
@@ -60,8 +59,12 @@ class Project:
         return self.pyproject.setdefault('tool', {}).setdefault('poetry', {})
 
     @cached_property
-    def multi(self):  # My data
+    def multi(self):
         return self.pyproject.setdefault('tool', {}).setdefault('multi', {})
+
+    @cached_property
+    def tags(self):
+        return self.multi.setdefault('multi', [])
 
     @cached_property
     def git(self):

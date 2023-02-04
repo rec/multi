@@ -13,12 +13,23 @@ DRY_RUN = True
 MKDOCS_BINARY = str(projects.MULTI.bin_path / 'mkdocs')
 RENAMED = 'backer', 'def_main', 'hardback', 'impall', 'nc', 'nmr', 'vl8'
 
+assert configs
+
+
+def add_tag(project, *tags):
+    if tags:
+        with project.writer():
+            project.tags.extend(tags)
+            msg = f'Add tags {", ".join(tags)} to {PYPROJECT}'
+        project.commit(msg, PYPROJECT)
+        _p(project, 'Tags:', *project.tags)
+
 
 def open_readme(project):
     if project.branch() == 'rst-to-md':
         print(project.name + ':')
         project.open_git()
-        project.open_git(f'tree/rst-to-md')
+        project.open_git('tree/rst-to-md')
 
 
 def readme(project):
