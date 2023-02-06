@@ -1,3 +1,7 @@
+def has_mkdocs(project):
+    return (project.path / 'doc').exists()
+
+
 def site_in_gitignore(project):
     return '/site' in (project.path / '.gitignore').read_text().splitlines()
 

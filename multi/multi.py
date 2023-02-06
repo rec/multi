@@ -58,10 +58,16 @@ def run(
 
 
 def _get_callable(o, name):
-    if callable(f := getattr(o, name, None)):
+    none = object()
+    if callable(f := getattr(o, name, none)):
         return f
-    print(f'ERROR: {name} is not callable ({o=}, {f=})')
-    raise ValueError()
+    if f is none:
+        msg = f'ERROR: {name} does not exist ({o=}, {f=})'
+    else:
+        msg = f'ERROR: {name} is not callable ({o=}, {f=})'
+    if True:
+        raise ValueError(msg)
+    print(msg)
     sys.exit(-1)
 
 
