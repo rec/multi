@@ -1,4 +1,3 @@
-PROJECT_FILES = 'poetry.lock', PYPROJECT
 NONE = object()
 DRY_RUN = True
 RENAMED = 'backer', 'def_main', 'hardback', 'impall', 'nc', 'nmr', 'vl8'
