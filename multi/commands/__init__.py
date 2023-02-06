@@ -1,6 +1,5 @@
 from .. import configs, projects
 from pathlib import Path
-import itertools
 import threading
 import time
 import subprocess
@@ -63,7 +62,7 @@ def fix_gitignore(project):
 
     gi.write_text('\n'.join(lines) + '\n')
     project.git.commit(msg, gi)
-    _p(project, gi, '/site -> site/')
+    project.p(gi, '/site -> site/')
 
 
 def remove_tag(project, *tags):
@@ -79,7 +78,7 @@ def remove_tag(project, *tags):
         if not project.tags:
             del project.poetry['tags']
         project.write()
-        _p(project, 'Tags:', *project.tags)
+        project.p('Tags:', *project.tags)
 
 
 def add_tag(project, *tags):
@@ -88,7 +87,7 @@ def add_tag(project, *tags):
             project.tags.extend(tags)
             msg = f'Set multi.tags to {", ".join(tags)} in {PYPROJECT}'
         project.git.commit(msg, PYPROJECT)
-        _p(project, 'Tags:', *project.tags)
+        project.p('Tags:', *project.tags)
 
 
 def open_readme(project):
@@ -119,7 +118,7 @@ def cat(project, *globs):
 
 
 def glob(project, *globs):
-    _p(project, *_glob(project, *globs))
+    project.p(*_glob(project, *globs))
 
 
 def tweak_github(project):
@@ -130,7 +129,7 @@ def tweak_github(project):
         '--enable-rebase-merge',
         '--enable-squash-merge=false',
     )
-    _p(project)
+    project.p()
 
 
 def bump_version(project, rule_or_version, *notes):
@@ -149,7 +148,7 @@ def get(project, address, *args):
     data = _getattrs(project, [address])
 
     if not callable(data):
-        _p(project, data)
+        project.p(data)
         return
 
     try:
@@ -177,13 +176,13 @@ def assign(project, *argv):
 
 
 def run(project, *argv):
-    _p(project)
+    project.p()
     project.run(*argv)
     print()
 
 
 def bash(project, *argv):
-    _p(project)
+    project.p()
     project.run.bash(*argv)
     print()
 
@@ -211,20 +210,12 @@ def serve(project, *args):
     return True
 
 
-def name(project):
-    print(project.site_name)
-
-
 def _exit(*args):
     # Elsewhere.
     if args:
         print(*args, file=sys.stderr)
         exit(-1)
     exit(0)
-
-
-def _p(project, *args, **kwargs):
-    print(f'{project.name:10}: ', *args, **kwargs)
 
 
 def _getattr(data, a):

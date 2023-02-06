@@ -142,3 +142,6 @@ class Project:
     def site_name(self):
         e1, desc, e2 = self.description_parts
         return f'{e1}: `{self.name}`: {desc} {e2}'
+
+    def p(self, *args, **kwargs):
+        print(f'{self.name:10}: ', *args, **kwargs)
