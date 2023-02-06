@@ -1,4 +1,4 @@
-from . import configs, projects
+from .. import configs, projects
 from pathlib import Path
 import itertools
 import threading
