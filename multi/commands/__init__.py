@@ -5,15 +5,11 @@ import time
 import subprocess
 import sys
 
-PYPROJECT = 'pyproject.toml'
-PROJECT_FILES = 'poetry.lock', PYPROJECT
-NONE = object()
-MKDOCS = Path(__file__).parents[1] / 'mkdocs'
-DRY_RUN = True
-MKDOCS_BINARY = str(projects.MULTI.bin_path / 'mkdocs')
-RENAMED = 'backer', 'def_main', 'hardback', 'impall', 'nc', 'nmr', 'vl8'
-
 assert configs
+
+MKDOCS = Path(__file__).parents[1] / 'mkdocs'
+MKDOCS_BINARY = str(projects.MULTI.bin_path / 'mkdocs')
+PYPROJECT = 'pyproject.toml'
 
 
 def add_mkdocs(project, *argv):

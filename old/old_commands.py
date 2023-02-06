@@ -1,3 +1,9 @@
+PROJECT_FILES = 'poetry.lock', PYPROJECT
+NONE = object()
+DRY_RUN = True
+RENAMED = 'backer', 'def_main', 'hardback', 'impall', 'nc', 'nmr', 'vl8'
+
+
 def pull_rename(project):
     if project.branch() == 'rst-to-md':
         project.git('switch', 'main')
