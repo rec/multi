@@ -4,10 +4,7 @@ import time
 
 
 def add_mkdocs(project, *argv):
-    if (project.path / 'doc').exists():
-        return
     docs = sorted(i for i in MKDOCS.rglob('*') if not i.name.startswith('.'))
-
     written = [f for d in docs for f in _write_doc(project, d)]
     assert written
     project.run(MKDOCS_BINARY, 'build')

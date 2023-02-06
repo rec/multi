@@ -98,6 +98,14 @@ class Project:
         return f'https://github.com/{self.user}/{self.name}'
 
     @cached_property
+    def doc_url(self):
+        return f'https://{self.user}.github.io/{self.name}'
+
+    @cached_property
+    def open_doc(self):
+        return Opener(self.doc_url)
+
+    @cached_property
     def open_git(self):
         return Opener(self.git_url)
 
