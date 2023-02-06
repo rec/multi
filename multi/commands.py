@@ -1,5 +1,6 @@
 from . import configs, projects
 from pathlib import Path
+import itertools
 import threading
 import time
 import subprocess
@@ -14,6 +15,24 @@ MKDOCS_BINARY = str(projects.MULTI.bin_path / 'mkdocs')
 RENAMED = 'backer', 'def_main', 'hardback', 'impall', 'nc', 'nmr', 'vl8'
 
 assert configs
+
+
+def fix_gitignore(project):
+    gi = project.path / '.gitignore'
+    lines = gi.read_text().splitlines()
+    if 'site/' in lines:
+        return
+    if matches := [i for i, line in enumerate(lines) if line == '/site']:
+        for i in matches:
+            lines[i] = 'site/'
+        msg = 'Replaced /site with site/ in .gitignore'
+    else:
+        lines.append('site/')
+        msg = 'Added site/ to .gitignore'
+
+    gi.write_text('\n'.join(lines) + '\n')
+    project.git.commit(msg, gi)
+    _p(project, gi, '/site -> site/')
 
 
 def remove_tag(project, *tags):
@@ -80,8 +99,8 @@ def add_mkdocs(project, *argv):
     written = [f for d in docs for f in _write_doc(project, d)]
     assert written
     project.run(MKDOCS_BINARY, 'build')
-    # msg = 'Add mkdocs documentation'
-    # project.git.commit(msg, 'doc/', *written)
+    msg = 'Add mkdocs documentation'
+    project.git.commit(msg, *written)
 
 
 def _write_doc(project, doc):
