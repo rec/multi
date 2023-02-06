@@ -1,40 +1,5 @@
 NONE = object()
 DRY_RUN = True
-RENAMED = 'backer', 'def_main', 'hardback', 'impall', 'nc', 'nmr', 'vl8'
-
-
-def pull_rename(project):
-    if project.branch() == 'rst-to-md':
-        project.git('switch', 'main')
-
-        if project.name in RENAMED:
-            project.git('merge', 'rst-to-md')
-            project.git('push')
-
-        project.git('delete', 'rst-to-md')
-
-
-def rename_readme(project):
-    src = project.poetry['readme']
-    if not src.endswith('.rst'):
-        return
-
-    print(project.name + ':\n')
-    root = src.removesuffix('.rst')
-    target = root + '.md'
-    tmp = root + '-tmp.md'
-
-    branch_name = 'rst-to-md'
-    project.git('new', branch_name)
-    project.run(f'pandoc {src} -f rst -t markdown -o {tmp}'.split())
-    project.git('mv', src, target)
-    project.run('mv', tmp, target)
-    project.poetry['readme'] = target
-    project.write()
-    project.run.poetry('lock')
-
-    msg = 'Convert README.rst to README.md'
-    project.git.commit(msg, src, target, *PROJECT_FILES)
 
 
 def old_files(project):
@@ -45,18 +10,6 @@ def old_files(project):
         project.git('rm', *files)
         project.git.commit('Remove old files', *files)
         _p(project, 'Removed', *files)
-
-
-def bump_version(project, rule_or_version, *notes):
-    project.run.poetry('version', rule_or_version)
-    project.reload()
-
-    version = 'v' + project.poetry.version
-    project.git.commit(f'Update to version {version}', PYPROJECT)
-    project.git('tag', version)
-    project.git('push', '--tag', '--force-with-lease')
-    notes = ' '.join(notes).strip() or f'Version {version}'
-    project.run.gh('release', 'create', '--notes', notes)
 
 
 def fix_desc(project):

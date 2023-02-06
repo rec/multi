@@ -25,3 +25,13 @@ def tweak_github(project):
         '--enable-squash-merge=false',
     )
     project.p()
+
+
+def pull_rename(project):
+    if project.branch() == 'rst-to-md':
+        project.git('switch', 'main')
+
+        project.git('merge', 'rst-to-md')
+        project.git('push')
+
+        project.git('delete', 'rst-to-md')
