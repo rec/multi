@@ -17,6 +17,37 @@ RENAMED = 'backer', 'def_main', 'hardback', 'impall', 'nc', 'nmr', 'vl8'
 assert configs
 
 
+def add_mkdocs(project, *argv):
+    if (project.path / 'doc').exists():
+        return
+    docs = sorted(i for i in MKDOCS.rglob('*') if not i.name.startswith('.'))
+
+    written = [f for d in docs for f in _write_doc(project, d)]
+    assert written
+    project.run(MKDOCS_BINARY, 'build')
+    msg = 'Add mkdocs documentation'
+    project.git.commit(msg, *written)
+
+
+def _write_doc(project, doc):
+    if doc.is_dir():
+        return
+
+    contents = doc.read_text()
+    if '.tpl' in doc.suffixes:
+        contents = contents.format(project=project)
+
+        suffixes = ''.join(s for s in doc.suffixes if s != '.tpl')
+        while doc.suffix:
+            doc = doc.with_suffix('')
+        doc = doc.with_suffix(suffixes)
+
+    rel = project.path / doc.relative_to(MKDOCS)
+    rel.parent.mkdir(exist_ok=True)
+    rel.write_text(contents)
+    yield rel
+
+
 def fix_gitignore(project):
     gi = project.path / '.gitignore'
     lines = gi.read_text().splitlines()
@@ -91,37 +122,6 @@ def glob(project, *globs):
     _p(project, *_glob(project, *globs))
 
 
-def add_mkdocs(project, *argv):
-    if (project.path / 'doc').exists():
-        return
-    docs = sorted(i for i in MKDOCS.rglob('*') if not i.name.startswith('.'))
-
-    written = [f for d in docs for f in _write_doc(project, d)]
-    assert written
-    project.run(MKDOCS_BINARY, 'build')
-    msg = 'Add mkdocs documentation'
-    project.git.commit(msg, *written)
-
-
-def _write_doc(project, doc):
-    if doc.is_dir():
-        return
-
-    contents = doc.read_text()
-    if '.tpl' in doc.suffixes:
-        contents = contents.format(project=project)
-
-        suffixes = ''.join(s for s in doc.suffixes if s != '.tpl')
-        while doc.suffix:
-            doc = doc.with_suffix('')
-        doc = doc.with_suffix(suffixes)
-
-    rel = project.path / doc.relative_to(MKDOCS)
-    rel.parent.mkdir(exist_ok=True)
-    rel.write_text(contents)
-    yield rel
-
-
 def tweak_github(project):
     project.run.gh(
         'repo',
@@ -145,18 +145,17 @@ def bump_version(project, rule_or_version, *notes):
     project.run.gh('release', 'create', '--notes', notes)
 
 
-def prop(project, *argv):
-    _p(project, _getattrs(project, argv))
+def get(project, address, *args):
+    data = _getattrs(project, [address])
 
+    if not callable(data):
+        _p(project, data)
+        return
 
-def call(project, func, *args):
-    print(project.name + ':')
     try:
-        f = _getattrs(project, [func])
-        result = f(*args)
+        result = data(*args)
     except Exception as e:
         result = e
-        raise
 
     if not isinstance(result, (type(None), subprocess.CompletedProcess)):
         print(result)
@@ -175,20 +174,6 @@ def assign(project, *argv):
             for i in rest:
                 m = m.setdefault(i, {})
             m[last] = v
-
-
-def status(project, *argv):
-    if r := project.git.out('status', '--porcelain').rstrip():
-        _p(project)
-        print(r)
-
-
-def branch(project, *argv):
-    _p(project, project.branch())
-
-
-def branches(project, *argv):
-    _p(project, *project.branches())
 
 
 def run(project, *argv):
