@@ -1,54 +1,23 @@
-from .. paths import MKDOCS_BINARY, PYPROJECT
+from . git import fix_gitignore, tweak_github
 from . mkdocs import add_mkdocs
+from . tags import add_tag, remove_tag
+
+from .. paths import MKDOCS_BINARY, PYPROJECT
 import threading
 import time
 import subprocess
 import sys
 
-__all__ = 'add_mkdocs',
+_before = set(locals())
 
 
-def fix_gitignore(project):
-    gi = project.path / '.gitignore'
-    lines = gi.read_text().splitlines()
-    if 'site/' in lines:
-        return
-    if matches := [i for i, line in enumerate(lines) if line == '/site']:
-        for i in matches:
-            lines[i] = 'site/'
-        msg = 'Replaced /site with site/ in .gitignore'
-    else:
-        lines.append('site/')
-        msg = 'Added site/ to .gitignore'
-
-    gi.write_text('\n'.join(lines) + '\n')
-    project.git.commit(msg, gi)
-    project.p(gi, '/site -> site/')
-
-
-def remove_tag(project, *tags):
-    removed = False
-    for tag in tags:
-        try:
-            project.tags.remove(tag)
-            removed = True
-        except ValueError:
-            pass
-
-    if removed:
-        if not project.tags:
-            del project.poetry['tags']
-        project.write()
-        project.p('Tags:', *project.tags)
-
-
-def add_tag(project, *tags):
-    if tags:
-        with project.writer():
-            project.tags.extend(tags)
-            msg = f'Set multi.tags to {", ".join(tags)} in {PYPROJECT}'
-        project.git.commit(msg, PYPROJECT)
-        project.p('Tags:', *project.tags)
+__all__ = (
+    'add_mkdocs',
+    'add_tag',
+    'remove_tag',
+    'fix_gitignore',
+    'tweak_github',
+)
 
 
 def open_readme(project):
@@ -80,17 +49,6 @@ def cat(project, *globs):
 
 def glob(project, *globs):
     project.p(*_glob(project, *globs))
-
-
-def tweak_github(project):
-    project.run.gh(
-        'repo',
-        'edit',
-        '--enable-merge-commit=false',
-        '--enable-rebase-merge',
-        '--enable-squash-merge=false',
-    )
-    project.p()
 
 
 def bump_version(project, rule_or_version, *notes):
