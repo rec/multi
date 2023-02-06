@@ -1,43 +1,27 @@
+from . files import clean_dir, cat, glob
 from . get import get
 from . git import fix_gitignore, tweak_github
-from . mkdocs import add_mkdocs
+from . mkdocs import add_mkdocs, serve
 from . readme import open_readme, readme
 from . tags import add_tag, remove_tag
 
-from .. paths import MKDOCS_BINARY, PYPROJECT
-import threading
-import time
+from .. paths import PYPROJECT
 import sys
 
 __all__ = (
     'add_mkdocs',
     'add_tag',
+    'cat',
+    'clean_dir',
     'fix_gitignore',
     'get',
+    'glob',
     'open_readme',
     'readme',
     'remove_tag',
+    'serve',
     'tweak_github',
 )
-
-
-def clean_dir(project):
-    print(f'cd {project.path}')
-    print('direnv reload')
-    print('poetry --no-ansi install')
-
-
-def _glob(project, *globs):
-    return sorted(f for g in globs for f in project.path.glob(g))
-
-
-def cat(project, *globs):
-    for f in _glob(project, *globs):
-        print(f'\n{f}:\n{f.read_text().rstrip()}')
-
-
-def glob(project, *globs):
-    project.p(*_glob(project, *globs))
 
 
 def bump_version(project, rule_or_version, *notes):
@@ -82,18 +66,6 @@ def run_poetry(project, *argv):
     print(project.name + ':')
     project.run.poetry(*argv)
     print()
-
-
-def serve(project, *args):
-    if project.is_singleton:
-        args = '-w', project.name + '.py', *args
-
-    args = MKDOCS_BINARY, 'serve', f'--dev-addr={project.server_url}', *args
-    threading.Thread(target=project.run, args=args, daemon=True).start()
-
-    time.sleep(0.5)
-    project.open_server()
-    return True
 
 
 def name(project):

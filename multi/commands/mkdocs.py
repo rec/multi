@@ -1,4 +1,6 @@
 from .. paths import MKDOCS, MKDOCS_BINARY
+import threading
+import time
 
 
 def add_mkdocs(project, *argv):
@@ -30,3 +32,15 @@ def _write_doc(project, doc):
     rel.parent.mkdir(exist_ok=True)
     rel.write_text(contents)
     yield rel
+
+
+def serve(project, *args):
+    if project.is_singleton:
+        args = '-w', project.name + '.py', *args
+
+    args = MKDOCS_BINARY, 'serve', f'--dev-addr={project.server_url}', *args
+    threading.Thread(target=project.run, args=args, daemon=True).start()
+
+    time.sleep(0.5)
+    project.open_server()
+    return True
