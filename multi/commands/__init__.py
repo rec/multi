@@ -1,35 +1,24 @@
+from . get import get
 from . git import fix_gitignore, tweak_github
 from . mkdocs import add_mkdocs
+from . readme import open_readme, readme
 from . tags import add_tag, remove_tag
 
 from .. paths import MKDOCS_BINARY, PYPROJECT
 import threading
 import time
-import subprocess
 import sys
-
-_before = set(locals())
-
 
 __all__ = (
     'add_mkdocs',
     'add_tag',
-    'remove_tag',
     'fix_gitignore',
+    'get',
+    'open_readme',
+    'readme',
+    'remove_tag',
     'tweak_github',
 )
-
-
-def open_readme(project):
-    if project.branch() == 'rst-to-md':
-        print(project.name + ':')
-        project.open_git()
-        project.open_git('tree/rst-to-md')
-
-
-def readme(project):
-    if files := sorted(project.path.glob('README.*')):
-        project.run('wc', '-l', *files)
 
 
 def clean_dir(project):
@@ -63,23 +52,6 @@ def bump_version(project, rule_or_version, *notes):
     project.run.gh('release', 'create', '--notes', notes)
 
 
-def get(project, address, *args):
-    data = _getattrs(project, [address])
-
-    if not callable(data):
-        project.p(data)
-        return
-
-    try:
-        result = data(*args)
-    except Exception as e:
-        result = e
-
-    if not isinstance(result, (type(None), subprocess.CompletedProcess)):
-        print(result)
-    print()
-
-
 def assign(project, *argv):
     parts = [(k, v) for a in argv for k, _, v in a.partition('=')]
     if bad := sorted(a for a, (k, v) in zip(argv, parts) if not (k and v)):
@@ -104,11 +76,6 @@ def bash(project, *argv):
     project.p()
     project.run.bash(*argv)
     print()
-
-
-def single(project, *argv):
-    if project.is_singleton:
-        print(project.name + ':')
 
 
 def run_poetry(project, *argv):
@@ -139,23 +106,3 @@ def _exit(*args):
         print(*args, file=sys.stderr)
         exit(-1)
     exit(0)
-
-
-def _getattr(data, a):
-    for part in a and a.split('.'):
-        try:
-            data = data[part]
-        except Exception:
-            try:
-                data = getattr(data, part)
-            except AttributeError:
-                return
-    yield data
-
-
-def _getattrs(data, argv):
-    result = {a: d for a in argv or [''] for d in _getattr(data, a)}
-
-    if len(result) == 1 and len(argv) == 1:
-        return result.popitem()[1]
-    return result
