@@ -1,6 +1,7 @@
 from .. paths import MKDOCS, MKDOCS_BINARY
 import threading
 import time
+import xmod
 
 
 def add_mkdocs(project, *argv):
@@ -18,7 +19,7 @@ def _write_doc(project, doc):
 
     contents = doc.read_text()
     if '.tpl' in doc.suffixes:
-        contents = contents.format(project=project)
+        contents = contents.format(body=body, project=project)
 
         suffixes = ''.join(s for s in doc.suffixes if s != '.tpl')
         while doc.suffix:

@@ -4,6 +4,7 @@ from pathlib import Path
 import datacls
 import tomlkit
 import webbrowser
+import xmod
 
 CODE_ROOT = Path('/code')
 SCRIPTS = Path(__file__).parents[1] / 'scripts'
@@ -15,7 +16,9 @@ class Opener:
     url: str
 
     def __call__(self, *parts, new=1, autoraise=True):
-        webbrowser.open('/'.join((self.url, *parts)), 1)
+        url = '/'.join((self.url, *parts))
+        webbrowser.open(url, 1)
+        return url
 
 
 @datacls(order=True)
@@ -81,6 +84,9 @@ class Project:
     @cached_property
     def bin_path(self):
         return max(self.path.glob('.direnv/python-3.*.*/bin'))
+
+    def bin(self, *parts):
+        return self.bin_path / ('/'.join(parts))
 
     def branch(self):
         return self.run.out('git', 'rev-parse', '--abbrev-ref', 'HEAD').strip()
@@ -153,3 +159,20 @@ class Project:
 
     def p(self, *args, **kwargs):
         print(f'{self.name:10}: ', *args, **kwargs)
+
+    def python(self, *args, **kwargs):
+        arm = not self.poetry['dependencies']['python'].endswith('3.7')
+        return self.run(self.bin('python'), *args, arm=arm, **kwargs)
+
+    def comment(self):
+        n = self.name
+        a = xmod.WRAPPED_ATTRIBUTE
+        cmd = f'import {n}; {n} = getattr({n}, "{a}", {n}); print({n}.__doc__)'
+        lines = self.python('-c', cmd, out=True).strip().splitlines()
+
+        emoji = self.description_parts[0]
+        while lines and lines[0].startswith(emoji):
+            lines.pop(0)
+        while lines and not lines[0]:
+            lines.pop(0)
+        return lines

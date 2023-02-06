@@ -14,7 +14,7 @@ def get(project, address, *args):
         result = e
 
     if not isinstance(result, (type(None), subprocess.CompletedProcess)):
-        print(result)
+        project.p(result)
     print()
 
 
