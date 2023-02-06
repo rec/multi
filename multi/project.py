@@ -85,6 +85,10 @@ class Project:
     def branch(self):
         return self.run.out('git', 'rev-parse', '--abbrev-ref', 'HEAD').strip()
 
+    def branches(self):
+        lines = self.run.out('git', 'branch').splitlines()
+        return [i.split()[-1] for i in lines]
+
     @cached_property
     def server_url(self):
         return f'127.0.0.1:{7000 + self.index}'

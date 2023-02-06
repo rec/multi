@@ -187,6 +187,10 @@ def branch(project, *argv):
     _p(project, project.branch())
 
 
+def branches(project, *argv):
+    _p(project, *project.branches())
+
+
 def run(project, *argv):
     _p(project)
     project.run(*argv)
