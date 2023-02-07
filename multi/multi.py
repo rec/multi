@@ -2,6 +2,7 @@ from . import configs
 from . projects import PROJECTS
 from functools import wraps
 from typer import Argument, Option, Typer
+import importlib
 import sys
 import time
 
@@ -24,11 +25,9 @@ def run(
     projects: list[str] = Option(sorted(PROJECTS), '--projects', '-p'),
     verbose: bool = Option(configs.verbose, '--verbose', '-v'),
 ):
-    from multi import commands
-
     configs.verbose = verbose
 
-    cmd = _get_callable(commands, command)
+    cmd = _get_callable('multi.commands.' + command)
     filt = _make_filters(filter, negate)
     wait_at_end = False
 
@@ -57,14 +56,17 @@ def run(
     sys.exit('fail' in locals())
 
 
-def _get_callable(o, name):
+def _get_callable(name):
+    path, _, attr = name.rpartition('.')
+    module = importlib.import_module(path)
+
     none = object()
-    if callable(f := getattr(o, name, none)):
+    if callable(f := getattr(module, attr, none)):
         return f
     if f is none:
-        msg = f'ERROR: {name} does not exist ({o=}, {f=})'
+        msg = f'ERROR: {name} does not exist ({module=}, {f=})'
     else:
-        msg = f'ERROR: {name} is not callable ({o=}, {f=})'
+        msg = f'ERROR: {name} is not callable ({module=}, {f=})'
     if True:
         raise ValueError(msg)
     print(msg)
@@ -81,13 +83,11 @@ def _make_filters(filters, negate):
 
 
 def _make_filter(filter, negate):
-    from multi import filters
-
     if not filter:
         return lambda *_: True
 
     first, *args = filter.split(':')
-    filt = _get_callable(filters, first)
+    filt = _get_callable('multi.filters.' + first)
 
     @wraps(filt)
     def wrapped(project):

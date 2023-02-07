@@ -1,7 +1,6 @@
 from .. paths import MKDOCS, MKDOCS_BINARY
 import threading
 import time
-import xmod
 
 
 def add_mkdocs(project, *argv):
