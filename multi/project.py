@@ -164,6 +164,7 @@ class Project:
         arm = not self.poetry['dependencies']['python'].endswith('3.7')
         return self.run(self.bin('python'), *args, arm=arm, **kwargs)
 
+    @cached_property
     def comment(self):
         n = self.name
         a = xmod.WRAPPED_ATTRIBUTE
@@ -175,4 +176,5 @@ class Project:
             lines.pop(0)
         while lines and not lines[0]:
             lines.pop(0)
-        return lines
+        lines.append('')
+        return '\n'.join(lines)

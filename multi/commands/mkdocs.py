@@ -19,7 +19,7 @@ def _write_doc(project, doc):
 
     contents = doc.read_text()
     if '.tpl' in doc.suffixes:
-        contents = contents.format(body=body, project=project)
+        contents = contents.format(project=project)
 
         suffixes = ''.join(s for s in doc.suffixes if s != '.tpl')
         while doc.suffix:

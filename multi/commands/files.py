@@ -15,3 +15,10 @@ def cat(project, *globs):
 
 def glob(project, *globs):
     project.p(*_glob(project, *globs))
+
+
+def add_sponsor(project):
+    sf = project.path / 'FUNDING.yml':
+    if not sf.exists():
+        sf.write_text('github: rec\n')
+        project.git.commit('Added FUNDING.yml', sf)
