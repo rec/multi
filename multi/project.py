@@ -192,11 +192,12 @@ class Project:
         if 'gh-pages' not in self.branches():
             return
 
-        path = GH_PAGE / self.name
+        cache = self.path / '.cache'
+        path = cache / 'gh-pages'
         if path.exists():
             self.git('pull', cwd=path)
         else:
-            GH_PAGE.mkdir(exist_ok=True, parents=True)
-            self.git('clone', '-b', 'gh-pages', self.git_ssh_url, cwd=GH_PAGE)
+            cache.mkdir(exist_ok=True, parents=True)
+            self.git('clone', '-b', 'gh-pages', self.git_ssh_url, path)
 
         return path
