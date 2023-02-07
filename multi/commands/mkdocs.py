@@ -1,5 +1,6 @@
 from .. import tweak_index
 from .. paths import MKDOCS, MKDOCS_BINARY
+import shutil
 import threading
 import time
 
@@ -18,7 +19,7 @@ _PROCESS = {
 }
 
 
-def mkdocs(project):
+def process(project):
     site = project.path / 'site'
     assert site.exists()
 
@@ -27,15 +28,11 @@ def mkdocs(project):
         if not (src.name.startswith('.') or src.is_dir()):
             rel = str(src.relative_to(site))
             target = project.gh_pages / rel
+            shutil.copyfile(src, target)
+            if process := _PROCESS.get(target.name):
+                process(project, target)
 
-            s = src.read_text()
-            if process := _PROCESS.get(project, rel):
-                s = process(project, s)
-
-            t = target.read_text() if target.exists() else None
-            if s != t:
-                target.parent.mkdir(exist_ok=True, parents=True)
-                target.write_text(s)
+            if src.read_bytes() != target.read_bytes():
                 results.append(target)
 
     project.p(*results)
