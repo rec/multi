@@ -15,7 +15,6 @@ def get(project, address, *args):
 
     if not isinstance(result, (type(None), subprocess.CompletedProcess)):
         project.p(result)
-    print()
 
 
 def _getattr(data, a):

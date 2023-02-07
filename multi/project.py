@@ -158,6 +158,8 @@ class Project:
         return f'{e1}: `{self.name}`: {desc} {e2}'
 
     def p(self, *args, **kwargs):
+        if len(args) == 1 and isinstance(args[0], str):
+            args = [args[0].rstrip()]
         print(f'{self.name:10}: ', *args, **kwargs)
 
     def python(self, *args, **kwargs):
