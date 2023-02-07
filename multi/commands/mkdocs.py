@@ -1,15 +1,54 @@
+from .. import tweak_index
 from .. paths import MKDOCS, MKDOCS_BINARY
 import threading
 import time
 
 
-def add_mkdocs(project, *argv):
+def add_mkdocs(project):
     docs = sorted(i for i in MKDOCS.rglob('*') if not i.name.startswith('.'))
     written = [f for d in docs for f in _write_doc(project, d)]
     assert written
     project.run(MKDOCS_BINARY, 'build')
-    msg = 'Add mkdocs documentation'
+    msg = 'Update mkdocs documentation'
     project.git.commit(msg, *written)
+
+
+_PROCESS = {
+    'index.html': tweak_index,
+}
+
+
+def mkdocs(project):
+    site = project.path / 'site'
+    assert site.exists()
+
+    results = []
+    for src in sorted(site.rglob('*')):
+        if not (src.name.startswith('.') or src.is_dir()):
+            rel = str(src.relative_to(site))
+            target = project.gh_pages / rel
+
+            s = src.read_text()
+            if process := _PROCESS.get(project, rel):
+                s = process(project, s)
+
+            t = target.read_text() if target.exists() else None
+            if s != t:
+                target.parent.mkdir(exist_ok=True, parents=True)
+                target.write_text(s)
+                results.append(target)
+
+    project.p(*results)
+    if results:
+        commit_id = project.commit_id()[:7]
+        msg = f'Deployed {commit_id} with multi'
+        if True:
+            print(msg)
+            project.git('reset', '--hard', 'HEAD')
+            return
+
+        project.git('commit', '-m', msg, *results, cwd=project.gh_pages)
+        project.git('push', cwd=project.gh_pages)
 
 
 def _write_doc(project, doc):

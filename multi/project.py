@@ -97,6 +97,9 @@ class Project:
         lines = self.run.out('git', 'branch').splitlines()
         return [i.split()[-1] for i in lines]
 
+    def commit_id(self):
+        return self.run.out('git', 'rev-parse', 'HEAD').strip()
+
     @cached_property
     def server_url(self):
         return f'127.0.0.1:{7000 + self.index}'
@@ -189,15 +192,14 @@ class Project:
 
     @cached_property
     def gh_pages(self):
-        if 'gh-pages' not in self.branches():
-            return
-
         cache = self.path / '.cache'
         path = cache / 'gh-pages'
-        if path.exists():
-            self.git('pull', cwd=path)
-        else:
-            cache.mkdir(exist_ok=True, parents=True)
-            self.git('clone', '-b', 'gh-pages', self.git_ssh_url, path)
+
+        if 'gh-pages' in self.branches():
+            if path.exists():
+                self.git('pull', cwd=path)
+            else:
+                cache.mkdir(exist_ok=True, parents=True)
+                self.git('clone', '-b', 'gh-pages', self.git_ssh_url, path)
 
         return path
