@@ -1,8 +1,8 @@
 from . files import clean_dir, cat, glob
 from . get import get
 from . git import fix_gitignore, tweak_github
+from . data import assign
 from . mkdocs import add_mkdocs, serve
-from . multi import assign
 from . poetry import bump_version, run_poetry
 from . readme import open_readme, readme
 from . run import run, bash
