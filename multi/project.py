@@ -8,6 +8,8 @@ import xmod
 
 CODE_ROOT = Path('/code')
 SCRIPTS = Path(__file__).parents[1] / 'scripts'
+CACHE = Path(__file__).parents[1] / '.cache'
+GH_PAGE = CACHE / 'gh-page'
 RUN_SH = str(SCRIPTS / 'run.sh')
 
 
@@ -100,6 +102,10 @@ class Project:
         return f'127.0.0.1:{7000 + self.index}'
 
     @cached_property
+    def git_ssh_url(self):
+        return f'git@github.com:{self.user}/{self.name}.git'
+
+    @cached_property
     def git_url(self):
         return f'https://github.com/{self.user}/{self.name}'
 
@@ -180,3 +186,17 @@ class Project:
             lines.pop(0)
         lines.append('')
         return '\n'.join(lines)
+
+    @cached_property
+    def gh_pages(self):
+        if 'gh-pages' not in self.branches():
+            return
+
+        path = GH_PAGE / self.name
+        if path.exists():
+            self.git('pull', cwd=path)
+        else:
+            GH_PAGE.mkdir(exist_ok=True, parents=True)
+            self.git('clone', '-b', 'gh-pages', self.git_ssh_url, cwd=GH_PAGE)
+
+        return path

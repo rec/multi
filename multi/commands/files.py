@@ -49,7 +49,6 @@ def add_sponsor_file(project):
         project.git.commit('Added FUNDING.yml', sf)
 
 
-
 SIGNATURE = """
 ----------
 
