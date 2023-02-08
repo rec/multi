@@ -1,17 +1,8 @@
-def has_mkdocs(project):
-    return (project.path / 'doc').exists()
+from multi.commands.get import get_or_call as prop
 
 
-def site_in_gitignore(project):
-    return '/site' in (project.path / '.gitignore').read_text().splitlines()
-
-
-def is_dirty(project):
-    return project.git.is_dirty
-
-
-def is_singleton(project):
-    return project.is_singleton
+def exists(project, *args):
+    return project.joinpath(*args).exists()
 
 
 def has_emoji(project):
@@ -26,9 +17,8 @@ def is_rst(project):
     return project.poetry['readme'].endswith('.rst')
 
 
-def is_md(project):
-    return project.poetry['readme'].endswith('.md')
-
-
-def has_tags(project, *tags):
+def tag(project, *tags):
     return set(project.tags) & set(tags)
+
+
+has_tags = tag  # legacy

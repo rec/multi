@@ -1,27 +1,35 @@
 import subprocess
 
 
-def get(project, address, *args):
-    data = _getattrs(project, [address])
-
-    if not callable(data):
-        if isinstance(data, list):
-            data = list(data)  # tomlkits arrays don't print
-
-        project.p(data)
-        return
-
-    try:
-        result = data(*args)
-    except Exception as e:
-        result = e
-
-    if not isinstance(result, (type(None), subprocess.CompletedProcess)):
+def get(project, address):
+    if (result := get_or_call(project, address)) is not None:
         project.p(result)
 
 
+def get_or_call(project, address):
+    i = 0
+    if not (data := _getattr(project, address)):
+        return
+
+    data, = data
+    if call := callable(data):
+        try:
+            data = data(*args)
+        except Exception as e:
+            return e
+
+    if isinstance(data, subprocess.CompletedProcess):
+        return data.returncode or None
+
+    if isinstance(data, list):
+        # tomlkits arrays don't print
+        return list(data)
+
+    return data
+
+
 def _getattr(data, a):
-    for part in a and a.split('.'):
+    for part in (a and a.split('.')):
         try:
             data = data[part]
         except Exception:
@@ -29,12 +37,4 @@ def _getattr(data, a):
                 data = getattr(data, part)
             except AttributeError:
                 return
-    yield data
-
-
-def _getattrs(data, argv):
-    result = {a: d for a in argv or [''] for d in _getattr(data, a)}
-
-    if len(result) == 1 and len(argv) == 1:
-        return result.popitem()[1]
-    return result
+    return [data]

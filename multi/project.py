@@ -39,6 +39,12 @@ class Project:
     def path(self):
         return CODE_ROOT / self.name
 
+    def joinpath(self, *path):
+        return self.path.joinpath(*path)
+
+    def read_lines(self, *path):
+        return self.joinpath(*path).read_text().splitlines()
+
     @cached_property
     def pyproject_file(self):
         return self.path / 'pyproject.toml'
