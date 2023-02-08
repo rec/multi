@@ -21,25 +21,29 @@ _PROCESS = {
 
 def process(project):
     site = project.path / 'site'
-    assert site.exists()
+    if not site.exists():
+        return
 
     results = []
     for src in sorted(site.rglob('*')):
         if not (src.name.startswith('.') or src.is_dir()):
             rel = str(src.relative_to(site))
             target = project.gh_pages / rel
+
+            old_target = target.read_bytes()
+
             shutil.copyfile(src, target)
             if process := _PROCESS.get(target.name):
                 process(project, target)
 
-            if src.read_bytes() != target.read_bytes():
+            if src.read_bytes() != old_target:
                 results.append(target)
 
     project.p(*results)
     if results:
         commit_id = project.commit_id()[:7]
-        msg = f'Deployed {commit_id} with multi'
-        if True:
+        msg = f'Deployed {commit_id} with rec/multi version 0.11'
+        if not True:
             print(msg)
             project.git('reset', '--hard', 'HEAD')
             return
