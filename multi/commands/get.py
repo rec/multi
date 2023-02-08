@@ -5,6 +5,9 @@ def get(project, address, *args):
     data = _getattrs(project, [address])
 
     if not callable(data):
+        if isinstance(data, list):
+            data = list(data)  # tomlkits arrays don't print
+
         project.p(data)
         return
 

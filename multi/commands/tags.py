@@ -11,16 +11,37 @@ def remove_tag(project, *tags):
             pass
 
     if removed:
-        if not project.tags:
-            del project.poetry['tags']
         project.write()
+        msg = f'Removed {", ".join(tags)} from multi.tags in {PYPROJECT}'
+        project.git.commit(msg, PYPROJECT)
         project.p('Tags:', *project.tags)
 
 
 def add_tag(project, *tags):
     if tags:
         with project.writer():
-            project.tags.extend(tags)
+            for tag in tags:
+                if tag not in project.tags:
+                    project.tags.append(tags)
             msg = f'Set multi.tags to {", ".join(tags)} in {PYPROJECT}'
         project.git.commit(msg, PYPROJECT)
         project.p('Tags:', *project.tags)
+
+
+def fix(project):
+    tags = project.multi.pop('multi', None)
+    if tags is None:
+        return
+
+    if project.name == 'abbrev':
+        tags = ['finished']
+    else:
+        try:
+            tags[tags.index('release')] = 'working'
+        except ValueError:
+            pass
+
+    project.multi['tags'] = tags
+    project.write()
+    project.git.commit('Fix tags in '+ PYPROJECT, PYPROJECT)
+    project.p('Tags:', *project.tags)

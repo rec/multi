@@ -69,7 +69,7 @@ class Project:
 
     @cached_property
     def tags(self):
-        return self.multi.setdefault('multi', [])
+        return self.multi.setdefault('tags', [])
 
     @cached_property
     def git(self):
@@ -118,7 +118,12 @@ class Project:
 
     @cached_property
     def open_doc(self):
-        return Opener(self.doc_url)
+        if self.has_gh_pages():
+            return Opener(self.doc_url)
+        return lambda *a, **k: None
+
+    def has_gh_pages(self):
+        return 'gh-pages' in self.branches()
 
     @cached_property
     def open_git(self):
@@ -169,6 +174,7 @@ class Project:
     def p(self, *args, **kwargs):
         if len(args) == 1 and isinstance(args[0], str):
             args = [args[0].rstrip()]
+
         print(f'{self.name:10}: ', *args, **kwargs)
 
     def python(self, *args, **kwargs):
@@ -195,7 +201,7 @@ class Project:
         cache = self.path / '.cache'
         path = cache / 'gh-pages'
 
-        if 'gh-pages' in self.branches():
+        if self.has_gh_pages():
             if path.exists():
                 self.git('pull', cwd=path)
             else:
