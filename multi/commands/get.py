@@ -6,7 +6,7 @@ def get(project, address):
         project.p(result)
 
 
-def get_or_call(project, address):
+def get_or_call(project, address, *args):
     i = 0
     if not (data := _getattr(project, address)):
         return

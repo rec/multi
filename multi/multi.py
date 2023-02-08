@@ -18,7 +18,7 @@ command = app.command
 def run(
     command: str = Argument('name'),
     argv: list[str] = Argument(None),
-    continue_after_error: bool = Option(False, '--continue-after-error', '-e'),
+    continue_after_error: bool = Option(False, '--continue-after-error', '-c'),
     exclude: list[str] = Option((), '--exclude', '-e'),
     filter: list[str] = Option(None, '--filter', '-f'),
     negated_filter: list[str] = Option(None, '--negated-filter', '-n'),

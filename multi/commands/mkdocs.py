@@ -6,12 +6,17 @@ import time
 
 
 def add_mkdocs(project):
+    if not (project.path / 'docs').exists():
+        return
+
+    assert not project.git.is_dirty or project.name == 'multi'
+
     docs = sorted(i for i in MKDOCS.rglob('*') if not i.name.startswith('.'))
     written = [f for d in docs for f in _write_doc(project, d)]
-    assert written
     project.run(MKDOCS_BINARY, 'build')
-    msg = 'Update mkdocs documentation'
-    project.git.commit(msg, *written)
+    if project.git.is_dirty:
+        msg = 'Update mkdocs documentation'
+        project.git.commit(msg, *written)
 
 
 _PROCESS = {
@@ -39,17 +44,19 @@ def process(project):
             if src.read_bytes() != old_target:
                 results.append(target)
 
-    project.p(*results)
-    if results:
-        commit_id = project.commit_id()[:7]
-        msg = f'Deployed {commit_id} with rec/multi version 0.11'
-        if not True:
-            print(msg)
-            project.git('reset', '--hard', 'HEAD')
-            return
+    if not results:
+        return
 
-        project.git('commit', '-m', msg, *results, cwd=project.gh_pages)
-        project.git('push', cwd=project.gh_pages)
+    project.p(*results)
+    commit_id = project.commit_id()[:7]
+    msg = f'Deployed {commit_id} with rec/multi version 0.11'
+    if not True:
+        print(msg)
+        project.git('reset', '--hard', 'HEAD')
+        return
+
+    project.git('commit', '-m', msg, *results, cwd=project.gh_pages)
+    project.git('push', cwd=project.gh_pages)
 
 
 def _write_doc(project, doc):
@@ -67,8 +74,10 @@ def _write_doc(project, doc):
 
     rel = project.path / doc.relative_to(MKDOCS)
     rel.parent.mkdir(exist_ok=True)
-    rel.write_text(contents)
-    yield rel
+    c2 = rel.exists() and rel.read_text()
+    if c2 != contents:
+        rel.write_text(contents)
+        yield rel
 
 
 def serve(project, *args):

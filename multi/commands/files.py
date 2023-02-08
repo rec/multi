@@ -17,9 +17,48 @@ def glob(project, *globs):
     project.p(*_glob(project, *globs))
 
 
+def grep(project):
+    project.p()
+    filename = project.name + '.py'
+    re = r'\.\. code-block:: python'
+    try:
+        project.run('grep', '-e', re, filename)
+    except Exception:
+        print('---')
+
+
+def replace(project):
+    path = project.path / (project.name + '.py')
+    if not path.exists():
+        return
+
+    t = path.read_text()
+    b = '.. code-block:: python\n'
+    s = t.replace('    ' + b, '').replace(b, '')
+    if s == t:
+        return
+
+    project.p('Found some rsts')
+    path.write_text(s)
+    project.git.commit('Get rid of rst code-blocks', path)
+
+
+def remove_sig(project):
+    commits = project.run.out('git', 'l', '-4')
+    M = 'Add signature to '
+    if M in commits:
+        commits = commits.splitlines()
+        omit = next(i for i, s in enumerate(commits) if M in s)
+        s = 'ac' if omit == 1 else 'b'
+        project.git('permute', s)
+        project.git('push', '--force-with-lease')
+
+
 def add_signature(project):
     if not project.is_singleton:
         return
+
+    project.p()
 
     py_file = (project.path / project.name).with_suffix('.py')
     text = py_file.read_text()
@@ -35,8 +74,13 @@ def add_signature(project):
         last = before + last
         project.p('before=', bool(before))
 
-    signature = SIGNATURE.format(name=project.name)
-    parts = '', comment + signature, last
+    signature = SIGNATURE.format(name=project.name, user=project.user)
+    if signature in comment:
+        project.p('already signatured')
+        return
+
+    comment = comment.rstrip() + signature
+    parts = '', comment, last
 
     py_file.write_text(delim.join(parts))
     project.git.commit('Add signature to ' + py_file.name, py_file)
@@ -50,12 +94,12 @@ def add_sponsor_file(project):
 
 
 SIGNATURE = """
+
 ----------
 
 ## More info
 
-* [ Code ]( https://github.com/rec/abbrev )
-* [ Docs ]( https://rec.github.io/abbrev )
+* [ Code ]( https://github.com/{user}/{name} )
 * [ Me ]( https://github.com/rec )
 * [ Sponsors ]( https://github.com/sponsors/rec )
 
