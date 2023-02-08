@@ -21,24 +21,26 @@ def run(
     continue_after_error: bool = Option(False, '--continue-after-error', '-e'),
     exclude: list[str] = Option((), '--exclude', '-e'),
     filter: list[str] = Option(None, '--filter', '-f'),
-    negate: bool = Option(False, '--negate', '-n'),
+    negated_filter: list[str] = Option(None, '--negated-filter', '-n'),
     projects: list[str] = Option(sorted(PROJECTS), '--projects', '-p'),
     verbose: bool = Option(configs.verbose, '--verbose', '-v'),
 ):
     configs.verbose = verbose
 
     cmd = _get_callable('multi.commands.' + command)
-    filt = _make_filters(filter, negate)
+    filt = [_make_filter(f) for f in filter or ()]
+    nfilt = [_make_filter(f) for f in negated_filter or ()]
     wait_at_end = False
 
     projects = [i for p in projects for i in p.split(':')]
     projects = [p for p in projects if p not in exclude]
 
     for name in projects:
-        project = PROJECTS[name]
+        p = PROJECTS[name]
         try:
-            if filt(project) and cmd(project, *argv):
-                wait_at_end = True
+            if all(f(p) for f in filt) and not any(f(p) for f in nfilt):
+                if cmd(p, *argv):
+                    wait_at_end = True
 
         except Exception as e:
             if not continue_after_error:
@@ -73,25 +75,13 @@ def _get_callable(name):
     sys.exit(-1)
 
 
-def _make_filters(filters, negate):
-    filters = [_make_filter(f, negate) for f in filters]
-
-    def filter(project):
-        return all(f(project) for f in filters)
-
-    return filter
-
-
-def _make_filter(filter, negate):
-    if not filter:
-        return lambda *_: True
-
+def _make_filter(filter):
     first, *args = filter.split(':')
     filt = _get_callable('multi.filters.' + first)
 
     @wraps(filt)
     def wrapped(project):
-        return bool(filt(project, *args)) != bool(negate)
+        return bool(filt(project, *args))
 
     return wrapped
 
