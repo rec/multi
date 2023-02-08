@@ -1,0 +1,19 @@
+site_name: '📚: `multi`: Manage all my other projects 📚'
+
+theme:
+  name: material
+
+  palette:
+    primary:
+      'brown'
+
+  font:
+    text:
+      Roboto
+    code:
+      Roboto Mono
+
+extra_css: [extra.css]
+
+plugins:
+    - mkdocstrings
