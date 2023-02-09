@@ -1,3 +1,5 @@
+from lxml import etree
+from pathlib import Path
 import re
 import xmod
 
@@ -22,10 +24,30 @@ def tweak_index(project, path):
     path.write_text(s3)
 
 
-def rewrite(path):
-    from lxml import etree
-    from pathlib import Path
+def rewrite(path='/code/abbrev/.cache/gh-pages/index.html'):
+    from bs4 import BeautifulSoup
 
+    path = Path(path)
+    source = path.read_text().strip()
+    soup = BeautifulSoup(source, 'html.parser')
+    return soup
+
+
+def round_trip(s):
+    html = etree.HTML(s)
+    result = etree.tostring(html, pretty_print=True, method="html")
+    return result.decode()
+
+
+def rewrite2(path=Path('test-index.html')):
+    broken_html = "<!doctype html><html><head><title>test<body><h1>page title</h3>"
+    print(round_trip(broken_html))
+
+    source = path.read_text().strip()
+    print(round_trip(source))
+
+
+def rewrite_lxml(path):
     path = Path(path)
     source = path.read_text().strip()
     html = etree.HTML(source)
@@ -39,3 +61,7 @@ def rewrite(path):
     else:
         print('bytes', len(source), len(out))
         target.write_bytes(out)
+
+
+if __name__ == '__main__':
+    rewrite2()
