@@ -50,9 +50,9 @@ def process(project):
     project.p(*results)
     commit_id = project.commit_id()[:7]
     msg = f'Deployed {commit_id} with rec/multi version 0.11'
-    if not True:
+    if True:
         print(msg)
-        project.git('reset', '--hard', 'HEAD')
+        project.git('reset', '--hard', 'HEAD', cwd=project.gh_pages)
         return
 
     project.git('commit', '-m', msg, *results, cwd=project.gh_pages)
