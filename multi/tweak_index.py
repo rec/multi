@@ -20,3 +20,22 @@ def tweak_index(project, path):
         project.p('Unchanged', d1, d2)
         print(p1, p2)
     path.write_text(s3)
+
+
+def rewrite(path):
+    from lxml import etree
+    from pathlib import Path
+
+    path = Path(path)
+    source = path.read_text().strip()
+    html = etree.HTML(source)
+    print(html, dir(html))
+
+    target = path.parent / (path.stem + '-rewrite.html')
+    out = etree.tostring(html, pretty_print=True, method='html')
+    if isinstance(out, str):
+        print('str')
+        target.write_text(out)
+    else:
+        print('bytes', len(source), len(out))
+        target.write_bytes(out)
