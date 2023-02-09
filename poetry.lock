@@ -1183,4 +1183,4 @@ dek = "*"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "bf708226f5cc7a729f6c324eb8e64f940eb802009e2c23e83be2cab0134a415f"
+content-hash = "79270bf2af1e457cf0dc2cc597401b81cefe784b7f7888330f2fd5cbcfef3337"
