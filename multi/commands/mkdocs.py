@@ -1,4 +1,4 @@
-from .. import tweak_index
+from .. import configs, tweak_index
 from .. paths import MKDOCS, MKDOCS_BINARY
 import shutil
 import threading
@@ -19,6 +19,11 @@ def add_mkdocs(project):
         project.git.commit(msg, *written)
 
 
+def all_mkdocs(project):
+    add_mkdocs(project)
+    process(project)
+
+
 _PROCESS = {
     'index.html': tweak_index,
 }
@@ -35,8 +40,10 @@ def process(project):
             rel = str(src.relative_to(site))
             target = project.gh_pages / rel
 
-            old_target = target.read_bytes()
+            old_target = target.exists() and target.read_bytes()
 
+            if configs.verbose:
+                print('shutil.copyfile', src, target)
             shutil.copyfile(src, target)
             if process := _PROCESS.get(target.name):
                 process(project, target)
@@ -51,8 +58,8 @@ def process(project):
     commit_id = project.commit_id()[:7]
     msg = f'Deployed {commit_id} with rec/multi version 0.11'
     if True:
-        print(msg)
-        project.git('reset', '--hard', 'HEAD', cwd=project.gh_pages)
+        print(msg, "RESET")
+        # project.git('reset', '--hard', 'HEAD', cwd=project.gh_pages)
         return
 
     project.git('commit', '-m', msg, *results, cwd=project.gh_pages)
