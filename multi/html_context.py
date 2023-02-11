@@ -15,8 +15,13 @@ def context(filename: Path):
     yield html
 
     t = etree.tostring(html, pretty_print=True, method="html")
-    u = DIGITS.sub(replace, t)
-    filename.write_bytes(u)
+    filename.write_bytes(fix(t))
+
+
+def fix(t: bytes):
+    if isinstance(t, str):
+        t = t.encode()
+    return DIGITS.sub(replace, t)
 
 
 def replace(m):
