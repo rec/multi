@@ -4,19 +4,58 @@ import re
 import xmod
 from lxml import etree
 
-DIGIT = r'(?: & \# ( [1 2] \d \d ) ; )'
-PAT = re.compile(fr'(?: {DIGIT} ? {DIGIT} ) ? {DIGIT} {DIGIT}', re.VERBOSE)
-
 
 def run(s: str):
     if isinstance(s, str):
         s = s.encode()
     html = etree.HTML(s)
-    return etree.tostring(html, pretty_print=True, method="html").decode()
+    t = etree.tostring(html, pretty_print=True, method="html")
+    return fix_non_ascii(t.decode())
 
 
-def fix(s: str):
-    return PAT.sub(replace2, s)
+def fix_non_ascii(s):
+    # Example: &#237;&#156;&#132;&#237;&#156;&#136;&#240;&#159;&#152;&#134;
+
+    def replace(m):
+        parts = [int(i.strip(';')) for i in m.group(0).split('&#') if i]
+        return ''.join(to_chars(parts))
+
+    pat = r'(&#[12]\d\d;)+'
+    return re.sub(pat, replace, s)
+
+
+def to_chars(parts):
+    parts = parts[::-1]  # So we can pop from the end!
+    while parts:
+        a, b = parts.pop(), parts.pop()
+        if a < 0xE0:
+            yield chr(b + 0x40 * (a - 0xC2))
+
+        elif a < 0xF0:
+            c = parts.pop()
+            yield chr(
+                0x800 + (c - 0x80) +
+                + 0x40 * (
+                    (b - 0xA0)
+                    + 0x40 * (a - 0xE0)
+                )
+            )
+        else:
+            c, d = parts.pop(), parts.pop()
+
+            yield chr(
+                0x010000 + (d - 0x80)
+                + 0x40 * ((c - 0x80)
+                    + 0x40 * ((b - 0x90)
+                        + 0x40 * (a - 0xF0)
+                    )
+                )
+            )
+
+
+def attempt():
+    t = '<html><head><title>🐜</title></head><body>휄휈😆</body></html>'
+    print(run(t))
 
 
 def compare_both():
@@ -117,4 +156,5 @@ def guess(parts):
 
 
 if __name__ == '__main__':
-    compare_both()
+    # compare_both()
+    attempt()
