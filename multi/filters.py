@@ -1,4 +1,4 @@
-from multi.commands.get import get_or_call as prop
+from multi.commands.get import get_or_call
 
 
 def exists(project, *args):
@@ -21,4 +21,5 @@ def tag(project, *tags):
     return set(project.tags) & set(tags)
 
 
+prop = get_or_call
 has_tags = tag  # legacy

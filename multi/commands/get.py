@@ -7,12 +7,11 @@ def get(project, address):
 
 
 def get_or_call(project, address, *args):
-    i = 0
     if not (data := _getattr(project, address)):
         return
 
     data, = data
-    if call := callable(data):
+    if callable(data):
         try:
             data = data(*args)
         except Exception as e:

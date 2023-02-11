@@ -24,9 +24,6 @@ def tweak_index(project, path):
     path.write_text(s3)
 
 
-from lxml import etree
-
-
 def run(s):
     html = etree.HTML(s)
     assert html is not None, 'etree.HTML(s) returned None!'
@@ -59,7 +56,6 @@ def old_compare_both():
     # Fails
     round_trip(p2)         # Wrong answer
     round_trip('\n' + p2)  # Returns None
-
 
 
 def replace(m):

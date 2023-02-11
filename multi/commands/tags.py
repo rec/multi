@@ -43,5 +43,5 @@ def fix(project):
 
     project.multi['tags'] = tags
     project.write()
-    project.git.commit('Fix tags in '+ PYPROJECT, PYPROJECT)
+    project.git.commit('Fix tags in ' + PYPROJECT, PYPROJECT)
     project.p('Tags:', *project.tags)
