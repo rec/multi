@@ -12,22 +12,27 @@ class Git:
         return self.run('git', *a, **ka)
 
     def commit(self, msg, *files, **kwargs):
-        if self.is_dirty:
-            files = [Path(f) for f in files]
-            if exist := [f for f in files if f.exists()]:
-                self('add', *exist, **kwargs)
+        if not self.is_dirty():
+            return
 
-            self('commit', '-m', msg, *files, **kwargs)
-            self('push', **kwargs)
+        if not files:
+            lines = self('status', '--porcelain', out=True).splitlines()
+            files = [i.split()[-1] for i in lines]
 
-    @property
-    def is_dirty(self):
+        files = [Path(f) for f in files]
+        if exist := [f for f in files if f.exists()]:
+            self('add', *exist, **kwargs)
+
+        self('commit', '-m', msg, *files, **kwargs)
+        self('push', **kwargs)
+
+    def is_dirty(self, **kwargs):
         try:
-            self('diff-index', '--quiet', 'HEAD', '--')
+            self('diff-index', '--quiet', 'HEAD', '--', **kwargs)
             return False
         except subprocess.CalledProcessError:
             return True
 
     def status(self):
-        if self.is_dirty:
+        if self.is_dirty():
             self('status')

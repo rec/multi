@@ -1,5 +1,5 @@
 def state(project):
-    project.p(f'{project.git.is_dirty * "*":1} {project.branch()}')
+    project.p(f'{project.git.is_dirty() * "*":1} {project.branch()}')
 
 
 def fix_gitignore(project):

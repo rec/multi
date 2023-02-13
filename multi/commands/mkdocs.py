@@ -9,6 +9,8 @@ def mkdocs(project):
     if is_mkdocs(project):
         add_mkdocs(project)
         process(project)
+        if configs.open:
+            project.open_gh()
 
 
 def is_mkdocs(project):
@@ -23,12 +25,12 @@ def add_mkdocs(project):
     if not is_mkdocs(project):
         return
 
-    assert not project.git.is_dirty or project.name == 'multi'
+    assert not project.git.is_dirty() or project.name == 'multi'
 
     docs = sorted(i for i in MKDOCS.rglob('*') if not i.name.startswith('.'))
     written = [f for d in docs for f in _write_doc(project, d)]
     project.run(MKDOCS_BINARY, 'build')
-    if project.git.is_dirty:
+    if configs.push:
         msg = 'Update mkdocs documentation with rec/multi 0.1.1'
         project.git.commit(msg, *written)
 
@@ -64,9 +66,17 @@ def process(project):
         return
 
     project.p(*results)
-    commit_id = project.commit_id()[:7]
-    msg = f'Deployed {commit_id} with rec/multi version 0.1.1'
-    project.git.commit(msg, *results, cwd=project.gh_pages)
+    if configs.push:
+        push(project)
+
+
+def push(project):
+    if project.git.is_dirty(cwd=project.gh_pages):
+        project.p()
+        commit_id = project.commit_id()[:7]
+
+        msg = f'Deployed {commit_id} with rec/multi version 0.1.1'
+        project.git.commit(msg, cwd=project.gh_pages)
 
 
 def _write_doc(project, doc):
