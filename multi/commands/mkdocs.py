@@ -5,8 +5,16 @@ import threading
 import time
 
 
+def is_mkdocs(project):
+    return (
+        project.is_singleton
+        and (project.path / 'docs').exists()
+        and 'working' in project.tags
+    )
+
+
 def add_mkdocs(project):
-    if not (project.path / 'docs').exists():
+    if not is_mkdocs(project):
         return
 
     assert not project.git.is_dirty or project.name == 'multi'
@@ -15,13 +23,14 @@ def add_mkdocs(project):
     written = [f for d in docs for f in _write_doc(project, d)]
     project.run(MKDOCS_BINARY, 'build')
     if project.git.is_dirty:
-        msg = 'Update mkdocs documentation'
+        msg = 'Update mkdocs documentation with rec/multi 0.1.1'
         project.git.commit(msg, *written)
 
 
 def all_mkdocs(project):
-    add_mkdocs(project)
-    process(project)
+    if is_mkdocs(project):
+        add_mkdocs(project)
+        process(project)
 
 
 _PROCESS = {
@@ -56,14 +65,8 @@ def process(project):
 
     project.p(*results)
     commit_id = project.commit_id()[:7]
-    msg = f'Deployed {commit_id} with rec/multi version 0.11'
-    if True:
-        print(msg, "RESET")
-        # project.git('reset', '--hard', 'HEAD', cwd=project.gh_pages)
-        return
-
-    project.git('commit', '-m', msg, *results, cwd=project.gh_pages)
-    project.git('push', cwd=project.gh_pages)
+    msg = f'Deployed {commit_id} with rec/multi version 0.1.1'
+    project.git.commit(msg, *results, cwd=project.gh_pages)
 
 
 def _write_doc(project, doc):

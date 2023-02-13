@@ -11,13 +11,14 @@ class Git:
     def __call__(self, *a, **ka):
         return self.run('git', *a, **ka)
 
-    def commit(self, msg, *files):
-        files = [Path(f) for f in files]
-        if exist := [f for f in files if f.exists()]:
-            self('add', *exist)
+    def commit(self, msg, *files, **kwargs):
+        if self.is_dirty:
+            files = [Path(f) for f in files]
+            if exist := [f for f in files if f.exists()]:
+                self('add', *exist, **kwargs)
 
-        self('commit', '-m', msg, *files)
-        self('push')
+            self('commit', '-m', msg, *files, **kwargs)
+            self('push', **kwargs)
 
     @property
     def is_dirty(self):
