@@ -25,8 +25,6 @@ def build(project):
     if not is_mkdocs(project):
         return
 
-    assert not project.git.is_dirty() or project.name == 'multi'
-
     docs = sorted(i for i in MKDOCS.rglob('*') if not i.name.startswith('.'))
     written = [f for d in docs for f in _write_doc(project, d)]
     project.run(MKDOCS_BINARY, 'build')

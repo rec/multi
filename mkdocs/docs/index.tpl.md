@@ -2,8 +2,8 @@
 
 ::: {project.name}
 
-## More info
+## About this project
 
-* [ Code ]( https://github.com/{project.user}/{project.name} )
-* [ Me ]( https://github.com/rec )
+* [ Source code ]( https://github.com/{project.user}/{project.name} )
+* [ More by this author ]( https://github.com/rec )
 * [ Sponsors ]( https://github.com/sponsors/rec )
