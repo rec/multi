@@ -17,7 +17,7 @@ def glob(project, *globs):
     project.p(*_glob(project, *globs))
 
 
-def grep(project):
+def old_grep(project):
     project.p()
     filename = project.name + '.py'
     re = r'\.\. code-block:: python'
@@ -25,6 +25,46 @@ def grep(project):
         project.run('grep', '-e', re, filename)
     except Exception:
         print('---')
+
+
+_GREP = 'grep --exclude-dir={build,htmlcov} -nHIR * --include \\*.py -e'
+
+
+def grep(project):
+    project.p()
+    try:
+        project.run(*_GREP.split(), '__version__')
+    except Exception:
+        print('---')
+        raise
+
+
+def remove_version(project):
+    if versions := list(project.path.rglob('VERSION')):
+        project.p('Found', *versions)
+        v, = versions
+        v.unlink()
+        project.git.commit(f'Remove {v.relative_to(project.path)}', v)
+
+    if project.is_singleton:
+        paths = [project.path / (project.name + '.py')]
+    else:
+        paths = (project.path / project.name).rglob('*.py')
+
+    for path in paths:
+        _remove_version(project, path)
+
+
+def _remove_version(project, path):
+    prefix = '__version__ = '
+    lines = path.read_text().splitlines()
+    if indexes := [i for i, s in enumerate(lines) if s.startswith(prefix)]:
+        line = lines.pop(indexes[0])
+        path.write_text('\n'.join(lines) + '\n')
+
+        project.p('Removed', line)
+        msg = f'Removed __version__ from {path.name}'
+        project.git.commit(msg, path)
 
 
 def replace(project):

@@ -5,6 +5,12 @@ import threading
 import time
 
 
+def mkdocs(project):
+    if is_mkdocs(project):
+        add_mkdocs(project)
+        process(project)
+
+
 def is_mkdocs(project):
     return (
         project.is_singleton
@@ -25,12 +31,6 @@ def add_mkdocs(project):
     if project.git.is_dirty:
         msg = 'Update mkdocs documentation with rec/multi 0.1.1'
         project.git.commit(msg, *written)
-
-
-def all_mkdocs(project):
-    if is_mkdocs(project):
-        add_mkdocs(project)
-        process(project)
 
 
 _PROCESS = {

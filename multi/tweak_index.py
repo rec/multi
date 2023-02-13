@@ -1,5 +1,4 @@
 from . import html_context
-import re
 import xmod
 
 
