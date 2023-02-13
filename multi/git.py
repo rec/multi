@@ -12,11 +12,11 @@ class Git:
         return self.run('git', *a, **ka)
 
     def commit(self, msg, *files, **kwargs):
-        if not self.is_dirty():
+        if not self.is_dirty(**kwargs):
             return
 
         if not files:
-            lines = self('status', '--porcelain', out=True).splitlines()
+            lines = self('status', '--porcelain', out=True, **kwargs).splitlines()
             files = [i.split()[-1] for i in lines]
 
         files = [Path(f) for f in files]

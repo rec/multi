@@ -7,7 +7,7 @@ import time
 
 def mkdocs(project):
     if is_mkdocs(project):
-        add_mkdocs(project)
+        build(project)
         process(project)
         if configs.open:
             project.open_gh()
@@ -21,7 +21,7 @@ def is_mkdocs(project):
     )
 
 
-def add_mkdocs(project):
+def build(project):
     if not is_mkdocs(project):
         return
 
