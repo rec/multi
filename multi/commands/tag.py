@@ -1,7 +1,7 @@
 from ..paths import PYPROJECT
 
 
-def remove_tag(project, *tags):
+def remove(project, *tags):
     removed = False
     for tag in tags:
         try:
@@ -17,7 +17,7 @@ def remove_tag(project, *tags):
         project.p('Tags:', *project.tags)
 
 
-def add_tag(project, *tags):
+def add(project, *tags):
     if tags:
         with project.writer():
             for tag in tags:

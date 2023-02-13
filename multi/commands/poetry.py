@@ -13,7 +13,7 @@ def bump_version(project, rule_or_version, *notes):
     project.run.gh('release', 'create', '--notes', notes)
 
 
-def run_poetry(project, *argv):
+def poetry(project, *argv):
     print(project.name + ':')
     project.run.poetry(*argv)
     print()
