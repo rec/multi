@@ -128,6 +128,12 @@ class Project:
             return Opener(self.doc_url)
         return lambda *a, **k: None
 
+    @cached_property
+    def open_gh(self):
+        if self.has_gh_pages():
+            return Opener(f'file://{self.gh_pages}/index.html')
+        return lambda *a, **k: None
+
     def has_gh_pages(self):
         return 'gh-pages' in self.branches()
 
@@ -209,7 +215,8 @@ class Project:
 
         if self.has_gh_pages():
             if path.exists():
-                self.git('pull', cwd=path)
+                if False:
+                    self.git('pull', cwd=path)
             else:
                 cache.mkdir(exist_ok=True, parents=True)
                 self.git('clone', '-b', 'gh-pages', self.git_ssh_url, path)
