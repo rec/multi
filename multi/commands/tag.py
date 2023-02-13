@@ -22,8 +22,8 @@ def add(project, *tags):
         with project.writer():
             for tag in tags:
                 if tag not in project.tags:
-                    project.tags.append(tags)
-            msg = f'Set multi.tags to {", ".join(tags)} in {PYPROJECT}'
+                    project.tags.append(tag)
+            msg = f'Add {", ".join(tags)} to multi.tags in {PYPROJECT}'
         project.git.commit(msg, PYPROJECT)
         project.p('Tags:', *project.tags)
 
