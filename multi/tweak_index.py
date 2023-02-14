@@ -28,7 +28,8 @@ def insert_before(elem, child):
 def remove(project, tree, xpath):
     if child := tree.xpath(xpath):
         e = child[0]
-        project.p('Removing', e.text[:128])
+        text = (getattr(e, 'text', None) or str(e))[:128]
+        project.p('Removing', text)
         e.getparent().remove(e)
 
 
