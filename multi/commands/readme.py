@@ -29,7 +29,7 @@ def rename_readme(project):
     project.git('mv', src, target)
     project.run('mv', tmp, target)
     project.poetry['readme'] = target
-    project.write()
+    project.write_pyproject()
     project.run.poetry('lock')
 
     msg = 'Convert README.rst to README.md'

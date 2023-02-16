@@ -1,3 +1,4 @@
+from . import SCRIPTS
 from contextlib import contextmanager
 from functools import cached_property
 from pathlib import Path
@@ -7,9 +8,6 @@ import webbrowser
 import xmod
 
 CODE_ROOT = Path('/code')
-SCRIPTS = Path(__file__).parents[1] / 'scripts'
-CACHE = Path(__file__).parents[1] / '.cache'
-GH_PAGE = CACHE / 'gh-page'
 RUN_SH = str(SCRIPTS / 'run.sh')
 
 
@@ -26,7 +24,7 @@ class Opener:
 @datacls(order=True)
 class Project:
     name: str
-    index: int
+    data: dict = datacls.field(dict)
 
     RELOAD = 'description_parts', 'multi', 'poetry', 'pyproject_file'
 
@@ -38,6 +36,10 @@ class Project:
     @cached_property
     def path(self):
         return CODE_ROOT / self.name
+
+    @property
+    def index(self) -> int:
+        return self.data['index']
 
     def joinpath(self, *path):
         return self.path.joinpath(*path)
@@ -58,11 +60,11 @@ class Project:
         return tomlkit.loads(self.pyproject_file.read_text())
 
     @contextmanager
-    def writer(self):
+    def pyproject_writer(self):
         yield self.pyproject
-        self.write()
+        self.write_pyproject()
 
-    def write(self):
+    def write_pyproject(self):
         self.pyproject_file.write_text(tomlkit.dumps(self.pyproject))
 
     @cached_property
@@ -70,13 +72,8 @@ class Project:
         return self.pyproject.setdefault('tool', {}).setdefault('poetry', {})
 
     @cached_property
-    def multi(self):
-        assert False
-        return self.pyproject.setdefault('tool', {}).setdefault('multi', {})
-
-    @cached_property
     def tags(self):
-        return self.multi.setdefault('tags', [])
+        return self.data.setdefault('tags', [])
 
     @cached_property
     def git(self):
@@ -223,3 +220,16 @@ class Project:
                 self.git('clone', '-b', 'gh-pages', self.git_ssh_url, path)
 
         return path
+
+
+
+def _write_one(p, d):
+    p.write_text(tomlkit.dumps(d))
+
+
+def _write():
+    if PROJECTS_BACK:
+        _write_one(PROJECTS_BACK_FILE, PROJECTS_BACK)
+        PROJECTS_BACK.clear()
+
+    _write_one(PROJECTS_FILE, PROJECTS_DATA)

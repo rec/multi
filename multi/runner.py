@@ -1,10 +1,9 @@
-from . import configs
-import subprocess
+from . import SCRIPTS, configs
 from pathlib import Path
 import datacls
 import shlex
+import subprocess
 
-SCRIPTS = Path(__file__).parents[1] / 'scripts'
 RUN_BASH = str(SCRIPTS / 'run.sh')
 
 

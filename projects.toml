@@ -1,86 +1,110 @@
 [abbrev]
 index = 0
 tags = ["finished", "production"]
+rank = 11
 
 [backer]
 index = 1
+rank = 22
 
 [blocks]
 index = 2
+rank = 16
 
 [cfgs]
 index = 3
+rank = 21
 
 [datacls]
 index = 4
 tags = ["working", "production"]
+rank = 5
 
 [def_main]
 index = 5
 tags = []
+rank = 14
 
 [dek]
 index = 6
 tags = ["working", "production"]
+rank = 15
 
 [dtyper]
 index = 7
 tags = ["working", "production"]
+rank = 2
 
 [editor]
 index = 8
 tags = ["working", "production"]
+rank = 4
 
 [gitz]
 index = 9
 tags = ["production", "working"]
+rank = 8
 
 [hardback]
 index = 10
+rank = 18
 
 [impall]
 index = 11
 tags = ["working", "production"]
+rank = 7
 
 [loady]
 index = 12
+rank = 19
 
 [multi]
 index = 13
+rank = 17
 
 [nc]
 index = 14
 tags = ["production", "working"]
+rank = 10
 
 [nmr]
 index = 15
+rank = 9
 
 [plur]
 index = 16
 tags = ["working", "production"]
+rank = 12
 
 [runs]
 index = 17
+rank = 20
 
 [safer]
 index = 18
 tags = ["working", "production"]
+rank = 0
 
 [sproc]
 index = 19
 tags = ["working", "production"]
+rank = 13
 
 [tdir]
 index = 20
 tags = ["working", "production"]
+rank = 1
 
 [vl8]
 index = 21
+rank = 23
 
 [wavemap]
 index = 22
 tags = ["production", "working"]
+rank = 3
 
 [xmod]
 index = 23
 tags = ["working", "production"]
+rank = 6

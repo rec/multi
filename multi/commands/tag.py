@@ -11,7 +11,7 @@ def remove(project, *tags):
             pass
 
     if removed:
-        project.write()
+        project.write_pyproject()
         msg = f'Removed {", ".join(tags)} from multi.tags in {PYPROJECT}'
         project.git.commit(msg, PYPROJECT)
         project.p('Tags:', *project.tags)
@@ -41,6 +41,6 @@ def fix(project):
             pass
 
     project.multi['tags'] = tags
-    project.write()
+    project.write_pyproject()
     project.git.commit('Fix tags in ' + PYPROJECT, PYPROJECT)
     project.p('Tags:', *project.tags)

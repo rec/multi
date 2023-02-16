@@ -1,31 +1,23 @@
+from . import ROOT
 from . project import Project
+import copy
+import tomlkit
 
-NAMES = [
-    'abbrev',
-    'backer',
-    'blocks',
-    'cfgs',
-    'datacls',
-    'def_main',
-    'dek',
-    'dtyper',
-    'editor',
-    'gitz',
-    'hardback',
-    'impall',
-    'loady',
-    'multi',
-    'nc',
-    'nmr',
-    'plur',
-    'runs',
-    'safer',
-    'sproc',
-    'tdir',
-    'vl8',
-    'wavemap',
-    'xmod',
-]
+PROJECTS_FILE = ROOT / 'projects.toml'
+PROJECTS_BACK_FILE = PROJECTS_FILE.with_suffix('.toml.bak')
+PROJECTS_DATA = tomlkit.loads(PROJECTS_FILE.read_text())
+PROJECTS_BACK = copy.deepcopy(PROJECTS_DATA)
+
+PROJECTS = {k: Project(k, v) for k, v in PROJECTS_DATA.items()}
+MULTI = PROJECTS['multi']
+
+
+def add_rank():
+    for i, name in enumerate(RANK):
+        PROJECTS[name].data['rank'] = i
+
+    write_projects()
+
 
 RANK = [
     'safer',
@@ -79,23 +71,22 @@ COLORS = [
 ]
 
 
-PROJECTS = {k: Project(k, i) for i, k in enumerate(NAMES)}
-MULTI = PROJECTS['multi']
+def color(project):
+    return COLORS[product.index % len(COLORS)]
 
 
-def color(name):
-    return COLORS[RANK.index(name) % len(COLORS)]
+def _write_one(p, d):
+    p.write_text(tomlkit.dumps(d))
 
 
-def write_projects(path):
-    d = {p.name: {'index': p.index, **p.multi} for p in PROJECTS.values()}
+def write_projects():
+    if PROJECTS_BACK != PROJECTS_DATA:
+        if PROJECTS_BACK:
+            _write_one(PROJECTS_BACK_FILE, PROJECTS_BACK)
+            PROJECTS_BACK.clear()
 
-    import tomlkit
-
-    path.write_text(tomlkit.dumps(d))
+        _write_one(PROJECTS_FILE, PROJECTS_DATA)
 
 
 if __name__ == '__main__':
-    from pathlib import Path
-
-    write_projects(Path(__file__).parents[1] / 'projects.toml')
+    add_rank()
