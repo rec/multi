@@ -16,16 +16,45 @@ command = app.command
 
 @command()
 def run(
-    command: str = Argument('name'),
-    argv: list[str] = Argument(None),
-    continue_after_error: bool = Option(False, '--continue-after-error', '-e'),
-    exclude: list[str] = Option((), '--exclude', '-x'),
-    filter: list[str] = Option(None, '--filter', '-f'),
-    _open: bool = Option(configs.open, '--open', '-o'),
-    negated_filter: list[str] = Option(None, '--negated-filter', '-n'),
-    projects: list[str] = Option(sorted(PROJECTS), '--projects', '-p'),
-    push: bool = Option(False),
-    verbose: bool = Option(configs.verbose, '--verbose', '-v'),
+    command: str = Argument(
+        'name'
+    ),
+
+    argv: list[str] = Argument(
+        None
+    ),
+
+    continue_after_error: bool = Option(
+        False, '--continue-after-error', '-e'
+    ),
+
+    exclude: list[str] = Option(
+        (), '--exclude', '-x'
+    ),
+
+    filter: list[str] = Option(
+        None, '--filter', '-f'
+    ),
+
+    _open: bool = Option(
+        configs.open, '--open', '-o'
+    ),
+
+    negated_filter: list[str] = Option(
+        None, '--negated-filter', '-n'
+    ),
+
+    projects: list[str] = Option(
+        sorted(PROJECTS), '--projects', '-p'
+    ),
+
+    push: bool = Option(
+        False
+    ),
+
+    verbose: bool = Option(
+        configs.verbose, '--verbose', '-v'
+    ),
 ):
     configs.open = _open
     configs.push = push

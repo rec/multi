@@ -18,14 +18,13 @@ def remove(project, *tags):
 
 
 def add(project, *tags):
-    if tags:
+    if adds := [t for t in tags if t not in project.tags]:
         with project.writer():
-            for tag in tags:
-                if tag not in project.tags:
-                    project.tags.append(tag)
-            msg = f'Add {", ".join(tags)} to multi.tags in {PYPROJECT}'
-        project.git.commit(msg, PYPROJECT)
-        project.p('Tags:', *project.tags)
+            project.tags.extend(adds)
+            msg = f'Add {", ".join(adds)} to multi.tags in {PYPROJECT}'
+
+            project.git.commit(msg, PYPROJECT)
+            project.p('Added tags:', *adds)
 
 
 def fix(project):

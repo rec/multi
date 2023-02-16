@@ -67,6 +67,12 @@ def process(project):
     if configs.push:
         push(project)
 
+    if configs.open:
+        if configs.push:
+            project.open_doc()
+        else:
+            project.open_gh()
+
 
 def push(project):
     if project.git.is_dirty(cwd=project.gh_pages):
@@ -90,10 +96,11 @@ def _write_doc(project, doc):
             doc = doc.with_suffix('')
         doc = doc.with_suffix(suffixes)
 
+
     rel = project.path / doc.relative_to(MKDOCS)
     rel.parent.mkdir(exist_ok=True)
     c2 = rel.exists() and rel.read_text()
-    if c2 != contents:
+    if c2 != contents and not (rel.exists() and rel.name == 'index.md'):
         rel.write_text(contents)
         yield rel
 
