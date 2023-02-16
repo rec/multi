@@ -1,0 +1,86 @@
+[abbrev]
+index = 0
+tags = ["finished", "production"]
+
+[backer]
+index = 1
+
+[blocks]
+index = 2
+
+[cfgs]
+index = 3
+
+[datacls]
+index = 4
+tags = ["working", "production"]
+
+[def_main]
+index = 5
+tags = []
+
+[dek]
+index = 6
+tags = ["working", "production"]
+
+[dtyper]
+index = 7
+tags = ["working", "production"]
+
+[editor]
+index = 8
+tags = ["working", "production"]
+
+[gitz]
+index = 9
+tags = ["production", "working"]
+
+[hardback]
+index = 10
+
+[impall]
+index = 11
+tags = ["working", "production"]
+
+[loady]
+index = 12
+
+[multi]
+index = 13
+
+[nc]
+index = 14
+tags = ["production", "working"]
+
+[nmr]
+index = 15
+
+[plur]
+index = 16
+tags = ["working", "production"]
+
+[runs]
+index = 17
+
+[safer]
+index = 18
+tags = ["working", "production"]
+
+[sproc]
+index = 19
+tags = ["working", "production"]
+
+[tdir]
+index = 20
+tags = ["working", "production"]
+
+[vl8]
+index = 21
+
+[wavemap]
+index = 22
+tags = ["production", "working"]
+
+[xmod]
+index = 23
+tags = ["working", "production"]

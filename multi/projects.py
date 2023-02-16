@@ -85,3 +85,17 @@ MULTI = PROJECTS['multi']
 
 def color(name):
     return COLORS[RANK.index(name) % len(COLORS)]
+
+
+def write_projects(path):
+    d = {p.name: {'index': p.index, **p.multi} for p in PROJECTS.values()}
+
+    import tomlkit
+
+    path.write_text(tomlkit.dumps(d))
+
+
+if __name__ == '__main__':
+    from pathlib import Path
+
+    write_projects(Path(__file__).parents[1] / 'projects.toml')
