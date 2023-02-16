@@ -8,7 +8,11 @@ PROJECTS_BACK_FILE = PROJECTS_FILE.with_suffix('.bak.toml')
 PROJECTS_DATA = tomlkit.loads(PROJECTS_FILE.read_text())
 PROJECTS_BACK = copy.deepcopy(PROJECTS_DATA)
 
-PROJECTS = {k: Project(k, v) for k, v in PROJECTS_DATA.items()}
+_PROJECTS = [Project(k, v) for k, v in PROJECTS_DATA.items()]
+_PROJECTS.sort(key=lambda p: p.data['rank'])
+PROJECTS = {p.name: p for p in _PROJECTS}
+
+
 MULTI = PROJECTS['multi']
 
 COLORS = [
