@@ -3,8 +3,8 @@ from . project import Project
 import copy
 import tomlkit
 
-PROJECTS_FILE = ROOT / 'projects.toml'
-PROJECTS_BACK_FILE = PROJECTS_FILE.with_suffix('.toml.bak')
+PROJECTS_FILE = ROOT / 'multi.toml'
+PROJECTS_BACK_FILE = PROJECTS_FILE.with_suffix('.bak.toml')
 PROJECTS_DATA = tomlkit.loads(PROJECTS_FILE.read_text())
 PROJECTS_BACK = copy.deepcopy(PROJECTS_DATA)
 
