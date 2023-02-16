@@ -11,41 +11,6 @@ PROJECTS_BACK = copy.deepcopy(PROJECTS_DATA)
 PROJECTS = {k: Project(k, v) for k, v in PROJECTS_DATA.items()}
 MULTI = PROJECTS['multi']
 
-
-def add_rank():
-    for i, name in enumerate(RANK):
-        PROJECTS[name].data['rank'] = i
-
-    write_projects()
-
-
-RANK = [
-    'safer',
-    'tdir',
-    'dtyper',
-    'wavemap',
-    'editor',
-    'datacls',
-    'xmod',
-    'impall',
-    'gitz',
-    'nmr',
-    'nc',
-    'abbrev',
-    'plur',
-    'sproc',
-    'def_main',
-    'dek',
-    'blocks',
-    'multi',
-    'hardback',
-    'loady',
-    'runs',
-    'cfgs',
-    'backer',
-    'vl8',
-]
-
 COLORS = [
     'red',
     'pink',
@@ -86,7 +51,3 @@ def write_projects():
             PROJECTS_BACK.clear()
 
         _write_one(PROJECTS_FILE, PROJECTS_DATA)
-
-
-if __name__ == '__main__':
-    add_rank()
