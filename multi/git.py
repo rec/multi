@@ -16,8 +16,8 @@ class Git:
             return
 
         if not files:
-            lines = self('status', '--porcelain', out=True, **kwargs).splitlines()
-            files = [i.split()[-1] for i in lines]
+            lines = self('status', '--porcelain', out=True, **kwargs)
+            files = [i.split()[-1] for i in lines.splitlines()]
 
         files = [Path(f) for f in files]
         if exist := [f for f in files if f.exists()]:

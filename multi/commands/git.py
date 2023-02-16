@@ -1,5 +1,6 @@
 import string
 
+
 def state(project):
     project.p(f'{project.git.is_dirty() * "*":1} {project.branch()}')
 
@@ -55,7 +56,6 @@ def remove_data(project):
         print()
         return
 
-
     project.p('git', 'rebase', f'~{remove[-1] + 3}')
     print(*(commits[i] for i in remove), sep='\n')
     print()
@@ -63,6 +63,7 @@ def remove_data(project):
     chars = string.ascii_lowercase[:remove[-1] + 2]
     remain = [c for i, c in enumerate(chars) if i not in remove]
     res = ''.join(remain)
+    assert res
 
     # project.p(f'{str(remove):15} {res}')
 

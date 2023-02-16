@@ -220,16 +220,3 @@ class Project:
                 self.git('clone', '-b', 'gh-pages', self.git_ssh_url, path)
 
         return path
-
-
-
-def _write_one(p, d):
-    p.write_text(tomlkit.dumps(d))
-
-
-def _write():
-    if PROJECTS_BACK:
-        _write_one(PROJECTS_BACK_FILE, PROJECTS_BACK)
-        PROJECTS_BACK.clear()
-
-    _write_one(PROJECTS_FILE, PROJECTS_DATA)

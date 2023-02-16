@@ -96,7 +96,6 @@ def _write_doc(project, doc):
             doc = doc.with_suffix('')
         doc = doc.with_suffix(suffixes)
 
-
     rel = project.path / doc.relative_to(MKDOCS)
     rel.parent.mkdir(exist_ok=True)
     c2 = rel.exists() and rel.read_text()

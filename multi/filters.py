@@ -25,6 +25,5 @@ def has_old_data(project):
     return 'multi' in project.pyproject['tool']
 
 
-
 prop = get_or_call
 has_tags = tag  # legacy

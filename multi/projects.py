@@ -37,14 +37,14 @@ COLORS = [
 
 
 def color(project):
-    return COLORS[product.index % len(COLORS)]
+    return COLORS[project.index % len(COLORS)]
 
 
 def _write_one(p, d):
     p.write_text(tomlkit.dumps(d))
 
 
-def write_projects():
+def write():
     if PROJECTS_BACK != PROJECTS_DATA:
         if PROJECTS_BACK:
             _write_one(PROJECTS_BACK_FILE, PROJECTS_BACK)
