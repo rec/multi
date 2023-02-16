@@ -1,3 +1,5 @@
+import string
+
 def state(project):
     project.p(f'{project.git.is_dirty() * "*":1} {project.branch()}')
 
@@ -39,3 +41,30 @@ def pull_rename(project):
         project.git('push')
 
         project.git('delete', 'rst-to-md')
+
+
+def remove_data(project):
+    commits = project.git('log', '--oneline', out=True).splitlines()
+    matches = 'multi.tag', 'mult.tag'
+    ic = enumerate(commits)
+
+    remove = [i for i, c in ic if any(m in c for m in matches)]
+
+    if True:
+        print(f'cd {project.path} && git rebase -i HEAD~30')
+        print()
+        return
+
+
+    project.p('git', 'rebase', f'~{remove[-1] + 3}')
+    print(*(commits[i] for i in remove), sep='\n')
+    print()
+
+    chars = string.ascii_lowercase[:remove[-1] + 2]
+    remain = [c for i, c in enumerate(chars) if i not in remove]
+    res = ''.join(remain)
+
+    # project.p(f'{str(remove):15} {res}')
+
+    # print(f'cd {project.path} && git permute {res}')
+    # project.git('push', '--force-with-lease')

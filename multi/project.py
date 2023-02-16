@@ -71,6 +71,7 @@ class Project:
 
     @cached_property
     def multi(self):
+        assert False
         return self.pyproject.setdefault('tool', {}).setdefault('multi', {})
 
     @cached_property
