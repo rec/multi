@@ -1,110 +1,88 @@
-[abbrev]
-index = 0
+ranked = [
+    "safer",
+    "tdir",
+    "dtyper",
+    "wavemap",
+    "editor",
+    "datacls",
+    "xmod",
+    "impall",
+    "gitz",
+    "nmr",
+    "nc",
+    "abbrev",
+    "plur",
+    "sproc",
+    "def_main",
+    "dek",
+    "blocks",
+    "multi",
+    "hardback",
+    "loady",
+    "runs",
+    "cfgs",
+    "backer",
+    "vl8",
+]
+
+[project.abbrev]
 tags = ["finished", "production"]
-rank = 11
 
-[backer]
-index = 1
-rank = 22
+[project.backer]
 
-[blocks]
-index = 2
-rank = 16
+[project.blocks]
 
-[cfgs]
-index = 3
-rank = 21
+[project.cfgs]
 
-[datacls]
-index = 4
+[project.datacls]
 tags = ["working", "production"]
-rank = 5
 
-[def_main]
-index = 5
-tags = []
-rank = 14
+[project.def_main]
 
-[dek]
-index = 6
+[project.dek]
 tags = ["working", "production"]
-rank = 15
 
-[dtyper]
-index = 7
+[project.dtyper]
 tags = ["working", "production"]
-rank = 2
 
-[editor]
-index = 8
+[project.editor]
 tags = ["working", "production"]
-rank = 4
 
-[gitz]
-index = 9
+[project.gitz]
 tags = ["production", "working"]
-rank = 8
 
-[hardback]
-index = 10
-rank = 18
+[project.hardback]
 
-[impall]
-index = 11
+[project.impall]
 tags = ["working", "production"]
-rank = 7
 
-[loady]
-index = 12
-rank = 19
+[project.loady]
 
-[multi]
-index = 13
-rank = 17
+[project.multi]
 
-[nc]
-index = 14
+[project.nc]
 tags = ["production", "working"]
-rank = 10
 
-[nmr]
-index = 15
-rank = 9
+[project.nmr]
 
-[plur]
-index = 16
+[project.plur]
 tags = ["working", "production"]
-rank = 12
 
-[runs]
-index = 17
-rank = 20
+[project.runs]
 
-[safer]
-index = 18
+[project.safer]
 tags = ["working", "production"]
-rank = 0
 
-[sproc]
-index = 19
+[project.sproc]
 tags = ["working", "production"]
-rank = 13
 
-[tdir]
-index = 20
+[project.tdir]
 tags = ["working", "production"]
-rank = 1
 
-[vl8]
-index = 21
-rank = 23
+[project.vl8]
 
-[wavemap]
-index = 22
+[project.wavemap]
 tags = ["production", "working"]
-rank = 3
 
-[xmod]
-index = 23
+[project.xmod]
 tags = ["working", "production"]
-rank = 6

@@ -1,3 +1,11 @@
+def clean_ranks():
+    from .. import projects
+
+    rank = [p.name for p in projects.PROJECTS.values()]
+    projects.MULTI_DATA['rank'] = rank
+    projects.write()
+
+
 def clean_dir(project):
     print(f'cd {project.path}')
     print('direnv reload')

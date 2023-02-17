@@ -3,6 +3,7 @@ from . projects import PROJECTS
 from functools import wraps
 from typer import Argument, Option, Typer
 import importlib
+import inspect
 import sys
 import time
 
@@ -45,11 +46,15 @@ def run(
     ),
 
     projects: list[str] = Option(
-        sorted(PROJECTS), '--projects', '-p'
+        tuple(PROJECTS), '--projects', '-p'
     ),
 
     push: bool = Option(
         False
+    ),
+
+    sort: bool = Option(
+        False, '--sort', '-s',
     ),
 
     verbose: bool = Option(
@@ -60,26 +65,35 @@ def run(
     configs.push = push
     configs.verbose = verbose
 
+    command, _, configs.args = command.partition(':')
+
     cmd = _get_callable('multi.commands.' + command)
     filt = [_make_filter(f) for f in filter or ()]
     nfilt = [_make_filter(f) for f in negated_filter or ()]
     wait_at_end = False
 
-    projects = [i for p in projects for i in p.split(':')]
-    projects = [p for p in projects if p not in exclude]
+    if not inspect.signature(cmd).parameters:
+        wait_at_end = cmd()
 
-    for name in projects:
-        p = PROJECTS[name]
-        try:
-            if all(f(p) for f in filt) and not any(f(p) for f in nfilt):
-                if cmd(p, *argv):
-                    wait_at_end = True
+    else:
+        projects = [i for p in projects for i in p.split(':')]
+        projects = [p for p in projects if p not in exclude]
 
-        except Exception as e:
-            if not continue_after_error:
-                raise
-            print('ERROR', e, file=sys.stderr)
-            fail = True
+        if sort:
+            projects.sort()
+
+        for name in projects:
+            p = PROJECTS[name]
+            try:
+                if all(f(p) for f in filt) and not any(f(p) for f in nfilt):
+                    if cmd(p, *argv):
+                        wait_at_end = True
+
+            except Exception as e:
+                if not continue_after_error:
+                    raise
+                print('ERROR', e, file=sys.stderr)
+                fail = True
 
     if wait_at_end:
         try:

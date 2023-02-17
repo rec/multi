@@ -24,7 +24,8 @@ class Opener:
 @datacls(order=True)
 class Project:
     name: str
-    data: dict = datacls.field(dict)
+    data: dict
+    rank: int
 
     RELOAD = 'description_parts', 'multi', 'poetry', 'pyproject_file'
 
@@ -36,10 +37,6 @@ class Project:
     @cached_property
     def path(self):
         return CODE_ROOT / self.name
-
-    @property
-    def index(self) -> int:
-        return self.data['index']
 
     def joinpath(self, *path):
         return self.path.joinpath(*path)
@@ -106,7 +103,7 @@ class Project:
 
     @cached_property
     def server_url(self):
-        return f'127.0.0.1:{7000 + self.index}'
+        return f'127.0.0.1:{7000 + self.rank}'
 
     @cached_property
     def git_ssh_url(self):
