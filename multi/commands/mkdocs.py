@@ -9,8 +9,6 @@ def mkdocs(project):
     if is_mkdocs(project):
         build(project)
         process(project)
-        if configs.open:
-            project.open_gh()
 
 
 def is_mkdocs(project):
@@ -76,11 +74,13 @@ def process(project):
 
 def push(project):
     if project.git.is_dirty(cwd=project.gh_pages):
-        project.p()
-        commit_id = project.commit_id()[:7]
+        lines = project.git('status', '--porcelain', out=True).splitlines()
+        if not all(i.endswith('.gz') for i in lines):
+            project.p()
+            commit_id = project.commit_id()[:7]
 
-        msg = f'Deployed {commit_id} with rec/multi version 0.1.1'
-        project.git.commit(msg, cwd=project.gh_pages)
+            msg = f'Deployed {commit_id} with rec/multi version 0.1.1'
+            project.git.commit(msg, cwd=project.gh_pages)
 
 
 def _write_doc(project, doc):
