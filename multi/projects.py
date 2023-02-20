@@ -39,8 +39,8 @@ COLORS = [
 ]
 
 
-def color(project):
-    return COLORS[project.index % len(COLORS)]
+def color(rank):
+    return COLORS[rank % len(COLORS)]
 
 
 def _write_one(p, d):

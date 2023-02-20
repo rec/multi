@@ -161,7 +161,7 @@ class Project:
     def color(self):
         from . import projects
 
-        return projects.color(self.name)
+        return projects.color(self.rank)
 
     @cached_property
     def git_tag(self):
