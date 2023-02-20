@@ -8,8 +8,9 @@ MULTI_BACK_FILE = MULTI_FILE.with_suffix('.bak.toml')
 MULTI_DATA = tomlkit.loads(MULTI_FILE.read_text())
 MULTI_BACK = copy.deepcopy(MULTI_DATA)
 PROJECTS_DATA = MULTI_DATA.setdefault('project', {})
-RANKED = MULTI_DATA['ranked']
-PROJECTS = {k: Project(k, PROJECTS_DATA[k], i) for i, k in enumerate(RANKED)}
+_RANKED = MULTI_DATA['ranked']
+_DATA = ((i, k, PROJECTS_DATA.get(k, {})) for i, k in enumerate(_RANKED))
+PROJECTS = {k: Project(k, data, i) for i, k, data in _DATA}
 
 
 MULTI = PROJECTS['multi']

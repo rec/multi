@@ -1,3 +1,8 @@
+def list_to_log(project):
+    if files := list(project.path.glob('CHANGE*')):
+        project.p(*files)
+
+
 def clean_ranks():
     from .. import projects
 

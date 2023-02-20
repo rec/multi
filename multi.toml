@@ -28,16 +28,8 @@ ranked = [
 [project.abbrev]
 tags = ["finished", "production"]
 
-[project.backer]
-
-[project.blocks]
-
-[project.cfgs]
-
 [project.datacls]
 tags = ["working", "production"]
-
-[project.def_main]
 
 [project.dek]
 tags = ["working", "production"]
@@ -51,22 +43,8 @@ tags = ["working", "production"]
 [project.gitz]
 tags = ["production", "working"]
 
-[project.hardback]
-
 [project.impall]
 tags = ["working", "production"]
-
-[project.loady]
-
-[project.multi]
-
-[project.nc]
-
-[project.nmr]
-
-[project.plur]
-
-[project.runs]
 
 [project.safer]
 tags = ["working", "production"]
@@ -76,8 +54,6 @@ tags = ["working", "production"]
 
 [project.tdir]
 tags = ["working", "production"]
-
-[project.vl8]
 
 [project.wavemap]
 tags = ["production", "working"]
