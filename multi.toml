@@ -61,12 +61,10 @@ tags = ["working", "production"]
 [project.multi]
 
 [project.nc]
-tags = ["production", "working"]
 
 [project.nmr]
 
 [project.plur]
-tags = ["working", "production"]
 
 [project.runs]
 
