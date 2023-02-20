@@ -70,7 +70,9 @@ class Project:
 
     @cached_property
     def tags(self):
-        return self.data.setdefault('tags', [])
+        from . projects import MULTI_DATA as d
+
+        return tuple(sorted(k for k, v in d['tags'].items() if self.name in v))
 
     @cached_property
     def git(self):

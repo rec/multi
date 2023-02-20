@@ -10,8 +10,8 @@ MULTI_BACK = copy.deepcopy(MULTI_DATA)
 PROJECTS_DATA = MULTI_DATA.setdefault('project', {})
 _RANKED = MULTI_DATA['ranked']
 _DATA = ((i, k, PROJECTS_DATA.get(k, {})) for i, k in enumerate(_RANKED))
-PROJECTS = {k: Project(k, data, i) for i, k, data in _DATA}
 
+PROJECTS = {k: Project(k, data, i) for i, k, data in _DATA}
 
 MULTI = PROJECTS['multi']
 

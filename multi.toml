@@ -2,19 +2,19 @@ ranked = [
     "safer",
     "tdir",
     "dtyper",
-    "wavemap",
     "editor",
-    "datacls",
     "xmod",
     "impall",
     "gitz",
-    "nmr",
-    "nc",
-    "abbrev",
-    "plur",
+    "datacls",
     "sproc",
-    "def_main",
     "dek",
+    "abbrev",
+    "wavemap",
+    "nc",
+    "nmr",
+    "plur",
+    "def_main",
     "blocks",
     "multi",
     "hardback",
@@ -25,38 +25,22 @@ ranked = [
     "vl8",
 ]
 
-[project.abbrev]
-tags = ["finished", "production"]
+[tags]
 
-[project.datacls]
-tags = ["working", "production"]
+working = [
+    "safer",
+    "tdir",
+    "dtyper",
+    "wavemap",
+    "editor",
+    "datacls",
+    "xmod",
+    "impall",
+    "gitz",
+    "sproc",
+    "dek",
+]
 
-[project.dek]
-tags = ["working", "production"]
-
-[project.dtyper]
-tags = ["working", "production"]
-
-[project.editor]
-tags = ["working", "production"]
-
-[project.gitz]
-tags = ["production", "working"]
-
-[project.impall]
-tags = ["working", "production"]
-
-[project.safer]
-tags = ["working", "production"]
-
-[project.sproc]
-tags = ["working", "production"]
-
-[project.tdir]
-tags = ["working", "production"]
-
-[project.wavemap]
-tags = ["production", "working"]
-
-[project.xmod]
-tags = ["working", "production"]
+done = [
+    "abbrev",
+]
