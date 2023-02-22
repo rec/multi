@@ -17,6 +17,7 @@ datacls = "^4.5.0"
 pyperclip = "^1.8.2"
 lxml = "^4.9.2"
 beautifulsoup4 = "^4.11.2"
+safer = "^4.4.1"
 
 
 [tool.poetry.group.dev.dependencies]

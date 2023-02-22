@@ -1012,6 +1012,18 @@ socks = ["PySocks (>=1.5.6,!=1.5.7)"]
 use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
+name = "safer"
+version = "4.4.1"
+description = "A safer file opener"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "safer-4.4.1-py3-none-any.whl", hash = "sha256:a526e4ab5d573b886bbe55326d9f286e6f1b7e77f99f684ec9aca92ac1e2e253"},
+    {file = "safer-4.4.1.tar.gz", hash = "sha256:4c7b5d4c5d440ac15d6e3b2269eeede477e0fa65f99bd5464377b0f4e3c1930f"},
+]
+
+[[package]]
 name = "six"
 version = "1.16.0"
 description = "Python 2 and 3 compatibility utilities"
@@ -1183,4 +1195,4 @@ dek = "*"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "79270bf2af1e457cf0dc2cc597401b81cefe784b7f7888330f2fd5cbcfef3337"
+content-hash = "5bfecd7329dee74379cc0780e1b0c016ed21a70a6ea84c30391692cd1f0876e2"
