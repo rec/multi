@@ -59,3 +59,18 @@ def fix_mistake(project):
         return
     project.git('commit', '--amend', '-m', 'Update README.md from dtyper.py')
     project.git('push', '--force-with-lease')
+
+
+def fix_stupid_mistake(project):
+    if project.name == 'dtyper':
+        return
+    line = project.git('l', '-1', out=True)
+    if 'dtyper' not in line:
+        return
+    msg = f'Update README.md from {project.name}.py'
+    project.p()
+    # project.p(line, msg, sep='\n')
+    if not True:
+        return
+    project.git('commit', '--amend', '-m', msg)
+    project.git('push', '--force-with-lease')
