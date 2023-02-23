@@ -1,36 +1,35 @@
-from ..paths import PROJECT_FILES
+import safer
 
 
-def open_readme(project):
-    if project.branch() == 'rst-to-md':
-        print(project.name + ':')
-        project.open_git()
-        project.open_git('tree/rst-to-md')
-
-
-def readme(project):
-    if files := sorted(project.path.glob('README.*')):
-        project.run('wc', '-l', *files)
+def fix_readme(project):
+    project.p(project.poetry['readme'])
+    if project.poetry['readme'].endswith('.me'):
+        project.poetry['readme'] = 'README.md'
+        project.write_pyproject()
+        project.git.commit('Fix typo in pyproject.toml', 'pyproject.toml')
 
 
 def rename_readme(project):
-    src = project.poetry['readme']
-    if not src.endswith('.rst'):
+    if not project.poetry['readme'].endswith('.rst'):
         return
 
-    print(project.name + ':\n')
-    root = src.removesuffix('.rst')
-    target = root + '.md'
-    tmp = root + '-tmp.md'
+    project.git('mv', 'README.rst', 'README.md')
+    readme = project.path / 'README.md'
+    url = f'https://rec.github.io/{project.name}'
+    anchor = project.api_anchor
+    link = f'\n\n### [API Documentation]({url}#{anchor})\n'
 
-    branch_name = 'rst-to-md'
-    project.git('new', branch_name)
-    project.run(f'pandoc {src} -f rst -t markdown -o {tmp}'.split())
-    project.git('mv', src, target)
-    project.run('mv', tmp, target)
-    project.poetry['readme'] = target
+    with safer.open(readme, 'w') as fp:
+        fp.write(project.comment)
+        fp.write(link)
+
+    project.poetry['readme'] = 'README.me'
     project.write_pyproject()
-    project.run.poetry('lock')
+    msg = 'Rename README.rst to README.md'
+    project.git.commit(msg, 'README.rst', 'README.md', 'pyproject.toml')
+    project.open_git()
 
-    msg = 'Convert README.rst to README.md'
-    project.git.commit(msg, src, target, *PROJECT_FILES)
+
+def readme(project):
+    project.p((project.path / 'README.md').open().readline())
+    project.write_pyproject()

@@ -7,8 +7,8 @@ import time
 
 def mkdocs(project):
     if is_mkdocs(project):
-        build(project)
-        process(project)
+        mkdocs_build(project)
+        copy_and_edit_site(project)
 
 
 def is_mkdocs(project):
@@ -19,7 +19,13 @@ def is_mkdocs(project):
     )
 
 
-def build(project):
+def open_all(project):
+    project.open_doc()
+    project.open_gh()
+    project.open_git()
+
+
+def mkdocs_build(project):
     if not is_mkdocs(project):
         return
 
@@ -36,7 +42,7 @@ _PROCESS = {
 }
 
 
-def process(project):
+def copy_and_edit_site(project):
     site = project.path / 'site'
     if not site.exists():
         return
@@ -51,6 +57,7 @@ def process(project):
 
             if configs.verbose:
                 print('shutil.copyfile', src, target)
+
             shutil.copyfile(src, target)
             if process := _PROCESS.get(target.name):
                 process(project, target)
@@ -64,7 +71,7 @@ def process(project):
 
     project.p(*results)
     if configs.push:
-        push(project)
+        push_site_changes(project)
 
     if configs.open:
         if configs.push:
@@ -73,7 +80,7 @@ def process(project):
             project.open_gh()
 
 
-def push(project):
+def push_site_changes(project):
     if not project.git.is_dirty(cwd=project.gh_pages):
         print('no change')
         return
