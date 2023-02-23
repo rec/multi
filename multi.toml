@@ -8,8 +8,8 @@ ranked = [
     "gitz",
     "datacls",
     "sproc",
-    "dek",
     "abbrev",
+    "dek",
     "wavemap",
     "nc",
     "nmr",
@@ -43,4 +43,9 @@ working = [
 
 done = [
     "abbrev",
+]
+
+legacy = [
+    "gitz",
+    "wavemap",
 ]

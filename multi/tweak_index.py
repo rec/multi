@@ -8,7 +8,8 @@ def tweak_index(project, path):
     with html_context(path) as tree:
         fix_title1(project, tree)
         fix_title2(project, tree)
-        fix_api(tree)
+        add_api_documentation(project, tree)
+        remove_extra_link(project, tree)
 
 
 def fix_title1(project, tree):
@@ -17,6 +18,10 @@ def fix_title1(project, tree):
 
 def fix_title2(project, tree):
     remove(project, tree, f'//h1[starts-with(@id, "{project.name}-")]')
+
+
+def remove_extra_link(project, tree):
+    remove(project, tree, f'//a[@class="md-nav__link md-nav__link--active"]')
 
 
 def insert_before(elem, child):
@@ -33,10 +38,25 @@ def remove(project, tree, xpath):
         e.getparent().remove(e)
 
 
-def fix_api(tree):
-    if child := tree.xpath('//div[@class="doc doc-children"]'):
-        e = etree.Element('h1')
-        e.text = 'API Documentation'
-        child[0].addprevious(etree.Element('hr'))
-        child[0].addprevious(etree.Element('p'))
-        child[0].addprevious(e)
+def add_api_documentation(project, tree):
+    doc_children = tree.xpath('//div[@class="doc doc-children"]')
+    assert doc_children
+
+    if False:
+        nav_list = tree.xpath('//ul[@class="md-nav__list"]')
+
+        assert nav_list
+        print(len(nav_list))
+        print(dir(nav_list))
+        print(*(dict(i.items()) for i in nav_list), sep='\n')
+
+        item = nav_list[0]
+        print(len(item))
+        print(item[0].items(), item[0].text)
+
+    e = etree.Element('h1', id=project.api_anchor)
+    e.text = 'API Documentation'
+    child = doc_children[0]
+    child.addprevious(etree.Element('hr'))
+    child.addprevious(etree.Element('p'))
+    child.addprevious(e)

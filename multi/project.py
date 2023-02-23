@@ -219,3 +219,7 @@ class Project:
                 self.git('clone', '-b', 'gh-pages', self.git_ssh_url, path)
 
         return path
+
+    @cached_property
+    def api_anchor(self):
+        return f'{self.name}--api-documentation'

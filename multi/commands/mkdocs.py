@@ -59,6 +59,7 @@ def process(project):
                 results.append(target)
 
     if not results:
+        project.p('no results')
         return
 
     project.p(*results)
@@ -73,18 +74,33 @@ def process(project):
 
 
 def push(project):
-    if project.git.is_dirty(cwd=project.gh_pages):
-        lines = project.git('status', '--porcelain', out=True).splitlines()
-        if not all(i.endswith('.gz') for i in lines):
-            project.p()
-            commit_id = project.commit_id()[:7]
+    if not project.git.is_dirty(cwd=project.gh_pages):
+        print('no change')
+        return
 
-            msg = f'Deployed {commit_id} with rec/multi version 0.1.1'
-            project.git.commit(msg, cwd=project.gh_pages)
+    lines = project.git('status', '--porcelain', out=True, cwd=project.gh_pages)
+    lines = lines.splitlines()
+    if all(i.endswith('.gz') for i in lines):
+        print('no files', lines)
+        return
+
+    project.p()
+    commit_id = project.commit_id()[:7]
+
+    msg = f'Deployed {commit_id} with rec/multi version 0.1.1'
+    project.git.commit(msg, cwd=project.gh_pages)
+
+
+def _accept(project, doc):
+    if not doc.exists():
+        return True
+    if doc.is_dir():
+        return False
+    return doc.name == 'index.md' and 'custom_index' in project.tags
 
 
 def _write_doc(project, doc):
-    if doc.is_dir():
+    if not _accept(project, doc):
         return
 
     contents = doc.read_text()
@@ -96,10 +112,10 @@ def _write_doc(project, doc):
             doc = doc.with_suffix('')
         doc = doc.with_suffix(suffixes)
 
-    rel = project.path / doc.relative_to(MKDOCS)
-    rel.parent.mkdir(exist_ok=True)
-    c2 = rel.exists() and rel.read_text()
-    if c2 != contents and not (rel.exists() and rel.name == 'index.md'):
+    p = project.path / doc.relative_to(MKDOCS)
+    p.parent.mkdir(exist_ok=True)
+    c2 = p.exists() and p.read_text()
+    if c2 != contents:
         rel.write_text(contents)
         yield rel
 
