@@ -49,3 +49,7 @@ legacy = [
     "gitz",
     "wavemap",
 ]
+
+[api_path]
+
+dek = "dek.dek"

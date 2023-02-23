@@ -27,7 +27,7 @@ class Git:
         self('push', **kwargs)
 
     def is_dirty(self, **kwargs):
-        lines = self('status', '--porcelain', out=True).splitlines()
+        lines = self('status', '--porcelain', out=True, **kwargs).splitlines()
         return any(not i.startswith('??') for i in lines)
 
     def status(self):

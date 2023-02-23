@@ -24,7 +24,6 @@ class Opener:
 @datacls(order=True)
 class Project:
     name: str
-    data: dict
     rank: int
 
     RELOAD = 'description_parts', 'multi', 'poetry', 'pyproject_file'
@@ -223,3 +222,27 @@ class Project:
     @cached_property
     def api_anchor(self):
         return f'{self.name}--api-documentation'
+
+    def get_value(self, key, default=None):
+        from . import projects
+
+        return projects.DATA.get(key, {}).get(self.name, default)
+
+    def set_value(self, key, value):
+        from . import projects
+
+        projects.DATA.setdefault(key, {})[self.name] = value
+        projects.write()
+
+    @property
+    def api_name(self):
+        return self.get_value('api_path', self.name)
+
+
+def _get(*keys):
+    from . projects import DATA
+
+    d = DATA
+    for k in keys:
+        d = d.setdefault(k, {})
+    return d

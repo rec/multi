@@ -84,13 +84,11 @@ def copy_and_edit_site(project):
 
 def push_site_changes(project):
     if not project.git.is_dirty(cwd=project.gh_pages):
-        print('no change')
         return
 
     lines = project.git('status', '--porcelain', out=True, cwd=project.gh_pages)
     lines = lines.splitlines()
     if all(i.endswith('.gz') for i in lines):
-        print('no files', lines)
         return
 
     project.p()

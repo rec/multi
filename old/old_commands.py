@@ -17,7 +17,7 @@ def clean_ranks():
     from .. import projects
 
     rank = [p.name for p in projects.PROJECTS.values()]
-    projects.MULTI_DATA['rank'] = rank
+    projects.DATA['rank'] = rank
     projects.write()
 
 

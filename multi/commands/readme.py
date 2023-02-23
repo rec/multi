@@ -1,3 +1,4 @@
+from .. import configs
 import safer
 
 
@@ -49,28 +50,5 @@ def write_readme(project):
 
     _write_readme(project)
 
-    if contents != fname.read_text():
+    if configs.push and contents != fname.read_text():
         project.git.commit(f'Update README.md from {project.name}.py', fname)
-
-
-def fix_mistake(project):
-    line = project.git('l', '-1', out=True)
-    if 'README.py' not in line:
-        return
-    project.git('commit', '--amend', '-m', 'Update README.md from dtyper.py')
-    project.git('push', '--force-with-lease')
-
-
-def fix_stupid_mistake(project):
-    if project.name == 'dtyper':
-        return
-    line = project.git('l', '-1', out=True)
-    if 'dtyper' not in line:
-        return
-    msg = f'Update README.md from {project.name}.py'
-    project.p()
-    # project.p(line, msg, sep='\n')
-    if not True:
-        return
-    project.git('commit', '--amend', '-m', msg)
-    project.git('push', '--force-with-lease')

@@ -3,15 +3,13 @@ from . project import Project
 import copy
 import tomlkit
 
-MULTI_FILE = ROOT / 'multi.toml'
-MULTI_BACK_FILE = MULTI_FILE.with_suffix('.bak.toml')
-MULTI_DATA = tomlkit.loads(MULTI_FILE.read_text())
-MULTI_BACK = copy.deepcopy(MULTI_DATA)
-PROJECTS_DATA = MULTI_DATA.setdefault('project', {})
-_RANKED = MULTI_DATA['ranked']
-_DATA = ((i, k, PROJECTS_DATA.get(k, {})) for i, k in enumerate(_RANKED))
+FILE = ROOT / 'multi.toml'
+BACK_FILE = FILE.with_suffix('.bak.toml')
+DATA = tomlkit.loads(FILE.read_text())
+BACK = copy.deepcopy(DATA)
+_RANKED = DATA['ranked']
 
-PROJECTS = {k: Project(k, data, i) for i, k, data in _DATA}
+PROJECTS = {k: Project(k, i) for i, k in enumerate(_RANKED)}
 
 MULTI = PROJECTS['multi']
 
@@ -49,9 +47,9 @@ def _write_one(p, d):
 
 
 def write():
-    if MULTI_BACK != MULTI_DATA:
-        if MULTI_BACK:
-            _write_one(MULTI_BACK_FILE, MULTI_BACK)
-            MULTI_BACK.clear()
+    if BACK != DATA:
+        if BACK:
+            _write_one(BACK_FILE, BACK)
+            BACK.clear()
 
-        _write_one(MULTI_FILE, MULTI_DATA)
+        _write_one(FILE, DATA)
