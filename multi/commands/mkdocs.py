@@ -1,3 +1,4 @@
+from . import readme
 from .. import configs, tweak_index
 from .. paths import MKDOCS, MKDOCS_BINARY
 import shutil
@@ -9,7 +10,7 @@ def mkdocs(project):
     if is_mkdocs(project):
         mkdocs_build(project)
         copy_and_edit_site(project)
-
+        readme.write_readme()
 
 def is_mkdocs(project):
     return (

@@ -1,6 +1,10 @@
 import safer
 
 
+def filename(project):
+    return project.path / 'README.md'
+
+
 def fix_readme(project):
     project.p(project.poetry['readme'])
     if project.poetry['readme'].endswith('.me'):
@@ -14,16 +18,10 @@ def rename_readme(project):
         return
 
     project.git('mv', 'README.rst', 'README.md')
-    readme = project.path / 'README.md'
-    url = f'https://rec.github.io/{project.name}'
-    anchor = project.api_anchor
-    link = f'\n\n### [API Documentation]({url}#{anchor})\n'
 
-    with safer.open(readme, 'w') as fp:
-        fp.write(project.comment)
-        fp.write(link)
+    _write_readme(project)
 
-    project.poetry['readme'] = 'README.me'
+    project.poetry['readme'] = 'README.md'
     project.write_pyproject()
     msg = 'Rename README.rst to README.md'
     project.git.commit(msg, 'README.rst', 'README.md', 'pyproject.toml')
@@ -31,5 +29,33 @@ def rename_readme(project):
 
 
 def readme(project):
-    project.p((project.path / 'README.md').open().readline())
+    project.p(filename(project).open().readline())
     project.write_pyproject()
+
+
+def _write_readme(project):
+    url = f'https://rec.github.io/{project.name}'
+    anchor = project.api_anchor
+    link = f'\n\n### [API Documentation]({url}#{anchor})\n'
+
+    with safer.open(filename(project), 'w') as fp:
+        fp.write(project.comment)
+        fp.write(link)
+
+
+def write_readme(project):
+    fname = filename(project)
+    contents = fname.read_text()
+
+    _write_readme(project)
+
+    if contents != fname.read_text():
+        project.git.commit(f'Update README.py from {project.name}.py', fname)
+
+
+def fix_mistake(project):
+    line = project.git('l', '-1', out=True)
+    if 'README.py' not in line:
+        return
+    project.git('commit', '--amend', '-m', 'Update README.md from dtyper.py')
+    project.git('push', '--force-with-lease')
