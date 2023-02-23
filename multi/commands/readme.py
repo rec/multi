@@ -50,7 +50,7 @@ def write_readme(project):
     _write_readme(project)
 
     if contents != fname.read_text():
-        project.git.commit(f'Update README.py from {project.name}.py', fname)
+        project.git.commit(f'Update README.md from {project.name}.py', fname)
 
 
 def fix_mistake(project):

@@ -10,7 +10,8 @@ def mkdocs(project):
     if is_mkdocs(project):
         mkdocs_build(project)
         copy_and_edit_site(project)
-        readme.write_readme()
+        readme.write_readme(project)
+
 
 def is_mkdocs(project):
     return (

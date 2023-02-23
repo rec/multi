@@ -27,11 +27,8 @@ class Git:
         self('push', **kwargs)
 
     def is_dirty(self, **kwargs):
-        try:
-            self('diff-index', '--quiet', 'HEAD', '--', **kwargs)
-            return False
-        except subprocess.CalledProcessError:
-            return True
+        lines = self('status', '--porcelain', out=True).splitlines()
+        return any(not i.startswith('??') for i in lines)
 
     def status(self):
         if self.is_dirty():
