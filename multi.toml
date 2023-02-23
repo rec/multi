@@ -50,6 +50,8 @@ legacy = [
     "wavemap",
 ]
 
-[api_path]
+[api_documentation]
 
-dek = "dek.dek"
+dek = false
+datacls = false
+impall = false

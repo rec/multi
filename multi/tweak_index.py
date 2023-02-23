@@ -39,8 +39,13 @@ def remove(project, tree, xpath):
 
 
 def add_api_documentation(project, tree):
+    if not project.get_value('api_documentation', True):
+        return
+
     doc_children = tree.xpath('//div[@class="doc doc-children"]')
-    assert doc_children
+    if not doc_children:
+        print('Did not add doc_children')
+        return
 
     if False:
         nav_list = tree.xpath('//ul[@class="md-nav__list"]')

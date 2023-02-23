@@ -49,7 +49,7 @@ class Runner:
         return self.in_venv('poetry', '--no-ansi', *args, **kwargs)
 
     def gh(self, *args, **kwargs):
-        return self.run('gh', *args, **kwargs)
+        return self('gh', *args, **kwargs)
 
     def commit(self, msg, *files):
         files = [str(i) for i in files]

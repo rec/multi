@@ -103,7 +103,7 @@ def _accept(project, doc):
         return True
     if doc.is_dir():
         return False
-    return doc.name == 'index.md' and 'custom_index' in project.tags
+    return not (doc.name == 'index.md' and 'custom_index' in project.tags)
 
 
 def _write_doc(project, doc):
@@ -123,8 +123,8 @@ def _write_doc(project, doc):
     p.parent.mkdir(exist_ok=True)
     c2 = p.exists() and p.read_text()
     if c2 != contents:
-        rel.write_text(contents)
-        yield rel
+        p.write_text(contents)
+        yield p
 
 
 def serve(project, *args):

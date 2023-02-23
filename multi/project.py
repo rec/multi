@@ -69,7 +69,7 @@ class Project:
 
     @cached_property
     def tags(self):
-        from . projects import MULTI_DATA as d
+        from . projects import DATA as d
 
         return tuple(sorted(k for k, v in d['tags'].items() if self.name in v))
 

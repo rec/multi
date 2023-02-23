@@ -1,7 +1,7 @@
 from .. paths import PYPROJECT
 
 
-def bump_version(project, rule_or_version, *notes):
+def bump_version(project, rule_or_version):
     project.run.poetry('version', rule_or_version)
     project.reload()
 
@@ -9,8 +9,7 @@ def bump_version(project, rule_or_version, *notes):
     project.git.commit(f'Update to version {version}', PYPROJECT)
     project.git('tag', version)
     project.git('push', '--tag', '--force-with-lease')
-    notes = ' '.join(notes).strip() or f'Version {version}'
-    project.run.gh('release', 'create', '--notes', notes)
+    project.run('gh', 'release', 'create', version, '--generate-notes')
 
 
 def poetry(project, *argv):
