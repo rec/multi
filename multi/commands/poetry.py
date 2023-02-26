@@ -10,6 +10,7 @@ def bump_version(project, rule_or_version):
     project.git('tag', version)
     project.git('push', '--tag', '--force-with-lease')
     project.run('gh', 'release', 'create', version, '--generate-notes')
+    project.poetry('publish', '--build')
 
 
 def poetry(project, *argv):
