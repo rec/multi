@@ -12,6 +12,7 @@ ranked = [
     "dek",
     "wavemap",
     "nc",
+    "vl8",
     "nmr",
     "plur",
     "def_main",
@@ -22,32 +23,43 @@ ranked = [
     "runs",
     "cfgs",
     "backer",
-    "vl8",
 ]
 
 [tags]
 
-working = [
-    "safer",
-    "tdir",
-    "dtyper",
-    "wavemap",
-    "editor",
-    "datacls",
-    "xmod",
-    "impall",
-    "gitz",
-    "sproc",
-    "dek",
+experimental = [
+    "backer",
+    "cfgs",
+    "hardback",
+    "nmr",
+    "vl8",
 ]
 
-done = [
+beta = [
+    "blocks",
+    "def_main",
+    "nc",
+    "plur",
+]
+
+mothballed = [
+    "loady",
+    "runs",
+    "wavemap",
+]
+
+production = [
     "abbrev",
-]
-
-legacy = [
+    "datacls",
+    "dek",
+    "dtyper",
+    "editor",
     "gitz",
-    "wavemap",
+    "impall",
+    "safer",
+    "sproc",
+    "tdir",
+    "xmod",
 ]
 
 [api_documentation]

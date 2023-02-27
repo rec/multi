@@ -1,3 +1,26 @@
+def fix_readme(project):
+    project.p(project.poetry['readme'])
+    if project.poetry['readme'].endswith('.me'):
+        project.poetry['readme'] = 'README.md'
+        project.write_pyproject()
+        project.git.commit('Fix typo in pyproject.toml', 'pyproject.toml')
+
+
+def rename_readme(project):
+    if not project.poetry['readme'].endswith('.rst'):
+        return
+
+    project.git('mv', 'README.rst', 'README.md')
+
+    _write_readme(project)
+
+    project.poetry['readme'] = 'README.md'
+    project.write_pyproject()
+    msg = 'Rename README.rst to README.md'
+    project.git.commit(msg, 'README.rst', 'README.md', 'pyproject.toml')
+    project.open_git()
+
+
 def old_grep(project):
     project.p()
     filename = project.name + '.py'

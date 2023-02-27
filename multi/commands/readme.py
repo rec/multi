@@ -1,32 +1,29 @@
-from .. import configs
+from .. import configs, projects, project
 import safer
+
+CATEGORIES = 'production', 'beta', 'experimental', 'mothballed'
+REC = project.Project('rec', len(projects.PROJECTS))
+
+"""
+Per project data:
+"""
+
+
+def rec():
+    categories = {c: [] for c in CATEGORIES}
+    tags = projects.DATA['tags']
+    for p in projects.PROJECTS.values():
+        for c in CATEGORIES:
+            if p.name in tags[c]:
+                categories[c].append(p)
+
+
+    for c, prs in CATEGORIES.items():
+        p = 1
 
 
 def filename(project):
     return project.path / 'README.md'
-
-
-def fix_readme(project):
-    project.p(project.poetry['readme'])
-    if project.poetry['readme'].endswith('.me'):
-        project.poetry['readme'] = 'README.md'
-        project.write_pyproject()
-        project.git.commit('Fix typo in pyproject.toml', 'pyproject.toml')
-
-
-def rename_readme(project):
-    if not project.poetry['readme'].endswith('.rst'):
-        return
-
-    project.git('mv', 'README.rst', 'README.md')
-
-    _write_readme(project)
-
-    project.poetry['readme'] = 'README.md'
-    project.write_pyproject()
-    msg = 'Rename README.rst to README.md'
-    project.git.commit(msg, 'README.rst', 'README.md', 'pyproject.toml')
-    project.open_git()
 
 
 def readme(project):
