@@ -21,7 +21,7 @@ def fix_title2(project, tree):
 
 
 def remove_extra_link(project, tree):
-    remove(project, tree, f'//a[@class="md-nav__link md-nav__link--active"]')
+    remove(project, tree, '//a[@class="md-nav__link md-nav__link--active"]')
 
 
 def insert_before(elem, child):

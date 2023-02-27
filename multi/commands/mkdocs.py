@@ -86,7 +86,9 @@ def push_site_changes(project):
     if not project.git.is_dirty(cwd=project.gh_pages):
         return
 
-    lines = project.git('status', '--porcelain', out=True, cwd=project.gh_pages)
+    lines = project.git(
+        'status', '--porcelain', out=True, cwd=project.gh_pages
+    )
     lines = lines.splitlines()
     if all(i.endswith('.gz') for i in lines):
         return

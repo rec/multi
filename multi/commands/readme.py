@@ -17,7 +17,6 @@ def rec():
             if p.name in tags[c]:
                 categories[c].append(p)
 
-
     for c, prs in CATEGORIES.items():
         p = 1
 
