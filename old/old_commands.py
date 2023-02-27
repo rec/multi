@@ -1,3 +1,18 @@
+def get_stars(project):
+    import re
+    # DOES NOT WORK (need to render JS)
+    # Star this repository (361962)
+
+    def get_page(project):
+        return requests.get(project.git_url).text
+
+    STARS_RE = re.compile(r'="Star this repository \((\d+)\)"')
+
+    if m := STARS_RE.match(get_page(project)):
+        project.p(int(m.group(1)))
+    project.p('No stars')
+
+
 def fix_readme(project):
     project.p(project.poetry['readme'])
     if project.poetry['readme'].endswith('.me'):

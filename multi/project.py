@@ -3,6 +3,7 @@ from contextlib import contextmanager
 from functools import cached_property
 from pathlib import Path
 import datacls
+import json
 import tomlkit
 import webbrowser
 import xmod
@@ -237,6 +238,17 @@ class Project:
     @property
     def api_name(self):
         return self.get_value('api_path', self.name)
+
+    @cached_property
+    def github_api_url(self):
+        return f'https://api.github.com/repos/{self.user}/{self.name}'
+
+    def gh(self, cmd):
+        return json.loads(self.run('gh', 'api', cmd, out=True))
+
+    @cached_property
+    def github_info(self):
+        return self.gh('repos/{owner}/{repo}')
 
 
 def _get(*keys):
