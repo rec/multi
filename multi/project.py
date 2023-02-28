@@ -54,6 +54,8 @@ class Project:
 
     @cached_property
     def pyproject(self):
+        if not self.pyproject_file.exists():
+            return {}
         return tomlkit.loads(self.pyproject_file.read_text())
 
     @contextmanager
@@ -147,8 +149,14 @@ class Project:
         return (self.path / self.name).with_suffix('.py').exists()
 
     @cached_property
+    def description(self):
+        if self.poetry:
+            return self.poetry['description']
+        return _DESCRIPTIONS.get(self.name, self.name)
+
+    @cached_property
     def description_parts(self):
-        d = self.poetry['description']
+        d = self.description
         items = list(enumerate(d))
 
         begin = next(i for i, c in items if c.isascii())
@@ -258,3 +266,9 @@ def _get(*keys):
     for k in keys:
         d = d.setdefault(k, {})
     return d
+
+
+_DESCRIPTIONS = {
+    'dotfiles': '⚫ My dotfiles ⚫',
+    'test': '❓ Tiny bits of experimental code ❓',
+}

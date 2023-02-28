@@ -6,7 +6,7 @@ def exists(project, *args):
 
 
 def has_emoji(project):
-    return not project.poetry['description'].isascii()
+    return not project.description.isascii()
 
 
 def needs_release(project):

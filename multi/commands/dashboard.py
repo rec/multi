@@ -89,9 +89,10 @@ def make_table(name, projects):
 
 
 VERSION = re.compile(r'ersion v\d+\.\d+\.\d+$').search
+SPLIT = '<!--- Automatically generated content below -->'
 
 
-def rec():
+def dashboard():
     categories = {c: [] for c in CATEGORIES}
     tags = projects.DATA['tags']
     for p in projects.PROJECTS.values():
@@ -101,6 +102,9 @@ def rec():
 
     tables = (make_table(k, v) for k, v in categories.items())
     result = '\n<p>\n'.join(tables)
-    (REC.path / 'README.md').write_text('# Tom Ritchford\n' + result)
+    readme = REC.path / 'README.md'
+    save, _ = readme.read_text().split(SPLIT)
+    readme.write_text(save + SPLIT + result)
+
     REC.git('commit', '--amend', 'README.md', '--no-edit')
     REC.git('push', '-f')
