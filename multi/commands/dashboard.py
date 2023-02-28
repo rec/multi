@@ -16,6 +16,11 @@ Latest commit:  [date] [message]
 
 MSG = 'Automatically update README.md'
 
+
+def resume():
+    from .. import resume
+
+
 def dashboard():
     categories = {c: [] for c in CATEGORIES}
     tags = projects.DATA['tags']
@@ -30,10 +35,12 @@ def dashboard():
     save, _ = readme.read_text().split(SPLIT)
     readme.write_text(save + SPLIT + result)
 
-    line, = REC.git.commits('-1')
     if not REC.git.is_dirty():
         print('No change')
-    elif line.strip().endswith(MSG):
+        return
+
+    line, = REC.git.commits('-1')
+    if line.strip().endswith(MSG):
         print('Amending')
         REC.git('commit', '--amend', 'README.md', '--no-edit')
         REC.git('push', '-f')

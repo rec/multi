@@ -3,11 +3,11 @@ ranked = [
     "tdir",
     "dtyper",
     "editor",
+    "sproc",
     "xmod",
     "impall",
     "gitz",
     "datacls",
-    "sproc",
     "abbrev",
     "dek",
     "wavemap",
@@ -23,8 +23,8 @@ ranked = [
     "runs",
     "cfgs",
     "backer",
-    "dotfiles",
     "test",
+    "dotfiles",
 ]
 
 [tags]
