@@ -11,17 +11,20 @@ RUN_BASH = str(SCRIPTS / 'run.sh')
 class Runner:
     path: Path | None = None
 
-    def __call__(self, *args, out=False, arm=True, **kwargs):
+    def __call__(self, *args, out=False, arm=True, complete=False, **kwargs):
         if len(args) == 1:
             args = args[0]
             if isinstance(args, str):
                 args = shlex.split(args)
         args = [str(a) for a in args]
 
-        if out:
+        if out or complete:
             kwargs.setdefault('stdout', subprocess.PIPE)
 
-        kwargs.setdefault('check', True)
+        if complete and not out:
+            kwargs.setdefault('stderr', subprocess.PIPE)
+
+        kwargs.setdefault('check', not complete)
         kwargs.setdefault('text', True)
         kwargs.setdefault('cwd', self.path)
 
@@ -31,12 +34,7 @@ class Runner:
         if configs.verbose:
             print('$', *args)
         r = subprocess.run(args, **kwargs)
-        if not out:
-            return r
-        elif r:
-            return r.stdout
-        else:
-            return ''
+        return (r and r.stdout or '') if out else r
 
     def out(self, *args, out=True, **kwargs):
         """Run and return stdout as a string on success, else ''"""

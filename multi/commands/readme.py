@@ -6,7 +6,7 @@ import safer
 
 CATEGORIES = 'production', 'beta', 'experimental', 'mothballed'
 REC = project.Project('rec', len(projects.PROJECTS))
-LOG_FLAGS = '--pretty=format:%h|%cd|%s', '--date=format:%C/%m/%d-%H:%M'
+LOG_FLAGS = '--pretty=format:%h|%cd|%s', '--date=format:%g/%m/%d'
 """
 Per project data:
 
@@ -21,50 +21,31 @@ def _a(href, contents):
     return f'<a href="{href}">{contents}</a>'
 
 
-def _commit1(project, label, log):
-    commit_id, date, tz, message = log.split('|', maxsplit=3)
-
-    if tz == '+0100':
-        tz = 'CET '
-    elif tz == '+0200':
-        tz = 'CEST'
-
-    date = f'{date} {tz}'
-    url = f'{project.git_url}/commit/{commit_id}'
-
-    return f'{label}: {_a(url, date)}: {message}'
-
-
-def summary1(project):
-    desc = project.poetry['description']
-    stars = project.github_info['stargazers_count']
-    star = stars > 1 and f' (🌟 {stars})' or ''
-    desc_line = _a(project.git_url, desc) + star
-
-    commits = project.git('log', *LOG_FLAGS, out=True).splitlines()
-    latest_line = _commit1(project, 'Latest commit', commits[0])
-
-    if commit := next((c for c in commits if VERSION(c)), None):
-        release_line = _commit1(project, f'Latest release', commit)
-    else:
-        release_line = '(Unreleased)'
-
-    lines = desc_line, release_line, latest_line
-    summary = '\n<br>\n'.join(lines)
-    return summary
-
-
 def _commit(project, label, log):
     commit_id, date, message = (p.strip() for p in log.split('|', maxsplit=2))
 
     url = f'{project.git_url}/commit/{commit_id}'
-    link = _a(url, date)
+    link = _a(url, f'<code>{date}</code>')
 
-    return f'{label} {link} {message}'
+    return f'{link}{label}<code>{message}</code>'
+
+
+def _pad(line, amount=105, offset=0):
+    count = offset + (amount - len(line)) // 2
+    spaces = count * '&nbsp;'
+    return spaces + line
+
+
+_COUNT_OFFSETS = {
+    'blocks': -12,
+    'plur': -2,
+    'nmr': -2,
+    'wavemap': +2,
+}
 
 
 def summary(project):
-    e1, _, e2 = project.description_parts
+    e1, desc, e2 = project.description_parts
     name = f'<code>{project.name}</code>'
     link = _a(project.git_url, name)
 
@@ -74,17 +55,20 @@ def summary(project):
         print(project.github_info)
         raise
     star = stars > 1 and f' (🌟 {stars})' or ''
-    desc_line = f'{e1} {link} {e2}' + star
+
+    offset = _COUNT_OFFSETS.get(project.name, 0)
+    desc_line = _pad(f'{e1} {link} {e2}' + star, offset=offset)
+    desc_line2 = _pad(f'<i>{desc}</i>', 55)
 
     commits = project.git('log', *LOG_FLAGS, out=True).splitlines()
-    latest_line = _commit(project, 'Latest', commits[0])
+    latest_line = _commit(project, '🕰', commits[0])
 
     if commit := next((c for c in commits if VERSION(c)), None):
-        release_line = _commit(project, f'Release', commit)
+        release_line = _commit(project, f'🟢', commit)
     else:
-        release_line = '(Unreleased)'
+        release_line = ''
 
-    lines = desc_line, release_line, latest_line
+    lines = desc_line, desc_line2, release_line, latest_line
     summary = '\n<br>\n'.join(lines)
     return summary
 
@@ -120,7 +104,9 @@ def rec():
 
     tables = (make_table(k, v) for k, v in categories.items())
     result = '\n<p>\n'.join(tables)
-    print(result)
+    (REC.path / 'README.md').write_text('# Tom Ritchford\n' + result)
+    REC.git('commit', '--amend', 'README.md', '--no-edit')
+    REC.git('push', '-f')
 
 
 def filename(project):

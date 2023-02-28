@@ -243,12 +243,12 @@ class Project:
     def github_api_url(self):
         return f'https://api.github.com/repos/{self.user}/{self.name}'
 
-    def gh(self, cmd):
-        return json.loads(self.run('gh', 'api', cmd, out=True))
+    def gh(self, *cmd):
+        return json.loads(self.run('gh', 'api', *cmd, out=True))
 
     @cached_property
     def github_info(self):
-        return self.gh('repos/{owner}/{repo}')
+        return self.gh('repos/{owner}/{repo}', '--cache', '3600s')
 
 
 def _get(*keys):
