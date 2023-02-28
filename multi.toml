@@ -23,6 +23,8 @@ ranked = [
     "runs",
     "cfgs",
     "backer",
+    "dotfiles",
+    "test",
 ]
 
 [tags]
@@ -46,6 +48,12 @@ mothballed = [
     "loady",
     "runs",
     "wavemap",
+]
+
+personal = [
+    "dotfiles",
+    "multi",
+    "test",
 ]
 
 production = [

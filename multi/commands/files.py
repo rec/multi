@@ -16,6 +16,7 @@ def _fix_lines(lines):
             _, line = line.split(']', maxsplit=1)
             yield file_location.strip() + line
 
+
 def _glob(project, *globs):
     return sorted(f for g in globs for f in project.path.glob(g))
 

@@ -1,6 +1,11 @@
 import string
 
 
+def commit(project, *args):
+    if project.name != 'multi' and project.git.is_dirty():
+        project.git('commit', '-am', ' '.join(args))
+
+
 def state(project):
     project.p(f'{project.git.is_dirty() * "*":1} {project.branch()}')
 
