@@ -50,7 +50,7 @@ def pull_rename(project):
 
 
 def remove_data(project):
-    commits = project.git('log', '--oneline', out=True).splitlines()
+    commits = project.git('log', '--oneline', out=True)
     matches = 'multi.tag', 'mult.tag'
     ic = enumerate(commits)
 

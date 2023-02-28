@@ -2,13 +2,15 @@ from pathlib import Path
 from typing import Callable
 import datacls
 
+LOG_FLAGS = '--pretty=format:%h|%cd|%s', '--date=format:%g/%m/%d'
+
 
 @datacls
 class Git:
     run: Callable
 
     def __call__(self, *a, **ka):
-        return self.run('git', *a, **ka)
+        return self.run('git', *a, **ka).splitlines()
 
     def commit(self, msg, *files, **kwargs):
         if not self.is_dirty(**kwargs):
@@ -16,7 +18,7 @@ class Git:
 
         if not files:
             lines = self('status', '--porcelain', out=True, **kwargs)
-            files = [i.split()[-1] for i in lines.splitlines()]
+            files = [i.split()[-1] for i in lines]
 
         files = [Path(f) for f in files]
         if exist := [f for f in files if f.exists()]:
@@ -25,10 +27,13 @@ class Git:
         self('commit', '-m', msg, *files, **kwargs)
         self('push', **kwargs)
 
+    def commits(self, *args, **kwargs):
+        return self('log', *LOG_FLAGS, *args, out=True, **kwargs)
+
     def is_dirty(self, **kwargs):
-        lines = self('status', '--porcelain', out=True, **kwargs).splitlines()
+        lines = self('status', '--porcelain', out=True, **kwargs)
         return any(not i.startswith('??') for i in lines)
 
-    def status(self):
+    def status(self, **kwargs):
         if self.is_dirty():
-            self('status')
+            self('status', **kwargs)

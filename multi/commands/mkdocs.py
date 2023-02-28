@@ -89,7 +89,6 @@ def push_site_changes(project):
     lines = project.git(
         'status', '--porcelain', out=True, cwd=project.gh_pages
     )
-    lines = lines.splitlines()
     if all(i.endswith('.gz') for i in lines):
         return
 

@@ -1,8 +1,9 @@
-from .. import projects, project
+from .. import projects
+from .. project import Project
 import re
 
 CATEGORIES = 'production', 'beta', 'experimental', 'personal', 'mothballed'
-REC = project.Project('rec', len(projects.PROJECTS))
+REC = Project('rec', len(projects.PROJECTS))
 LOG_FLAGS = '--pretty=format:%h|%cd|%s', '--date=format:%g/%m/%d'
 """
 Per project data:
@@ -12,6 +13,33 @@ Release v1.0.2:  [date] [message]
 Latest commit:  [date] [message]
 
 """
+
+MSG = 'Automatically update README.md'
+
+def dashboard():
+    categories = {c: [] for c in CATEGORIES}
+    tags = projects.DATA['tags']
+    for p in projects.PROJECTS.values():
+        for c in CATEGORIES:
+            if p.name in tags[c]:
+                categories[c].append(p)
+
+    tables = (make_table(k, v) for k, v in categories.items())
+    result = '\n<p>\n'.join(tables)
+    readme = REC.path / 'README.md'
+    save, _ = readme.read_text().split(SPLIT)
+    readme.write_text(save + SPLIT + result)
+
+    line, = REC.git.commits('-1')
+    if not REC.git.is_dirty():
+        print('No change')
+    elif line.strip().endswith(MSG):
+        print('Amending')
+        REC.git('commit', '--amend', 'README.md', '--no-edit')
+        REC.git('push', '-f')
+    else:
+        print('Committing')
+        REC.git.commit(MSG, 'README.msg')
 
 
 def _a(href, contents):
@@ -57,7 +85,7 @@ def summary(project):
     desc_line = _pad(f'{e1} {link} {e2}' + star, offset=offset)
     desc_line2 = _pad(f'<i>{desc}</i>', 55)
 
-    commits = project.git('log', *LOG_FLAGS, out=True).splitlines()
+    commits = project.git.commits()
     latest_line = _commit(project, '🕰', commits[0])
 
     if commit := next((c for c in commits if VERSION(c)), None):
@@ -90,21 +118,3 @@ def make_table(name, projects):
 
 VERSION = re.compile(r'ersion v\d+\.\d+\.\d+$').search
 SPLIT = '<!--- Automatically generated content below -->'
-
-
-def dashboard():
-    categories = {c: [] for c in CATEGORIES}
-    tags = projects.DATA['tags']
-    for p in projects.PROJECTS.values():
-        for c in CATEGORIES:
-            if p.name in tags[c]:
-                categories[c].append(p)
-
-    tables = (make_table(k, v) for k, v in categories.items())
-    result = '\n<p>\n'.join(tables)
-    readme = REC.path / 'README.md'
-    save, _ = readme.read_text().split(SPLIT)
-    readme.write_text(save + SPLIT + result)
-
-    REC.git('commit', '--amend', 'README.md', '--no-edit')
-    REC.git('push', '-f')

@@ -16,8 +16,8 @@ ranked = [
     "nmr",
     "plur",
     "def_main",
-    "blocks",
     "multi",
+    "blocks",
     "hardback",
     "loady",
     "runs",
@@ -38,7 +38,6 @@ experimental = [
 ]
 
 beta = [
-    "blocks",
     "def_main",
     "nc",
     "plur",
@@ -51,6 +50,7 @@ mothballed = [
 ]
 
 personal = [
+    "blocks",
     "dotfiles",
     "multi",
     "test",
