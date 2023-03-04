@@ -28,7 +28,7 @@ def open_all(project):
 
 
 def mkdocs_build(project):
-    if not is_mkdocs(project):
+    if False and not is_mkdocs(project):
         return
 
     docs = sorted(i for i in MKDOCS.rglob('*') if not i.name.startswith('.'))

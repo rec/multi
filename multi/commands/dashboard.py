@@ -1,10 +1,20 @@
 from .. import projects
 from .. project import Project
 import re
+import time
 
-CATEGORIES = 'production', 'beta', 'experimental', 'personal', 'mothballed'
+CATEGORIES = (
+    'production-ready',
+    'beta',
+    'experimental',
+    'personal',
+    'mothballed',
+)
 REC = Project('rec', len(projects.PROJECTS))
 LOG_FLAGS = '--pretty=format:%h|%cd|%s', '--date=format:%g/%m/%d'
+README = 'README.md'
+TIME_FORMAT = '%y/%m/%d, %H:%M:%S'
+
 """
 Per project data:
 
@@ -13,14 +23,18 @@ Release v1.0.2:  [date] [message]
 Latest commit:  [date] [message]
 
 """
-MSG = 'Automatically update README.md'
+MSG = f'Automatically update {README}'
+
+
+def dashboard():
+    resume()
+    readme()
 
 
 def resume():
     from .. import resume
 
-    path = REC.path # / 'resume'
-    src = path / 'resume.md'
+    src = REC.path / 'resume.md'
     assert src.exists()
     text = src.read_text()
     prefix = src.parent / src.stem
@@ -31,7 +45,38 @@ def resume():
     html_file.unlink()
 
 
-def dashboard():
+def readme():
+    _write_contents()
+    if REC.git.is_dirty():
+        _commit_readme()
+    else:
+        print('No change')
+
+
+def _write_contents():
+    readme = REC.path / README
+    text, _ = readme.read_text().split(SPLIT)
+
+    tables = (make_table(k, v) for k, v in _categories().items())
+    tables = '\n<p>\n'.join(tables)
+    timestamp = time.strftime('%Y/%m/%d, %H:%M:%S')
+    program = 'https://github.com/rec/multi'
+    rendered = f'Rendered at {timestamp} by {program}'
+    readme.write_text(f'{text}{SPLIT}{tables}\n\n{rendered}')
+
+
+def _commit_readme():
+    line, = REC.git.commits('-1')
+    if line.strip().endswith(MSG):
+        print('Amending')
+        REC.git('commit', '--amend', README, '--no-edit')
+        REC.git('push', '-f')
+    else:
+        print('Committing')
+        REC.git.commit(MSG, README)
+
+
+def _categories():
     categories = {c: [] for c in CATEGORIES}
     tags = projects.DATA['tags']
     for p in projects.PROJECTS.values():
@@ -39,24 +84,7 @@ def dashboard():
             if p.name in tags[c]:
                 categories[c].append(p)
 
-    tables = (make_table(k, v) for k, v in categories.items())
-    result = '\n<p>\n'.join(tables)
-    readme = REC.path / 'README.md'
-    save, _ = readme.read_text().split(SPLIT)
-    readme.write_text(save + SPLIT + result)
-
-    if not REC.git.is_dirty():
-        print('No change')
-        return
-
-    line, = REC.git.commits('-1')
-    if line.strip().endswith(MSG):
-        print('Amending')
-        REC.git('commit', '--amend', 'README.md', '--no-edit')
-        REC.git('push', '-f')
-    else:
-        print('Committing')
-        REC.git.commit(MSG, 'README.msg')
+    return categories
 
 
 def _a(href, contents):
@@ -117,7 +145,7 @@ def summary(project):
 
 def _cell(project):
     cell = summary(project)
-    return f'<td>{cell}</td>'
+    return f'<td>{cell}</td>\n'
 
 
 def _row(projects):

@@ -25,7 +25,7 @@ class Opener:
 @datacls(order=True)
 class Project:
     name: str
-    rank: int
+    rank: int = -1  # -1 means unranked
 
     RELOAD = 'description_parts', 'multi', 'poetry', 'pyproject_file'
 

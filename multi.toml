@@ -56,7 +56,7 @@ personal = [
     "test",
 ]
 
-production = [
+production-ready = [
     "abbrev",
     "datacls",
     "dek",
