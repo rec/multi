@@ -15,7 +15,8 @@ def context(filename: Path):
     yield html
 
     t = etree.tostring(html, pretty_print=True, method="html")
-    filename.write_bytes(fix(t))
+    fixed = fix(t)
+    filename.write_bytes(fixed)
 
 
 def fix(t: bytes):
@@ -25,7 +26,7 @@ def fix(t: bytes):
 
 
 def replace(m):
-    parts = [int(i.strip(';')) for i in m.group(0).split('&#') if i]
+    parts = [int(i.strip(b';')) for i in m.group(0).split('&#') if i]
     return ''.join(to_chars(parts))
 
 
@@ -51,3 +52,18 @@ def to_chars(parts):
                 + 0x40 * ((c - 0x80)
                     + 0x40 * ((b - 0x90)     # noqa: E128
                         + 0x40 * (a - 0xF0))))  # noqa: E128
+
+
+def check_unicode():
+    for i in range(0x80, 0x1_00_000):
+        c = chr(i)
+        try:
+            parts = list(c.encode())
+        except UnicodeEncodeError:
+            continue
+        c2, = to_chars(parts)
+        assert c == c2, f'{i} != {ord(c2)}'
+
+
+if __name__ == '__main__':
+    check_unicode()
