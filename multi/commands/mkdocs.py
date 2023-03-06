@@ -7,10 +7,9 @@ import time
 
 
 def mkdocs(project):
-    if is_mkdocs(project):
-        mkdocs_build(project)
-        copy_and_edit_site(project)
-        readme.write_readme(project)
+    mkdocs_build(project)
+    copy_and_edit_site(project)
+    readme.write_readme(project)
 
 
 def is_mkdocs(project):
@@ -28,9 +27,6 @@ def open_all(project):
 
 
 def mkdocs_build(project):
-    if False and not is_mkdocs(project):
-        return
-
     docs = sorted(i for i in MKDOCS.rglob('*') if not i.name.startswith('.'))
     written = [f for d in docs for f in _write_doc(project, d)]
     project.run(MKDOCS_BINARY, 'build')
@@ -60,8 +56,9 @@ def copy_and_edit_site(project):
             if configs.verbose:
                 print('shutil.copyfile', src, target)
 
+            target.parent.mkdir(exist_ok=True, parents=True)
             shutil.copyfile(src, target)
-            if process := _PROCESS.get(target.name):
+            if process := _PROCESS.get(str(rel)):
                 process(project, target)
 
             if src.read_bytes() != old_target:
@@ -83,14 +80,13 @@ def copy_and_edit_site(project):
 
 
 def push_site_changes(project):
-    if not project.git.is_dirty(cwd=project.gh_pages):
-        return
-
     lines = project.git(
         'status', '--porcelain', out=True, cwd=project.gh_pages
     )
     if all(i.endswith('.gz') for i in lines):
         return
+
+    project.git('add', '.', cwd=project.gh_pages)
 
     project.p()
     commit_id = project.commit_id()[:7]

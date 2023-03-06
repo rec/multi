@@ -31,8 +31,11 @@ class Git:
     def commits(self, *args, **kwargs):
         return self('log', *LOG_FLAGS, *args, out=True, **kwargs).splitlines()
 
-    def is_dirty(self, **kwargs):
+    def is_dirty(self, unknown=False, **kwargs):
         lines = self('status', '--porcelain', out=True, **kwargs).splitlines()
+        if unknown:
+            return any(lines)
+
         return any(not i.startswith('??') for i in lines)
 
     def status(self, **kwargs):

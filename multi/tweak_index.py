@@ -34,7 +34,6 @@ def remove(project, tree, xpath):
     if child := tree.xpath(xpath):
         e = child[0]
         text = (getattr(e, 'text', None) or str(e))[:128]
-        project.p('Removing', text)
         e.getparent().remove(e)
 
 

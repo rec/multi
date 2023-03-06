@@ -98,8 +98,8 @@ class Project:
     def branch(self):
         return self.run.out('git', 'rev-parse', '--abbrev-ref', 'HEAD').strip()
 
-    def branches(self):
-        lines = self.run.out('git', 'branch').splitlines()
+    def branches(self, *a, **ka):
+        lines = self.run.out('git', 'branch', *a, **ka).splitlines()
         return [i.split()[-1] for i in lines]
 
     def commit_id(self):
@@ -125,7 +125,7 @@ class Project:
     def open_doc(self):
         if self.has_gh_pages():
             return Opener(self.doc_url)
-        return lambda *a, **k: None
+        return lambda *a, **k: self.p('Has no gh_pages')
 
     @cached_property
     def open_gh(self):
@@ -134,7 +134,8 @@ class Project:
         return lambda *a, **k: None
 
     def has_gh_pages(self):
-        return 'gh-pages' in self.branches()
+        br = [b.split('/')[-1].strip() for b in self.branches('-r')]
+        return 'gh-pages' in br
 
     @cached_property
     def open_git(self):

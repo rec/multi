@@ -4,7 +4,7 @@ from pathlib import Path
 import xmod
 import re
 
-DIGITS = re.compile(br'(&#[12]\d\d;)+')
+DIGITS = re.compile(br'&#([12]\d\d);')
 
 
 @xmod
@@ -22,48 +22,8 @@ def context(filename: Path):
 def fix(t: bytes):
     if isinstance(t, str):
         t = t.encode()
+
+    def replace(m):
+        return bytes([int(m.group(1))])
+
     return DIGITS.sub(replace, t)
-
-
-def replace(m):
-    parts = [int(i.strip(b';')) for i in m.group(0).split('&#') if i]
-    return ''.join(to_chars(parts))
-
-
-def to_chars(parts):
-    parts = parts[::-1]  # So we can pop from the end!
-    while parts:
-        a, b = parts.pop(), parts.pop()
-        if a < 0xE0:
-            yield chr(b + 0x40 * (a - 0xC2))
-
-        elif a < 0xF0:
-            c = parts.pop()
-            yield chr(
-                0x800 + (c - 0x80) +
-                + 0x40 * (
-                    (b - 0xA0)
-                    + 0x40 * (a - 0xE0)))
-        else:
-            c, d = parts.pop(), parts.pop()
-
-            yield chr(
-                0x010000 + (d - 0x80)
-                + 0x40 * ((c - 0x80)
-                    + 0x40 * ((b - 0x90)     # noqa: E128
-                        + 0x40 * (a - 0xF0))))  # noqa: E128
-
-
-def check_unicode():
-    for i in range(0x80, 0x1_00_000):
-        c = chr(i)
-        try:
-            parts = list(c.encode())
-        except UnicodeEncodeError:
-            continue
-        c2, = to_chars(parts)
-        assert c == c2, f'{i} != {ord(c2)}'
-
-
-if __name__ == '__main__':
-    check_unicode()
