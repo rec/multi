@@ -1,6 +1,6 @@
 # {project.site_name}
 
-::: {project.api_name}
+{project.api_section}
 
 ## About this project
 

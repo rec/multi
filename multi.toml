@@ -75,3 +75,7 @@ production-ready = [
 dek = false
 datacls = false
 impall = false
+
+[api_paths]
+
+nc = ["nc", "nc.color", "nc.colors"]
