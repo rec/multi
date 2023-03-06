@@ -1,6 +1,7 @@
 ranked = [
     "safer",
     "tdir",
+    "nc",
     "dtyper",
     "editor",
     "sproc",
@@ -11,7 +12,6 @@ ranked = [
     "abbrev",
     "dek",
     "wavemap",
-    "nc",
     "vl8",
     "nmr",
     "plur",
@@ -39,7 +39,6 @@ experimental = [
 
 beta = [
     "def_main",
-    "nc",
     "plur",
 ]
 
@@ -64,6 +63,7 @@ production-ready = [
     "editor",
     "gitz",
     "impall",
+    "nc",
     "safer",
     "sproc",
     "tdir",

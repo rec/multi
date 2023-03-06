@@ -101,7 +101,8 @@ def _commit(project, label, log):
 
 
 def _pad(line, amount=105, offset=0):
-    count = offset + (amount - len(line)) // 2
+    lo = line.replace('&nbsp;', '')
+    count = offset + (amount - len(lo)) // 2
     spaces = count * '&nbsp;'
     return spaces + line
 
@@ -113,21 +114,31 @@ _COUNT_OFFSETS = {
     'wavemap': +2,
 }
 
+_FOLLOWERS = (
+    ('🌟', 'stargazers_count'),
+    ('👁', 'subscribers_count'),
+#    ('🍴', 'forks_count'),
+)
+
 
 def summary(project):
     e1, desc, e2 = project.description_parts
     name = f'<code>{project.name}</code>'
     link = _a(project.git_url, name)
 
-    try:
-        stars = project.github_info['stargazers_count']
-    except KeyError:
-        print(project.github_info)
-        raise
-    star = stars > 1 and f' (🌟 {stars})' or ''
+    items = []
+    for e, v in _FOLLOWERS:
+        count = project.github_info[v]
+        if count > 1:
+            items.append(f'{e} {count}')
+
+    sep = ' &nbsp;'
+
+    items = sep.join(items)
+    items = items and f'{sep}{sep} ({items})'
 
     offset = _COUNT_OFFSETS.get(project.name, 0)
-    desc_line = _pad(f'{e1} {link} {e2}' + star, offset=offset)
+    desc_line = _pad(f'{e1} {link} {e2}{items}', offset=offset)
     desc_line2 = _pad(f'<i>{desc}</i>', 55)
 
     commits = project.git.commits()
