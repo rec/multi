@@ -1,6 +1,29 @@
-def refurb(project):
-    from .. projects import MULTI
+from .. projects import GITHUB_IO, MULTI
 
+FAVICON = GITHUB_IO.path / 'docs/favicon.ico'
+assert FAVICON.exists()
+
+SIZE = 72
+PREFIX = 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2'
+
+
+def get_url(text):
+    n = ord(text[0])
+    return f'{PREFIX}/{SIZE}x{SIZE}/{n:x}.png'
+
+
+def favicon(project):
+    favicon = project.gh_pages / 'assets/images/favicon.png'
+    if not favicon.exists():
+        return
+    url = get_url(project.description)
+
+    project.run('curl', url, '-o', favicon)
+    msg = 'Rewrite favicon from emoji'
+    project.git.commit(msg, favicon, cwd=project.gh_pages)
+
+
+def refurb(project):
     src = project.name + project.is_singleton * '.py'
     r = MULTI.run('refurb', project.path / src, complete=True)
     result = r.stdout + r.stderr

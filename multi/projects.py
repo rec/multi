@@ -13,6 +13,7 @@ PROJECTS = {k: Project(k, i) for i, k in enumerate(_RANKED)}
 
 MULTI = PROJECTS['multi']
 REC = Project('rec', len(PROJECTS))
+GITHUB_IO = Project('rec.github.io', len(PROJECTS))
 
 COLORS = [
     'red',
