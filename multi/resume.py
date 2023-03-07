@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# noqa: E501
 import argparse
 import base64
 import itertools

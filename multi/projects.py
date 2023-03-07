@@ -12,6 +12,7 @@ _RANKED = DATA['ranked']
 PROJECTS = {k: Project(k, i) for i, k in enumerate(_RANKED)}
 
 MULTI = PROJECTS['multi']
+REC = Project('rec', len(PROJECTS))
 
 COLORS = [
     'red',

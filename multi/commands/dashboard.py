@@ -1,5 +1,4 @@
-from .. import projects
-from .. project import Project
+from .. projects import DATA, PROJECTS, REC
 import re
 import time
 
@@ -10,7 +9,6 @@ CATEGORIES = (
     'personal',
     'mothballed',
 )
-REC = Project('rec', len(projects.PROJECTS))
 LOG_FLAGS = '--pretty=format:%h|%cd|%s', '--date=format:%g/%m/%d'
 README = 'README.md'
 TIME_FORMAT = '%y/%m/%d, %H:%M:%S'
@@ -27,25 +25,6 @@ MSG = f'Automatically update {README}'
 
 
 def dashboard():
-    resume()
-    readme()
-
-
-def resume():
-    from .. import resume
-
-    src = REC.path / 'resume.md'
-    assert src.exists()
-    text = src.read_text()
-    prefix = src.parent / src.stem
-    html = resume.make_html(text, prefix=str(prefix))
-    html_file = prefix.with_suffix('.html')
-    html_file.write_text(html)
-    resume.write_pdf(html, prefix=str(prefix))
-    html_file.unlink()
-
-
-def readme():
     _write_contents()
     if REC.git.is_dirty():
         _commit_readme()
@@ -78,8 +57,8 @@ def _commit_readme():
 
 def _categories():
     categories = {c: [] for c in CATEGORIES}
-    tags = projects.DATA['tags']
-    for p in projects.PROJECTS.values():
+    tags = DATA['tags']
+    for p in PROJECTS.values():
         for c in CATEGORIES:
             if p.name in tags[c]:
                 categories[c].append(p)
@@ -117,7 +96,7 @@ _COUNT_OFFSETS = {
 _FOLLOWERS = (
     ('🌟', 'stargazers_count'),
     ('👁', 'subscribers_count'),
-#    ('🍴', 'forks_count'),
+    # ('🍴', 'forks_count'),
 )
 
 
