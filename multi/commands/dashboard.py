@@ -1,3 +1,4 @@
+from .. import configs
 from .. projects import DATA, PROJECTS, REC
 import re
 import time
@@ -13,14 +14,6 @@ LOG_FLAGS = '--pretty=format:%h|%cd|%s', '--date=format:%g/%m/%d'
 README = 'README.md'
 TIME_FORMAT = '%y/%m/%d, %H:%M:%S'
 
-"""
-Per project data:
-
-description (🌟 # if # > 1)
-Release v1.0.2:  [date] [message]
-Latest commit:  [date] [message]
-
-"""
 MSG = f'Automatically update {README}'
 
 
@@ -40,19 +33,19 @@ def _write_contents():
     tables = '\n<p>\n'.join(tables)
     timestamp = time.strftime('%Y/%m/%d, %H:%M:%S')
     program = 'https://github.com/rec/multi'
-    rendered = f'Rendered at {timestamp} by {program}'
-    readme.write_text(f'{text}{SPLIT}{tables}\n\n{rendered}')
+    rendered = f'(Last update {timestamp} by {program})'
+    readme.write_text(f'{text}{SPLIT}\n\n{rendered}\n\n{tables}')
 
 
 def _commit_readme():
     line, = REC.git.commits('-1')
-    if line.strip().endswith(MSG):
+    if line.strip().endswith(MSG) and not configs.args:
         print('Amending')
         REC.git('commit', '--amend', README, '--no-edit')
         REC.git('push', '-f')
     else:
         print('Committing')
-        REC.git.commit(MSG, README)
+        REC.git.commit(' '.join(configs.args) or MSG, README)
 
 
 def _categories():
