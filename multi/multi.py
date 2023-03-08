@@ -65,9 +65,16 @@ def run(
     configs.push = push
     configs.verbose = verbose
 
-    command, _, configs.args = command.partition(':')
+    cmd_name, *configs.args = command.split(':')
 
-    cmd = _get_callable('multi.commands.' + command)
+    try:
+        cmd = _get_callable('multi.commands.' + cmd_name)
+    except Exception:
+        # It's a get?
+        cmd = _get_callable('multi.commands.get')
+        argv.insert(0, command)
+        configs.args = []
+
     filt = [_make_filter(f) for f in filter or ()]
     nfilt = [_make_filter(f) for f in negated_filter or ()]
     wait_at_end = False
@@ -130,7 +137,7 @@ def _get_callable(name):
 
 def _make_filter(filter):
     first, *args = filter.split(':')
-    filt = _get_callable('multi.filters.' + first)
+    filt = _get_callable('multi.filters.' + (first or tag))
 
     @wraps(filt)
     def wrapped(project):
