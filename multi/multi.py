@@ -137,7 +137,7 @@ def _get_callable(name):
 
 def _make_filter(filter):
     first, *args = filter.split(':')
-    filt = _get_callable('multi.filters.' + (first or tag))
+    filt = _get_callable('multi.filters.' + (first or 'tag'))
 
     @wraps(filt)
     def wrapped(project):

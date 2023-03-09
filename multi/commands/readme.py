@@ -22,6 +22,7 @@ def _write_readme(project):
 
 
 def write_readme(project):
+    project.p()
     fname = filename(project)
     contents = fname.read_text()
 

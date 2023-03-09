@@ -6,6 +6,23 @@ import threading
 import time
 
 
+def fix(project):
+    if not project.has_gh_pages():
+        project.p('no gh-pages')
+    else:
+        mkd = project.gh_pages / 'assets/_mkdocstrings.css'
+        if mkd.exists():
+            project.p('exists')
+        elif not mkd.parent.exists():
+            project.p('no parent')
+        elif False:
+            shutil.copyfile('/code/safer/site/assets/_mkdocstrings.css', mkd)
+            project.git('add', mkd, cwd=project.gh_pages)
+            project.commit('Add _mkdocstrings.css', mkd, cwd=project.gh_pages)
+        else:
+            print('Missing', mkd)
+
+
 def mkdocs(project):
     mkdocs_build(project)
     copy_and_edit_site(project)
