@@ -29,6 +29,18 @@ ranked = [
 
 [tags]
 
+proof = [
+    "abbrev",
+    "datacls",
+    "impall",
+    "xmod",
+    "sproc",
+    "editor",
+    "safer",
+    "dtyper",
+    "nc",
+]
+
 experimental = [
     "backer",
     "cfgs",
