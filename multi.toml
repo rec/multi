@@ -13,6 +13,7 @@ ranked = [
     "dek",
     "wavemap",
     "vl8",
+    "litoid",
     "nmr",
     "plur",
     "def_main",
@@ -45,6 +46,7 @@ experimental = [
     "backer",
     "cfgs",
     "hardback",
+    "litoid",
     "nmr",
     "vl8",
 ]
