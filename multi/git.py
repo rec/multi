@@ -3,6 +3,7 @@ from typing import Callable
 import datacls
 
 LOG_FLAGS = '--pretty=format:%h|%cd|%s', '--date=format:%g/%m/%d'
+LONG_LOG_FLAGS = '--pretty=format:%h|%cd|%s', '--date=format:%g/%m/%d %H:%M:%S'
 
 
 @datacls
@@ -28,8 +29,9 @@ class Git:
         self('commit', '-m', msg, *files, **kwargs)
         self('push', **kwargs)
 
-    def commits(self, *args, **kwargs):
-        return self('log', *LOG_FLAGS, *args, out=True, **kwargs).splitlines()
+    def commits(self, *args, long=False, **kwargs):
+        flags = LONG_LOG_FLAGS if long else LOG_FLAGS
+        return self('log', *flags, *args, out=True, **kwargs).splitlines()
 
     def is_dirty(self, unknown=False, **kwargs):
         lines = self('status', '--porcelain', out=True, **kwargs).splitlines()
