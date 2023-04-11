@@ -3,6 +3,7 @@ ranked = [
     "tdir",
     "nc",
     "dtyper",
+    "clsprop",
     "editor",
     "sproc",
     "xmod",
@@ -29,18 +30,6 @@ ranked = [
 ]
 
 [tags]
-
-proof = [
-    "abbrev",
-    "datacls",
-    "impall",
-    "xmod",
-    "sproc",
-    "editor",
-    "safer",
-    "dtyper",
-    "nc",
-]
 
 experimental = [
     "backer",
@@ -71,6 +60,7 @@ personal = [
 
 production-ready = [
     "abbrev",
+    "clsprop",
     "datacls",
     "dek",
     "dtyper",
