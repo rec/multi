@@ -144,5 +144,5 @@ def make_table(name, projects):
     return f'{label}<table><tbody>{body}</tbody></table>'
 
 
-VERSION = re.compile(r'ersion v\d+\.\d+\.\d+$').search
+VERSION = re.compile(r'ersion (to )?v\d+\.\d+\.\d+$').search
 SPLIT = '<!--- Automatically generated content below -->'
