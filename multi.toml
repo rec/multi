@@ -76,6 +76,7 @@ production-ready = [
 
 [api_documentation]
 
+clsprop = false
 dek = false
 datacls = false
 impall = false
