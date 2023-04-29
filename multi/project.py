@@ -251,7 +251,7 @@ class Project:
     @property
     def api_section(self):
         paths = self.get_value('api_paths', [self.api_name])
-        return '\n'.join(f'::: {p}' for p in paths)
+        return '\n\n'.join(f'::: {p}' for p in paths)
 
     @cached_property
     def github_api_url(self):
