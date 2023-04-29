@@ -6,6 +6,7 @@ ranked = [
     "clsprop",
     "editor",
     "sproc",
+    "fil",
     "xmod",
     "impall",
     "gitz",
@@ -34,8 +35,7 @@ ranked = [
 
 experimental = [
     "backer",
-    "cfgs",
-    "fortune",
+    "def_main",
     "hardback",
     "litoid",
     "nmr",
@@ -43,7 +43,8 @@ experimental = [
 ]
 
 beta = [
-    "def_main",
+    "cfgs",
+    "fil",
     "plur",
 ]
 
@@ -57,6 +58,7 @@ personal = [
     "blocks",
     "dotfiles",
     "multi",
+    "fortune",
     "test",
 ]
 
@@ -86,3 +88,4 @@ impall = false
 [api_paths]
 
 nc = ["nc", "nc.color", "nc.colors"]
+fil = ["fil.read", "fil.write"]
