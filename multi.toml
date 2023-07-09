@@ -69,6 +69,7 @@ production-ready = [
     "dek",
     "dtyper",
     "editor",
+    "fil",
     "gitz",
     "impall",
     "nc",
