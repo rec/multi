@@ -14,6 +14,7 @@ ranked = [
     "datacls",
     "abbrev",
     "dek",
+    "recs",
     "wavemap",
     "vl8",
     "litoid",
@@ -40,6 +41,7 @@ experimental = [
     "hardback",
     "litoid",
     "nmr",
+    "recs",
     "vl8",
 ]
 
