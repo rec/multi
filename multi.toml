@@ -5,6 +5,7 @@ ranked = [
     "dtyper",
     "clsprop",
     "editor",
+    "threa",
     "sproc",
     "fil",
     "xmod",
@@ -46,6 +47,7 @@ beta = [
     "cfgs",
     "fil",
     "plur",
+    "threa",
 ]
 
 mothballed = [
