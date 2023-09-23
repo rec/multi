@@ -14,6 +14,9 @@ LOG_FLAGS = '--pretty=format:%h|%cd|%s', '--date=format:%g/%m/%d'
 README = 'README.md'
 TIME_FORMAT = '%y/%m/%d, %H:%M:%S'
 
+VERSION = re.compile(r'ersion (to )?v\d+\.\d+\.\d+$').search
+SPLIT = '<!--- Automatically generated content below -->'
+
 MSG = f'Automatically update {README}'
 
 
@@ -114,7 +117,9 @@ def summary(project):
     desc_line2 = _pad(f'<i>{desc}</i>', 55)
 
     commits = project.git.commits()
-    latest_line = _commit(project, '🕰', commits[0])
+
+    latest = next(c for c in commits if not VERSION(c))
+    latest_line = _commit(project, '🕰', latest)
 
     if commit := next((c for c in commits if VERSION(c)), None):
         release_line = _commit(project, '🟢', commit)
@@ -142,7 +147,3 @@ def make_table(name, projects):
 
     label = f'<h2>{name.capitalize()}</h2>\n'
     return f'{label}<table><tbody>{body}</tbody></table>'
-
-
-VERSION = re.compile(r'ersion (to )?v\d+\.\d+\.\d+$').search
-SPLIT = '<!--- Automatically generated content below -->'
