@@ -79,13 +79,16 @@ def update_python(project):
     except KeyError:
         return
 
-    print(project.name, 'starting')
+    project.p('Updating', project.poetry['version'])
+    if not True:
+        return
     dependencies['python'] = '>=3.8'
     project.write_pyproject()
     project.run('poetry', 'lock', arm=True)
 
     project.git.commit('Update minimum Python version to 3.8', *PROJECT_FILES)
     bump_version(project, 'minor')
+    project.p('Done', project.poetry['version'])
 
 
 def bad_versions(project):
