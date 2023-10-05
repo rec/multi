@@ -1,4 +1,7 @@
 from .. projects import GITHUB_IO, MULTI
+from . bump_version import bump_version
+from ..paths import PROJECT_FILES
+
 
 FAVICON = GITHUB_IO.path / 'docs/favicon.ico'
 assert FAVICON.exists()
@@ -66,27 +69,14 @@ def grep(project):
 
 
 def update_python(project):
-    from . bump_version import bump_version
-    from ..paths import PROJECT_FILES
-
-    try:
-        dependencies = project.configs['tool']['poetry']['dependencies']
-        if not dependencies['python'].endswith('3.7'):
-            return
-    except KeyError:
-        return
-
     if not {'production-ready', 'beta'}.intersection(project.tags):
         return
 
-    if True:
-        if (envrc := project.path / '.envrc').exists():
-            False and project.p('$', envrc.read_text().strip())
-        else:
-            False and project.p('* no .envrc')
-        print(f'cd /code/{project.name} && rm -Rf .direnv && direnv allow')
-        print('poetry install')
-        print()
+    try:
+        dependencies = project.poetry['dependencies']
+        if not dependencies['python'].endswith('3.7'):
+            return
+    except KeyError:
         return
 
     print(project.name, 'starting')
@@ -95,4 +85,24 @@ def update_python(project):
     project.run('poetry', 'lock', arm=True)
 
     project.git.commit('Update minimum Python version to 3.8', *PROJECT_FILES)
-    print(project.name, 'done')
+    bump_version(project, 'minor')
+
+
+def bad_versions(project):
+    import re
+    search = re.compile(r'\bv\d+\.\d+\.\d+$').search
+
+    poetry_version = project.poetry.get('version', None)
+    for commit in project.git.commits('-10'):
+        h, cd, s = commit.split('|')
+        if m := search(s):
+            git_version = m.group()[1:]
+            if poetry_version == git_version:
+                return
+            else:
+                break
+    else:
+        return
+
+    project.p(poetry_version, git_version)
+    bump_version(project, 'patch')

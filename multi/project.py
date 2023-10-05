@@ -27,7 +27,7 @@ class Project:
     name: str
     rank: int = -1  # -1 means unranked
 
-    RELOAD = 'description_parts', 'multi', 'poetry', 'pyproject_file'
+    RELOAD = 'description_parts', 'multi', 'poetry', 'pyproject_file', 'configs'
 
     def reload(self):
         for r in self.RELOAD:
