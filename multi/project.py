@@ -1,4 +1,4 @@
-from . import SCRIPTS, paths
+from . import SCRIPTS
 from contextlib import contextmanager
 from functools import cached_property
 from pathlib import Path
@@ -35,7 +35,7 @@ class Project:
                 del self.__dict__[r]
 
     @cached_property
-    def path(self):
+    def path(self) -> Path:
         return CODE_ROOT / self.name
 
     def joinpath(self, *path):
@@ -46,7 +46,8 @@ class Project:
 
     @cached_property
     def pyproject_file(self):
-        return self.path / paths.PYPROJECT
+        from . paths import PYPROJECT
+        return self.path / PYPROJECT
 
     @cached_property
     def user(self):
@@ -90,7 +91,7 @@ class Project:
 
     @cached_property
     def bin_path(self):
-        return max(self.path.glob('.direnv/python-3.*.*/bin'))
+        return max(self.path.glob('.direnv/python-3.*/bin'))
 
     def bin(self, *parts):
         return self.bin_path / ('/'.join(parts))
