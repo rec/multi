@@ -63,3 +63,36 @@ def grep(project):
     except Exception:
         print('---')
         raise
+
+
+def update_python(project):
+    from . bump_version import bump_version
+    from ..paths import PROJECT_FILES
+
+    try:
+        dependencies = project.configs['tool']['poetry']['dependencies']
+        if not dependencies['python'].endswith('3.7'):
+            return
+    except KeyError:
+        return
+
+    if not {'production-ready', 'beta'}.intersection(project.tags):
+        return
+
+    if True:
+        if (envrc := project.path / '.envrc').exists():
+            False and project.p('$', envrc.read_text().strip())
+        else:
+            False and project.p('* no .envrc')
+        print(f'cd /code/{project.name} && rm -Rf .direnv && direnv allow')
+        print('poetry install')
+        print()
+        return
+
+    print(project.name, 'starting')
+    dependencies['python'] = '>=3.8'
+    project.write_pyproject()
+    project.run('poetry', 'lock', arm=True)
+
+    project.git.commit('Update minimum Python version to 3.8', *PROJECT_FILES)
+    print(project.name, 'done')
