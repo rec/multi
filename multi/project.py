@@ -1,4 +1,4 @@
-from . import SCRIPTS
+from . import SCRIPTS, paths
 from contextlib import contextmanager
 from functools import cached_property
 from pathlib import Path
@@ -46,29 +46,29 @@ class Project:
 
     @cached_property
     def pyproject_file(self):
-        return self.path / 'pyproject.toml'
+        return self.path / paths.PYPROJECT
 
     @cached_property
     def user(self):
         return 'timedata-org' if self.name == 'loady' else 'rec'
 
     @cached_property
-    def pyproject(self):
+    def configs(self):
         if not self.pyproject_file.exists():
             return {}
         return tomlkit.loads(self.pyproject_file.read_text())
 
     @contextmanager
     def pyproject_writer(self):
-        yield self.pyproject
+        yield self.configs
         self.write_pyproject()
 
     def write_pyproject(self):
-        self.pyproject_file.write_text(tomlkit.dumps(self.pyproject))
+        self.pyproject_file.write_text(tomlkit.dumps(self.configs))
 
     @cached_property
     def poetry(self):
-        return self.pyproject.setdefault('tool', {}).setdefault('poetry', {})
+        return self.configs.setdefault('tool', {}).setdefault('poetry', {})
 
     @cached_property
     def tags(self):

@@ -22,7 +22,7 @@ def tag(project, *tags):
 
 
 def has_old_data(project):
-    return 'multi' in project.pyproject['tool']
+    return 'multi' in project.configs['tool']
 
 
 prop = get_or_call
