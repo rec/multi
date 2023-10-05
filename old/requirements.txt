@@ -1,6 +1,0 @@
-editor
-safer
-pyyaml
-versy
-requests
-beautifulsoup4
