@@ -26,6 +26,8 @@ def dashboard():
         _commit_readme()
     else:
         print('No change')
+    if configs.open:
+        REC.open_git('..')
 
 
 def _write_contents():
