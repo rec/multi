@@ -1,6 +1,7 @@
+import configparser
 from .. projects import GITHUB_IO, MULTI
 from . bump_version import bump_version
-from ..paths import PROJECT_FILES
+from ..paths import PROJECT_FILES, PYPROJECT
 
 
 FAVICON = GITHUB_IO.path / 'docs/favicon.ico'
@@ -8,6 +9,29 @@ assert FAVICON.exists()
 
 SIZE = 72
 PREFIX = 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2'
+
+
+def move_coveragerc(project):
+    cov = project.path / '.coveragerc'
+    if not cov.exists():
+        return
+
+    config = configparser.ConfigParser()
+    config.read(cov)
+    c = {k: dict(config[k]) for k in config.sections()}
+
+    if exclude_lines := c.get('report', {}).get('exclude_lines'):
+        c['report']['exclude_lines'] = exclude_lines.split('\n')
+
+    project.configs['tool']['coverage'] = c
+
+    if True:
+        project.p()
+        return
+
+    project.write_pyproject()
+    cov.unlink()
+    project.git.commit(f'Move .coveragerc into {PYPROJECT}', PYPROJECT, cov)
 
 
 def add_coverage(project):
