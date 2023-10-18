@@ -49,7 +49,6 @@ beta = [
     "cfgs",
     "fil",
     "plur",
-    "threa",
 ]
 
 mothballed = [
@@ -80,6 +79,7 @@ production-ready = [
     "safer",
     "sproc",
     "tdir",
+    "threa",
     "xmod",
 ]
 

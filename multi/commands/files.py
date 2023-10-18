@@ -10,6 +10,25 @@ SIZE = 72
 PREFIX = 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2'
 
 
+def add_coverage(project):
+    if not project.pyproject_file.exists():
+        return
+
+    has_coverage = 'coverage = ' in project.pyproject_file.read_text()
+    if has_coverage:
+        return
+
+    if project.name not in ('threa', 'fil', 'gitz', 'litoid', 'plur'):
+        return
+    project.p('adding')
+
+    if True:
+        return
+
+    project.run('poetry', 'add', 'coverage')
+    project.git.commit('Add coverage dependency', *PROJECT_FILES)
+
+
 def get_url(text):
     n = ord(text[0])
     return f'{PREFIX}/{SIZE}x{SIZE}/{n:x}.png'

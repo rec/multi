@@ -7,7 +7,7 @@ def recent_commits():
     it = ((k, v.git.commits('-1', long=True)[0]) for k, v in PROJECTS.items())
     it = ((k, v.split('|')) for k, v in it)
     commits = sorted(it, key=lambda x: x[1][1])
-    print('commits', commits)
+    print('commits', *commits, sep='\n')
 
 
 def commit(project, *args):
