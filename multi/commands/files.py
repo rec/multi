@@ -11,6 +11,28 @@ SIZE = 72
 PREFIX = 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2'
 
 
+def fix_coveragerc(project):
+    try:
+        exclude_lines = project.configs['tool']['coverage']['report']['exclude_lines']
+    except KeyError:
+        return
+    if not exclude_lines[0]:
+        while exclude_lines and not exclude_lines[0]:
+            exclude_lines.pop(0)
+
+    project.commit_pyproject(f'Move .coveragerc into {PYPROJECT}')
+
+
+def fix_coveragerc2(project):
+    first, second = (i.split('|')[-1] for i in project.git.commits('-2'))
+    if first != second:
+        return
+
+    project.git('commit', '--amend', '-m',
+                'Remove empty line in pyproject coverage section')
+    project.git('push', '--force-with-lease')
+
+
 def move_coveragerc(project):
     cov = project.path / '.coveragerc'
     if not cov.exists():

@@ -67,6 +67,12 @@ class Project:
     def write_pyproject(self):
         self.pyproject_file.write_text(tomlkit.dumps(self.configs))
 
+    def commit_pyproject(self, msg, *files):
+        from . paths import PYPROJECT
+
+        self.write_pyproject()
+        self.git.commit(msg, PYPROJECT, *files)
+
     @cached_property
     def poetry(self):
         return self.configs.setdefault('tool', {}).setdefault('poetry', {})
