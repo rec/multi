@@ -1,6 +1,8 @@
+from pathlib import Path
 import string
 from .. projects import DATA, PROJECTS, REC
 import time
+CI = Path('.github/workflows/python-package.yml')
 
 
 def recent_commits():
@@ -17,6 +19,41 @@ def commit(project, *args):
 
 def state(project):
     project.p(f'{project.git.is_dirty() * "*":1} {project.branch()}')
+
+
+def status(project):
+    project.p()
+    project.git('status')
+
+HEADER = """\
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+"""
+
+def fix_package(project):
+    if (ci := (project.path / CI)).exists():
+        contents = ci.read_text()
+        removed = contents.removeprefix(HEADER)
+        if removed != contents:
+            if True:
+                ci.write_text(removed)
+                project.git.commit('Remove boilerplate from workflow', ci)
+            else:
+                project.p(removed.splitlines()[0])
+
+
+def add_github(project):
+    project.p()
+    contents = ('/code/tdir' / CI).read_text()
+    replaced = contents.replace('tdir', project.name)
+
+    project.p(replaced[:128])
+
+    if True:
+        return
+
+    (project.path / CI).write(replaced)
 
 
 def fix_gitignore(project):

@@ -69,7 +69,7 @@ def run(
 
     try:
         cmd = _get_callable('multi.commands.' + cmd_name)
-    except Exception:
+    except ValueError:
         # It's a get?
         cmd = _get_callable('multi.commands.get')
         argv.insert(0, command)
