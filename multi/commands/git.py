@@ -1,9 +1,10 @@
 from pathlib import Path
 import string
+from .. paths import PYPROJECT
 from .. projects import DATA, PROJECTS, REC
 import time
 import yaml
-
+import copy
 
 CI = Path('.github/workflows/python-package.yml')
 
@@ -13,18 +14,22 @@ def fix_ruff(project):
         return
 
     # TODO: change pytest!!!
-    pfile = project.path / CI
-    if not pfile.exists():
+    ci_file = project.path / CI
+    if not ci_file.exists():
         return
 
-    with pfile.open() as fp:
-       package = yaml.safe_load(fp)
-       steps = package['jobs']['build']['steps']
+    ci = yaml.safe_load(ci_file.read_text())
+    steps = ci['jobs']['build']['steps']
+
+    old_ci, old_configs = copy.deepcopy(ci), copy.deepcopy(project.configs)
 
     def stepper():
         for step in steps:
             before, sep, after = step.get('run', '').partition('poetry run ruff check ')
-            if sep and not before:
+            if '--select' in after:
+                yield step
+
+            elif sep and not before:
                 yield {'run': f'poetry run ruff check --select I --fix {after}'}
                 yield {'run': f'poetry run ruff format'}
 
@@ -32,15 +37,29 @@ def fix_ruff(project):
                 yield step
 
     steps[:] = stepper()
-    # write it
 
     ruff = project.configs['tool'].setdefault('ruff', {})
     ruff['line-length'] = 88
     ruff.setdefault('format', {})['quote-style'] = 'single'
-    # write it
 
-    project.p(*package['jobs']['build']['steps'], sep='\n')
-    project.p(project.configs['tool']['ruff'])
+    files = []
+    if ci != old_ci:
+        dump = yaml.safe_dump(ci)
+        if False:
+            ci_file.write_text(dump)
+        files.append(CI)
+
+    if project.configs != old_configs:
+        if False:
+            project.write_pyproject()
+        files.append(PYPROJECT)
+
+    if files and False:
+        project.git.commit('Replace isort and black with ruff')
+
+    project.p(*files)
+
+
 
 def recent_commits():
     it = ((k, v.git.commits('-1', long=True)[0]) for k, v in PROJECTS.items())
