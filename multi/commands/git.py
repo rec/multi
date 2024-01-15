@@ -31,8 +31,16 @@ def fix_ruff(project):
             else:
                 yield step
 
-    project.p(*stepper(), sep='\n')
+    steps[:] = stepper()
+    # write it
 
+    ruff = project.configs['tool'].setdefault('ruff', {})
+    ruff['line-length'] = 88
+    ruff.setdefault('format', {})['quote-style'] = 'single'
+    # write it
+
+    project.p(*package['jobs']['build']['steps'], sep='\n')
+    project.p(project.configs['tool']['ruff'])
 
 def recent_commits():
     it = ((k, v.git.commits('-1', long=True)[0]) for k, v in PROJECTS.items())
