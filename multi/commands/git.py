@@ -17,11 +17,12 @@ def fix_ruff(project):
     if not pfile.exists():
         return
 
-    def steps():
-        with pfile.open() as fp:
-            package = yaml.safe_load(fp)
+    with pfile.open() as fp:
+       package = yaml.safe_load(fp)
+       steps = package['jobs']['build']['steps']
 
-        for step in package['jobs']['build']['steps']:
+    def stepper():
+        for step in steps:
             before, sep, after = step.get('run', '').partition('poetry run ruff check ')
             if sep and not before:
                 yield {'run': f'poetry run ruff check --select I --fix {after}'}
@@ -30,8 +31,7 @@ def fix_ruff(project):
             else:
                 yield step
 
-
-    project.p(*steps(), sep='\n')
+    project.p(*stepper(), sep='\n')
 
 
 def recent_commits():
