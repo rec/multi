@@ -2,7 +2,36 @@ from pathlib import Path
 import string
 from .. projects import DATA, PROJECTS, REC
 import time
+import yaml
+
+
 CI = Path('.github/workflows/python-package.yml')
+
+
+def fix_ruff(project):
+    if project.name == 'safer':
+        return
+
+    # TODO: change pytest!!!
+    pfile = project.path / CI
+    if not pfile.exists():
+        return
+
+    def steps():
+        with pfile.open() as fp:
+            package = yaml.safe_load(fp)
+
+        for step in package['jobs']['build']['steps']:
+            before, sep, after = step.get('run', '').partition('poetry run ruff check ')
+            if sep and not before:
+                yield {'run': f'poetry run ruff check --select I --fix {after}'}
+                yield {'run': f'poetry run ruff format'}
+
+            else:
+                yield step
+
+
+    project.p(*steps(), sep='\n')
 
 
 def recent_commits():
@@ -81,9 +110,6 @@ def fix_github_old(project):
     git('add', '.github')
     if git.is_dirty():
         git.commit('Add {CI}', CI)
-
-
-def fix_github(project):
 
 
 

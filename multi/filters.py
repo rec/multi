@@ -25,5 +25,13 @@ def has_old_data(project):
     return 'multi' in project.configs['tool']
 
 
+def has_test_deps(project):
+    try:
+        deps = set(project.configs['tool']['poetry']['dependencies'])
+    except KeyError:
+        return False
+    return deps.intersection(('pytest', 'tdir', 'ruff', 'mypy', 'isort', 'black'))
+
+
 prop = get_or_call
 has_tags = tag  # legacy
