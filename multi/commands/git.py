@@ -44,16 +44,47 @@ def fix_package(project):
 
 
 def add_github(project):
-    project.p()
-    contents = ('/code/tdir' / CI).read_text()
-    replaced = contents.replace('tdir', project.name)
-
-    project.p(replaced[:128])
-
-    if True:
+    if project.name == 'nc':
         return
 
-    (project.path / CI).write(replaced)
+    if (ci := (project.path / CI)).exists():
+        return
+
+    contents = ('/code/tdir' / CI).read_text()
+    replaced = contents.replace(
+        'test_tdir.py', 'test*'
+    ).replace(
+        'tdir', project.name
+    ).replace(
+        '\n\n\n', '\n\n'
+    )
+    commit_msg = f'Add {CI}'
+
+    if not True:
+        project.p(project.configs['tool']['poetry']['dependencies']['python'])
+        # print(replaced)
+        # project.p()
+
+    else:
+        project.p('Writing', ci)
+        ci.parent.mkdir(exist_ok=True, parents=True)
+        ci.write_text(replaced)
+        project.git('add', ci)
+        project.git.commit(commit_msg, ci)
+
+
+def fix_github_old(project):
+    if not (ci := (project.path / CI)).exists():
+        return
+    git = project.git
+    assert not git.is_dirty()
+    git('add', '.github')
+    if git.is_dirty():
+        git.commit('Add {CI}', CI)
+
+
+def fix_github(project):
+
 
 
 def fix_gitignore(project):
