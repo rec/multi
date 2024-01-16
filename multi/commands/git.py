@@ -43,18 +43,20 @@ def fix_ruff(project):
     ruff.setdefault('format', {})['quote-style'] = 'single'
 
     files = []
+    ENABLE = not False
+
     if ci != old_ci:
         dump = yaml.safe_dump(ci)
-        if False:
+        if ENABLE:
             ci_file.write_text(dump)
         files.append(CI)
 
     if project.configs != old_configs:
-        if False:
+        if ENABLE:
             project.write_pyproject()
         files.append(PYPROJECT)
 
-    if files and False:
+    if files and ENABLE:
         project.git.commit('Replace isort and black with ruff')
 
     project.p(*files)
