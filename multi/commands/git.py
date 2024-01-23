@@ -3,8 +3,10 @@ import string
 from .. paths import PYPROJECT
 from .. projects import DATA, PROJECTS, REC
 import time
-import yaml
+from ruamel.yaml import YAML
 import copy
+
+yaml = YAML(typ='safe', pure='True')
 
 CI = Path('.github/workflows/python-package.yml')
 
@@ -18,7 +20,7 @@ def fix_ruff(project):
     if not ci_file.exists():
         return
 
-    ci = yaml.safe_load(ci_file.read_text())
+    ci = yaml.load(ci_file.read_text())
     steps = ci['jobs']['build']['steps']
 
     old_ci, old_configs = copy.deepcopy(ci), copy.deepcopy(project.configs)
@@ -43,15 +45,18 @@ def fix_ruff(project):
     ruff.setdefault('format', {})['quote-style'] = 'single'
 
     files = []
-    ENABLE = not False
+    ENABLE = True
 
     if ci != old_ci:
-        dump = yaml.safe_dump(ci)
         if ENABLE:
-            ci_file.write_text(dump)
+            with open(ci_file, 'w') as fp:
+                yaml.dump(ci, fp)
         files.append(CI)
 
-    if project.configs != old_configs:
+    if project.configs != old_configs and (
+        list(project.configs) != list(old_configs)
+        or any(v != project.configs[k] for k, v in old_configs.items())
+    ):
         if ENABLE:
             project.write_pyproject()
         files.append(PYPROJECT)
