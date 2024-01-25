@@ -37,6 +37,14 @@ def update(project):
                 project.git.commit('Update dependencies', *PROJECT_FILES)
 
 
+def remove_cruft(project):
+    tools = 'black', 'flake8', 'isort'
+    removed = [k for k in tools if project.configs['tool'].pop(k, None)]
+    if any(removed):
+        project.write_pyproject()
+        project.git.commit('Removed tool configs for ' + ', '.join(removed), PYPROJECT)
+
+
 def _exists(url):
     try:
         value = requests.get(url)
