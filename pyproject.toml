@@ -30,6 +30,9 @@ mkdocs = "*"
 mkdocstrings = {extras = ["python"], version = "*"}
 mkdocs-material = "*"
 
+
+[tool.mypy]
+strict = true
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
