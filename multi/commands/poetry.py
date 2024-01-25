@@ -1,5 +1,6 @@
 import requests
 from . import bump_version
+from ..paths import PYPROJECT, PROJECT_FILES
 
 
 def poetry(project, *argv):
@@ -24,6 +25,16 @@ def add_fields(project):
         project.p('Done')
     else:
         project.p(tool)
+
+
+def update(project):
+    assert project.name == 'multi' or not project.git.is_dirty()
+    if (project.path / PYPROJECT).exists():
+        project.p()
+        if not False:
+            project.run.poetry('update')
+            if project.git.is_dirty():
+                project.git.commit('Update dependencies', *PROJECT_FILES)
 
 
 def _exists(url):
