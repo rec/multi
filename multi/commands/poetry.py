@@ -45,6 +45,14 @@ def remove_cruft(project):
         project.git.commit('Removed tool configs for ' + ', '.join(removed), PYPROJECT)
 
 
+def add_strict(project):
+    mypy = project.configs['tool'].setdefault('mypy', {})
+    if not mypy.get('strict'):
+        mypy['strict'] = True
+        project.write_pyproject()
+        project.git.commit('Run mypy in strict mode', PYPROJECT)
+
+
 def _exists(url):
     try:
         value = requests.get(url)
