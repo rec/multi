@@ -31,10 +31,9 @@ def update(project):
     assert project.name == 'multi' or not project.git.is_dirty()
     if (project.path / PYPROJECT).exists():
         project.p()
-        if not False:
-            project.run.poetry('update')
-            if project.git.is_dirty():
-                project.git.commit('Update dependencies', *PROJECT_FILES)
+        project.run.poetry('update')
+        if project.git.is_dirty():
+            project.git.commit('Update dependencies', *PROJECT_FILES)
 
 
 def remove_cruft(project):
@@ -51,6 +50,10 @@ def add_strict(project):
         mypy['strict'] = True
         project.write_pyproject()
         project.git.commit('Run mypy in strict mode', PYPROJECT)
+
+
+def run_tests(project):
+    project.run('/code/dotfiles/bin/run-tests')
 
 
 def _exists(url):
