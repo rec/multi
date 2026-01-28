@@ -1,4 +1,4 @@
-from . import SCRIPTS
+from . import ROOT, SCRIPTS
 from contextlib import contextmanager
 from functools import cached_property
 from pathlib import Path
@@ -10,6 +10,9 @@ import xmod
 
 CODE_ROOT = Path('~/code').expanduser()
 RUN_SH = str(SCRIPTS / 'run.sh')
+FILE = ROOT / 'multi.toml'
+DATA = tomlkit.loads(FILE.read_text())
+BACK_FILE = FILE.with_suffix('.bak.toml')
 
 
 @datacls
@@ -25,6 +28,7 @@ class Opener:
 @datacls(order=True)
 class Project:
     name: str
+    tag: str
     rank: int = -1  # -1 means unranked
 
     RELOAD = 'description_parts', 'multi', 'pyproject_file', 'configs'
@@ -84,10 +88,8 @@ class Project:
         return self.manager['version']
 
     @cached_property
-    def tags(self):
-        from . projects import DATA as d
-
-        return tuple(sorted(k for k, v in d['tags'].items() if self.name in v))
+    def tags(self) -> tuple[str, ...]:
+        return tuple(sorted(k for k, v in DATA['tags'].items() if self.name in v))
 
     @cached_property
     def git(self):
@@ -250,14 +252,12 @@ class Project:
         return f'{self.name}--api-documentation'
 
     def get_value(self, key, default=None):
-        from . import projects
-
-        return projects.DATA.get(key, {}).get(self.name, default)
+        return DATA.get(key, {}).get(self.name, default)
 
     def set_value(self, key, value):
         from . import projects
 
-        projects.DATA.setdefault(key, {})[self.name] = value
+        DATA.setdefault(key, {})[self.name] = value
         projects.write()
 
     @property
@@ -282,8 +282,6 @@ class Project:
 
 
 def _get(*keys):
-    from . projects import DATA
-
     d = DATA
     for k in keys:
         d = d.setdefault(k, {})

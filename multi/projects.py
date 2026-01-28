@@ -1,15 +1,9 @@
-from . import ROOT
-from . project import Project
+from . project import DATA, Project
 import copy
 import tomlkit
 
-FILE = ROOT / 'multi.toml'
-BACK_FILE = FILE.with_suffix('.bak.toml')
-DATA = tomlkit.loads(FILE.read_text())
 BACK = copy.deepcopy(DATA)
-_RANKED = DATA['ranked']
-
-PROJECTS = {k: Project(k, i) for i, k in enumerate(_RANKED)}
+PROJECTS = {name: Project(name, tag, i) for i, (name, tag) in enumerate(DATA['ranked'])}
 
 MULTI = PROJECTS['multi']
 REC = Project('rec', len(PROJECTS))

@@ -1,4 +1,4 @@
-ranked-tagged = [
+ranked = [
     ["safer", "production-ready"],
     ["tdir", "production-ready"],
     ["editor", "production-ready"],
@@ -34,107 +34,19 @@ ranked-tagged = [
     ["test", "personal"],
     ["dotfiles", "personal"],
 ]
+
 new-unranked = [
     "tuney",
     "zoialib",
     "fixo",
 ]
-ranked = [
-    "safer",
-    "tdir",
-    "editor",
-    "psplit",
-    "gitz",
-    "pullman",
-    "nc",
-    "dtyper",
-    "clsprop",
-    "threa",
-    "sproc",
-    "fil",
-    "xmod",
-    "impall",
-    "nmr",
-    "datacls",
-    "abbrev",
-    "dek",
-    "recs",
-    "wavemap",
-    "vl8",
-    "litoid",
-    "fortune",
-    "plur",
-    "def_main",
-    "multi",
-    "blocks",
-    "hardback",
-    "loady",
-    "runs",
-    "cfgs",
-    "backer",
-    "test",
-    "dotfiles",
-]
-
-[tags]
-
-production-ready = [
-    "abbrev",
-    "clsprop",
-    "datacls",
-    "dek",
-    "dtyper",
-    "editor",
-    "gitz",
-    "impall",
-    "psplit",
-    "nc",
-    "safer",
-    "sproc",
-    "tdir",
-    "threa",
-    "xmod",
-]
-
-experimental = [
-    "backer",
-    "def_main",
-    "hardback",
-    "litoid",
-    "nmr",
-    "recs",
-    "vl8",
-]
-
-beta = [
-    "cfgs",
-    "fil",
-    "plur",
-    "pullman",
-]
-
-mothballed = [
-    "loady",
-    "runs",
-    "wavemap",
-]
-
-personal = [
-    "blocks",
-    "dotfiles",
-    "multi",
-    "fortune",
-    "test",
-]
 
 [api_documentation]
-
 clsprop = false
 dek = false
 datacls = false
 impall = false
 
 [api_paths]
-
 nc = ["nc", "nc.color", "nc.colors"]
 fil = ["fil.read", "fil.write"]
