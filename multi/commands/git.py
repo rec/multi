@@ -88,6 +88,10 @@ def status(project):
     project.p()
     project.git('status')
 
+
+git = state
+
+
 HEADER = """\
 # This workflow will install Python dependencies, run tests and lint with a variety of Python versions
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python

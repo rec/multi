@@ -1,16 +1,60 @@
+ranked-tagged = [
+    ["safer", "production-ready"],
+    ["tdir", "production-ready"],
+    ["editor", "production-ready"],
+    ["psplit", "production-ready"],
+    ["gitz", "production-ready"],
+    ["pullman", "beta"],
+    ["nc", "production-ready"],
+    ["dtyper", "production-ready"],
+    ["clsprop", "production-ready"],
+    ["threa", "production-ready"],
+    ["sproc", "production-ready"],
+    ["fil", "beta"],
+    ["xmod", "production-ready"],
+    ["impall", "production-ready"],
+    ["nmr", "experimental"],
+    ["datacls", "production-ready"],
+    ["abbrev", "production-ready"],
+    ["dek", "production-ready"],
+    ["recs", "experimental"],
+    ["wavemap", "mothballed"],
+    ["vl8", "experimental"],
+    ["litoid", "experimental"],
+    ["fortune", "personal"],
+    ["plur", "beta"],
+    ["def_main", "experimental"],
+    ["multi", "personal"],
+    ["blocks", "personal"],
+    ["hardback", "experimental"],
+    ["loady", "mothballed"],
+    ["runs", "mothballed"],
+    ["cfgs", "beta"],
+    ["backer", "experimental"],
+    ["test", "personal"],
+    ["dotfiles", "personal"],
+]
+new-unranked = [
+    "tuney",
+    "zoialib",
+    "fixo",
+]
 ranked = [
     "safer",
     "tdir",
+    "editor",
+    "psplit",
+    "gitz",
+    "pullman",
     "nc",
     "dtyper",
     "clsprop",
-    "editor",
     "threa",
     "sproc",
     "fil",
     "xmod",
     "impall",
-    "gitz",
+    "nmr",
     "datacls",
     "abbrev",
     "dek",
@@ -19,7 +63,6 @@ ranked = [
     "vl8",
     "litoid",
     "fortune",
-    "nmr",
     "plur",
     "def_main",
     "multi",
@@ -35,6 +78,24 @@ ranked = [
 
 [tags]
 
+production-ready = [
+    "abbrev",
+    "clsprop",
+    "datacls",
+    "dek",
+    "dtyper",
+    "editor",
+    "gitz",
+    "impall",
+    "psplit",
+    "nc",
+    "safer",
+    "sproc",
+    "tdir",
+    "threa",
+    "xmod",
+]
+
 experimental = [
     "backer",
     "def_main",
@@ -49,6 +110,7 @@ beta = [
     "cfgs",
     "fil",
     "plur",
+    "pullman",
 ]
 
 mothballed = [
@@ -63,24 +125,6 @@ personal = [
     "multi",
     "fortune",
     "test",
-]
-
-production-ready = [
-    "abbrev",
-    "clsprop",
-    "datacls",
-    "dek",
-    "dtyper",
-    "editor",
-    "fil",
-    "gitz",
-    "impall",
-    "nc",
-    "safer",
-    "sproc",
-    "tdir",
-    "threa",
-    "xmod",
 ]
 
 [api_documentation]

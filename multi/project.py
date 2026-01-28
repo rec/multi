@@ -96,8 +96,12 @@ class Project:
         return Runner(self.path)
 
     @cached_property
-    def bin_path(self):
-        return max(self.path.glob('.direnv/python-3.*/bin'))
+    def bin_path(self) -> Path:
+        if p := list(self.path.glob('.direnv/python-3.*/bin')):
+            return max(p)
+        if (p := Path('.venv/bin')).exists():
+            return p
+        raise ValueError(f'No binary path found in {self.path=}, {VENV_PATHS=}')
 
     def bin(self, *parts):
         return self.bin_path / ('/'.join(parts))
