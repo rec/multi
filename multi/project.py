@@ -38,11 +38,11 @@ class Project:
     def path(self) -> Path:
         return CODE_ROOT / self.name
 
-    def joinpath(self, *path):
-        return self.path.joinpath(*path)
+    def make_path(self, *path):
+        return self.path.make_path(*path)
 
     def read_lines(self, *path):
-        return self.joinpath(*path).read_text().splitlines()
+        return self.make_path(*path).read_text().splitlines()
 
     @cached_property
     def pyproject_file(self):
@@ -73,9 +73,9 @@ class Project:
         self.write_pyproject()
         self.git.commit(msg, PYPROJECT, *files)
 
-    @cached_property
-    def poetry(self):
-        return self.configs.setdefault('tool', {}).setdefault('poetry', {})
+    @property
+    def poetry(self) -> dict | None
+        return self.configs.setdefault('tool', {}).get('poetry')
 
     @cached_property
     def tags(self):

@@ -3,7 +3,7 @@ from multi.paths import PYPROJECT
 
 
 def exists(project, *args):
-    return project.joinpath(*args).exists()
+    return project.make_path(*args).exists()
 
 
 def has_emoji(project):
