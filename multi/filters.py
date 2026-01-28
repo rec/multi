@@ -11,7 +11,7 @@ def has_emoji(project):
 
 
 def needs_release(project):
-    return project.git_tag != 'v' + project.poetry['version']
+    return project.git_tag != 'v' + project.version
 
 
 def is_rst(project):

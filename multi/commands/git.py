@@ -11,63 +11,6 @@ yaml = YAML(typ='safe', pure='True')
 CI = Path('.github/workflows/python-package.yml')
 
 
-def fix_ruff(project):
-    if project.name == 'safer':
-        return
-
-    # TODO: change pytest!!!
-    ci_file = project.path / CI
-    if not ci_file.exists():
-        return
-
-    ci = yaml.load(ci_file.read_text())
-    steps = ci['jobs']['build']['steps']
-
-    old_ci, old_configs = copy.deepcopy(ci), copy.deepcopy(project.configs)
-
-    def stepper():
-        for step in steps:
-            before, sep, after = step.get('run', '').partition('poetry run ruff check ')
-            if '--select' in after:
-                yield step
-
-            elif sep and not before:
-                yield {'run': f'poetry run ruff check --select I --fix {after}'}
-                yield {'run': f'poetry run ruff format'}
-
-            else:
-                yield step
-
-    steps[:] = stepper()
-
-    ruff = project.configs['tool'].setdefault('ruff', {})
-    ruff['line-length'] = 88
-    ruff.setdefault('format', {})['quote-style'] = 'single'
-
-    files = []
-    ENABLE = True
-
-    if ci != old_ci:
-        if ENABLE:
-            with open(ci_file, 'w') as fp:
-                yaml.dump(ci, fp)
-        files.append(CI)
-
-    if project.configs != old_configs and (
-        list(project.configs) != list(old_configs)
-        or any(v != project.configs[k] for k, v in old_configs.items())
-    ):
-        if ENABLE:
-            project.write_pyproject()
-        files.append(PYPROJECT)
-
-    if files and ENABLE:
-        project.git.commit('Replace isort and black with ruff')
-
-    project.p(*files)
-
-
-
 def recent_commits():
     it = ((k, v.git.commits('-1', long=True)[0]) for k, v in PROJECTS.items())
     it = ((k, v.split('|')) for k, v in it)
@@ -127,17 +70,11 @@ def add_github(project):
     )
     commit_msg = f'Add {CI}'
 
-    if not True:
-        project.p(project.configs['tool']['poetry']['dependencies']['python'])
-        # print(replaced)
-        # project.p()
-
-    else:
-        project.p('Writing', ci)
-        ci.parent.mkdir(exist_ok=True, parents=True)
-        ci.write_text(replaced)
-        project.git('add', ci)
-        project.git.commit(commit_msg, ci)
+    project.p('Writing', ci)
+    ci.parent.mkdir(exist_ok=True, parents=True)
+    ci.write_text(replaced)
+    project.git('add', ci)
+    project.git.commit(commit_msg, ci)
 
 
 def fix_github_old(project):

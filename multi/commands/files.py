@@ -1,7 +1,7 @@
 import configparser
 from .. projects import GITHUB_IO, MULTI
 from . bump_version import bump_version
-from ..paths import PROJECT_FILES, PYPROJECT
+from ..paths import POETRY_PROJECT_FILES, PYPROJECT
 
 
 FAVICON = GITHUB_IO.path / 'docs/favicon.ico'
@@ -55,24 +55,6 @@ def move_coveragerc(project):
     cov.unlink()
     project.git.commit(f'Move .coveragerc into {PYPROJECT}', PYPROJECT, cov)
 
-
-def add_coverage(project):
-    if not project.pyproject_file.exists():
-        return
-
-    has_coverage = 'coverage = ' in project.pyproject_file.read_text()
-    if has_coverage:
-        return
-
-    if project.name not in ('threa', 'fil', 'gitz', 'litoid', 'plur'):
-        return
-    project.p('adding')
-
-    if True:
-        return
-
-    project.run('poetry', 'add', 'coverage')
-    project.git.commit('Add coverage dependency', *PROJECT_FILES)
 
 
 def get_url(text):
@@ -138,39 +120,19 @@ def update_python(project):
         return
 
     try:
-        dependencies = project.poetry['dependencies']
+        dependencies = project.manager['dependencies']
         if not dependencies['python'].endswith('3.7'):
             return
     except KeyError:
         return
 
-    project.p('Updating', project.poetry['version'])
+    project.p('Updating', project.version)
     if not True:
         return
     dependencies['python'] = '>=3.8'
     project.write_pyproject()
     project.run('poetry', 'lock', arm=True)
 
-    project.git.commit('Update minimum Python version to 3.8', *PROJECT_FILES)
+    project.git.commit('Update minimum Python version to 3.8', *POETRY_PROJECT_FILES)
     bump_version(project, 'minor')
-    project.p('Done', project.poetry['version'])
-
-
-def bad_versions(project):
-    import re
-    search = re.compile(r'\bv\d+\.\d+\.\d+$').search
-
-    poetry_version = project.poetry.get('version', None)
-    for commit in project.git.commits('-10'):
-        h, cd, s = commit.split('|')
-        if m := search(s):
-            git_version = m.group()[1:]
-            if poetry_version == git_version:
-                return
-            else:
-                break
-    else:
-        return
-
-    project.p(poetry_version, git_version)
-    bump_version(project, 'patch')
+    project.p('Done', project.version)

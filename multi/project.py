@@ -74,8 +74,16 @@ class Project:
         self.git.commit(msg, PYPROJECT, *files)
 
     @property
-    def poetry(self) -> dict | None
-        return self.configs.setdefault('tool', {}).get('poetry')
+    def poetry(self) -> dict | None:
+        return self.configs.get('tool', {}).get('poetry')
+
+    @property
+    def manager(self) -> dict | None:
+        return self.configs.get('project') or self.poetry
+
+    @property
+    def version(self) -> dict | None:
+        return self.manager['version']
 
     @cached_property
     def tags(self):
