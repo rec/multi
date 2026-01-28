@@ -1,38 +1,52 @@
-[tool.poetry]
+[project]
 name = "multi"
 version = "0.1.1"
 description = "📚 Manage all my other projects 📚"
-authors = ["Tom Ritchford <tom@swirly.com>"]
-license = "MIT"
+authors = [{ name = "Tom Ritchford", email = "tom@swirly.com" }]
+requires-python = ">3.10"
 readme = "README.md"
+license = "MIT"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+dependencies = [
+    "abbrev",
+    "typer",
+    "dtyper",
+    "loady",
+    "tomlkit",
+    "datacls",
+    "lxml",
+    "safer",
+    "requests",
+    "refurb",
+    "pelican[markdown]",
+    "typogrify",
+    "ruamel.yaml",
+]
 
-[tool.poetry.dependencies]
-python = ">3.10"
-abbrev = "*"
-typer = "*"
-dtyper = "*"
-loady = "*"
-tomlkit = "*"
-datacls = "*"
-lxml = "*"
-safer = "*"
-requests = "*"
-refurb = "*"
-pelican = {extras = ["markdown"], version = "*"}
-typogrify = "*"
-"ruamel.yaml" = "*"
+[project.scripts]
+multi = "multi.__main__:main"
 
+[dependency-groups]
+dev = [
+    "black",
+    "flake8",
+    "mkdocs",
+    "mkdocstrings[python]",
+    "mkdocs-material",
+]
 
-[tool.poetry.group.dev.dependencies]
-black = "*"
-flake8 = "*"
-mkdocs = "*"
-mkdocstrings = {extras = ["python"], version = "*"}
-mkdocs-material = "*"
+[tool.uv]
+package = true
 
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [tool.mypy]
 strict = true
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"

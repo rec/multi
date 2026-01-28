@@ -1,4 +1,9 @@
 from . multi import app
 
-if __name__ == '__main__':
+
+def main():
     app(standalone_mode=False)
+
+
+if __name__ == '__main__':
+    main()
