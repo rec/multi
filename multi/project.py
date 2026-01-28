@@ -8,7 +8,7 @@ import tomlkit
 import webbrowser
 import xmod
 
-CODE_ROOT = Path('/code')
+CODE_ROOT = Path('~/code').expanduser()
 RUN_SH = str(SCRIPTS / 'run.sh')
 
 
@@ -27,7 +27,7 @@ class Project:
     name: str
     rank: int = -1  # -1 means unranked
 
-    RELOAD = 'description_parts', 'multi', 'poetry', 'pyproject_file', 'configs'
+    RELOAD = 'description_parts', 'multi', 'pyproject_file', 'configs'
 
     def reload(self):
         for r in self.RELOAD:
@@ -55,9 +55,10 @@ class Project:
 
     @cached_property
     def configs(self):
-        if not self.pyproject_file.exists():
+        try:
+            return tomlkit.loads(self.pyproject_file.read_text())
+        except FileNotFoundError:
             return {}
-        return tomlkit.loads(self.pyproject_file.read_text())
 
     @contextmanager
     def pyproject_writer(self):
@@ -74,12 +75,9 @@ class Project:
         self.git.commit(msg, PYPROJECT, *files)
 
     @property
-    def poetry(self) -> dict | None:
-        return self.configs.get('tool', {}).get('poetry')
-
-    @property
     def manager(self) -> dict | None:
-        return self.configs.get('project') or self.poetry
+        c = self.configs
+        return c.get('project') or c.get('tool', {}).get('poetry')
 
     @property
     def version(self) -> dict | None:
@@ -170,8 +168,8 @@ class Project:
 
     @cached_property
     def description(self):
-        if self.poetry:
-            return self.poetry['description']
+        if self.manager:
+            return self.manager['description']
         return _DESCRIPTIONS.get(self.name, self.name)
 
     @cached_property
@@ -215,8 +213,7 @@ class Project:
         print(f'{self.name:10}: ', *args, **kwargs)
 
     def python(self, *args, **kwargs):
-        arm = not self.poetry['dependencies']['python'].endswith('3.7')
-        return self.run(self.bin('python'), *args, arm=arm, **kwargs)
+        return self.run(self.bin('python'), *args, arm=True, **kwargs)
 
     @cached_property
     def comment(self):

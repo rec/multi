@@ -15,7 +15,7 @@ def needs_release(project):
 
 
 def is_rst(project):
-    return project.poetry['readme'].endswith('.rst')
+    return project.manager['readme'].endswith('.rst')
 
 
 def tag(project, *tags):
@@ -28,7 +28,7 @@ def has_old_data(project):
 
 def has_test_deps(project):
     try:
-        deps = set(project.configs['tool']['poetry']['dependencies'])
+        deps = set(project.manager['dependencies'])
     except KeyError:
         return False
     return deps.intersection(('pytest', 'tdir', 'ruff', 'mypy', 'isort', 'black'))
