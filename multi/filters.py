@@ -38,5 +38,15 @@ def clean_project(project):
     return not project.git.is_dirty() and (project.path / PYPROJECT).exists()
 
 
+def is_old_python(project) -> bool:
+    if not project.python_version:
+        return False
+    comp, _, version = project.python_version.partition(",")[0].partition('3.')
+    assert version, project.version
+    return comp == "^" or int(version.partition(".")[0]) < 10
+
+
+
+
 prop = get_or_call
 has_tags = tag  # legacy
