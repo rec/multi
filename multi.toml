@@ -4,12 +4,15 @@ ranked = [
     ["editor", "production-ready"],
     ["psplit", "production-ready"],
     ["gitz", "production-ready"],
+    ["tuney", "experimental"],
     ["pullman", "beta"],
+    ["fixo", "beta"],
     ["nc", "production-ready"],
     ["dtyper", "production-ready"],
     ["clsprop", "production-ready"],
     ["threa", "production-ready"],
     ["sproc", "production-ready"],
+    ["zoialib", "production-ready"],
     ["fil", "beta"],
     ["xmod", "production-ready"],
     ["impall", "production-ready"],
@@ -33,12 +36,6 @@ ranked = [
     ["backer", "experimental"],
     ["test", "personal"],
     ["dotfiles", "personal"],
-]
-
-new-unranked = [
-    "tuney",
-    "zoialib",
-    "fixo",
 ]
 
 [api_documentation]
