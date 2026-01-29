@@ -78,14 +78,14 @@ class Project:
         self.write_pyproject()
         self.git.commit(msg, PYPROJECT, *files)
 
-    @property
+    @cached_property
     def manager(self) -> dict | None:
         c = self.configs
         return c.get('project') or c.get('tool', {}).get('poetry')
 
-    @property
-    def version(self) -> dict | None:
-        return self.manager['version']
+    @cached_property
+    def version(self) -> str:
+        return (self.manager or {}).get('version', '')
 
     @cached_property
     def tags(self) -> tuple[str, ...]:
@@ -152,6 +152,7 @@ class Project:
             return Opener(f'file://{self.gh_pages}/index.html')
         return lambda *a, **k: None
 
+    @cached_property
     def has_gh_pages(self):
         br = [b.split('/')[-1].strip() for b in self.branches('-r')]
         return 'gh-pages' in br
@@ -215,7 +216,12 @@ class Project:
         print(f'{self.name:10}: ', *args, **kwargs)
 
     def python(self, *args, **kwargs):
-        return self.run(self.bin('python'), *args, arm=True, **kwargs)
+        return self.run(str(self.bin('python')), *args, arm=True, **kwargs)
+
+    @cached_property
+    def python_version(self) -> str:
+        m = self.manager or {}
+        return m.get('requires-python') or m.get('dependencies', {}).get('python') or ''
 
     @cached_property
     def comment(self):
