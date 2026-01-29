@@ -16,6 +16,8 @@ class Runner:
             args = args[0]
             if isinstance(args, str):
                 args = shlex.split(args)
+            else:
+                assert isinstance(args, (list, tuple)), (args, type(args))
         args = [str(a) for a in args]
 
         if out or complete:
