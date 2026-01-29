@@ -47,6 +47,5 @@ def is_old_python(project) -> bool:
 
 
 
-
 prop = get_or_call
 has_tags = tag  # legacy

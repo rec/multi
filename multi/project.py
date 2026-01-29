@@ -79,16 +79,24 @@ class Project:
         self.git.commit(msg, PYPROJECT, *files)
 
     @cached_property
-    def manager(self) -> dict | None:
-        c = self.configs
-        return c.get('project') or c.get('tool', {}).get('poetry')
+    def manager(self) -> dict:
+        return self.configs.get('project') or self.poetry
+
+    @cached_property
+    def poetry(self) -> dict:
+        return self.configs.get('tool', {}).get('poetry', {})
+
+    @cached_property
+    def package_manager(self) -> dict | None:
+        return 'uv' if 'project' in self.configs else 'poetry' if self.poetry else ''
 
     @cached_property
     def version(self) -> str:
-        return (self.manager or {}).get('version', '')
+        return self.manager.get('version', '')
 
     @cached_property
     def tags(self) -> tuple[str, ...]:
+        # wrong
         return tuple(sorted(k for k, v in DATA['tags'].items() if self.name in v))
 
     @cached_property
@@ -171,9 +179,7 @@ class Project:
 
     @cached_property
     def description(self):
-        if self.manager:
-            return self.manager['description']
-        return _DESCRIPTIONS.get(self.name, self.name)
+        return self.manager.get('description') or DESCRIPTIONS.get(self.name, self.name)
 
     @cached_property
     def description_parts(self):
@@ -220,7 +226,7 @@ class Project:
 
     @cached_property
     def python_version(self) -> str:
-        m = self.manager or {}
+        m = self.manager
         return m.get('requires-python') or m.get('dependencies', {}).get('python') or ''
 
     @cached_property
@@ -294,7 +300,7 @@ def _get(*keys):
     return d
 
 
-_DESCRIPTIONS = {
+DESCRIPTIONS = {
     'dotfiles': '⚫ My dotfiles ⚫',
     'test': '❓ Tiny bits of experimental code ❓',
 }
