@@ -11,7 +11,7 @@ RUN_BASH = str(SCRIPTS / 'run.sh')
 class Runner:
     path: Path | None = None
 
-    def __call__(self, *args, out=False, arm=True, complete=False, **kwargs):
+    def __call__(self, *args, out=False, complete=False, **kwargs):
         if len(args) == 1:
             args = args[0]
             if isinstance(args, str):
@@ -29,9 +29,6 @@ class Runner:
         kwargs.setdefault('check', not complete)
         kwargs.setdefault('text', True)
         kwargs.setdefault('cwd', self.path)
-
-        if arm:
-            args = 'arch', '-arm64', *args
 
         if configs.verbose:
             print('$', *args)

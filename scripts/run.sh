@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
 
-source .direnv/python*/bin/activate
+if [ -d .venv ]; then
+    source .venv/bin/activate
+else
+    source .direnv/python*/bin/activate
+fi
+
 $@

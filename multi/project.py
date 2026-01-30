@@ -42,19 +42,19 @@ class Project:
     def path(self) -> Path:
         return CODE_ROOT / self.name
 
-    def make_path(self, *path):
-        return self.path.make_path(*path)
+    def make_path(self, *path) -> Path:
+       return self.path.joinpath(*path)
 
-    def read_lines(self, *path):
+    def read_lines(self, *path) -> list[str]:
         return self.make_path(*path).read_text().splitlines()
 
     @cached_property
-    def pyproject_file(self):
+    def pyproject_file(self) -> Path:
         from . paths import PYPROJECT
         return self.path / PYPROJECT
 
     @cached_property
-    def user(self):
+    def user(self) -> str:
         return 'timedata-org' if self.name == 'loady' else 'rec'
 
     @cached_property
@@ -96,8 +96,7 @@ class Project:
 
     @cached_property
     def tags(self) -> tuple[str, ...]:
-        # wrong
-        return tuple(sorted(k for k, v in DATA['tags'].items() if self.name in v))
+        return [self.tag]
 
     @cached_property
     def git(self):
@@ -113,10 +112,10 @@ class Project:
 
     @cached_property
     def bin_path(self) -> Path:
-        if p := list(self.path.glob('.direnv/python-3.*/bin')):
-            return max(p)
         if (p := Path('.venv/bin')).exists():
             return p
+        if p := list(self.path.glob('.direnv/python-3.*/bin')):
+            return max(p)
         raise ValueError(f'No binary path found in {self.path=}, {VENV_PATHS=}')
 
     def bin(self, *parts):
@@ -228,6 +227,13 @@ class Project:
     def python_version(self) -> str:
         m = self.manager
         return m.get('requires-python') or m.get('dependencies', {}).get('python') or ''
+
+    def is_old_python(self) -> bool:
+        if not self.python_version:
+            return False
+        comp, _, version = self.python_version.partition(",")[0].partition('3.')
+        assert version, self.version
+        return comp == "^" or int(version.partition(".")[0]) < 10
 
     @cached_property
     def comment(self):

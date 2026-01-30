@@ -39,12 +39,11 @@ def clean_project(project):
 
 
 def is_old_python(project) -> bool:
-    if not project.python_version:
-        return False
-    comp, _, version = project.python_version.partition(",")[0].partition('3.')
-    assert version, project.version
-    return comp == "^" or int(version.partition(".")[0]) < 10
+    return project.is_old_python
 
+
+def is_poetry(project) -> bool:
+    return bool(project.poetry)
 
 
 prop = get_or_call
