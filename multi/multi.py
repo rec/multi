@@ -112,27 +112,32 @@ def run(
     sys.exit('fail' in locals())
 
 
-def _get_one_callable(name, path, attr):
-    module = importlib.import_module(path)
-    none = object()
-
-    if callable(f := getattr(module, attr, none)):
-        return f
-    if f is none:
-        msg = ValueError(f'ERROR: {name} does not exist ({module=}, {f=})')
-    else:
-        msg = f'ERROR: {name} is not callable ({module=}, {f=})'
-    raise ValueError(msg)
-
-
 def _get_callable(name):
+    def get_one_callable(path):
+        module = importlib.import_module(path)
+        none = object()
+
+        if callable(f := getattr(module, attr, none)):
+            return f
+        if f is none:
+            msg = ValueError(f'ERROR: {name} does not exist ({module=}, {f=})')
+        else:
+            msg = f'ERROR: {name} is not callable ({module=}, {f=})'
+        raise ValueError(msg)
+
+
     path, _, attr = name.rpartition('.')
 
     try:
-        return _get_one_callable(name, path, attr)
-    except ValueError:
-        pass
-    return _get_one_callable(name, f'{path}.{attr}', attr)
+        return get_one_callable(path)
+    except ValueError as e:
+        try:
+            return get_one_callable(f'{path}.{attr}')
+        except ValueError as f:
+            f.args = f.args + e.args
+            raise
+        except ModuleNotFoundError as f:
+            raise ValueError(*e.args, *f.args) from None
 
 
 def _make_filter(filter):
