@@ -34,17 +34,5 @@ def has_test_deps(project):
     return deps.intersection(('pytest', 'tdir', 'ruff', 'mypy', 'isort', 'black'))
 
 
-def clean_project(project):
-    return not project.git.is_dirty() and (project.path / PYPROJECT).exists()
-
-
-def is_old_python(project) -> bool:
-    return project.is_old_python
-
-
-def is_poetry(project) -> bool:
-    return bool(project.poetry)
-
 
 prop = get_or_call
-has_tags = tag  # legacy
