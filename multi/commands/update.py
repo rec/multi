@@ -1,5 +1,6 @@
 from contextlib import suppress
 import re
+import safer
 
 MSG = 'use "git push" to publish your local commits'
 
@@ -22,7 +23,46 @@ def fix_single_file(project):
         project.git.comp(f'Rename {src} to {target}')
 
 
-update = fix_single_file
+def update(project):
+    p = project.python_version
+    if not (v := p.partition(",")[0].partition('3.')[2].partition(".")[0]):
+        return
+    project.p('update')
+    version = int(v)
+
+    ignore_path = project.path / '.gitignore'
+    text = ignore_path.read_text()
+    with safer.open(ignore_path, 'w') as fp:
+        state = 0
+        for line in text.splitlines(keepends=True):
+            if line.startswith('# pyenv'):
+                state = 1
+            elif state == 1:
+                if '.python-version' in line:
+                    state = 2
+            elif state == 2:
+                if line.strip():
+                    fp.write(line)
+                state = 0
+            elif '.python-version' not in line:
+                assert state == 0, (state, line, prev)
+                fp.write(line)
+            prev = line
+
+    f = project.path / '.python-version'
+    text = f'3.{max(version, 10)}\n'
+    if not f.exists() or f.read_text() != text:
+        f.write_text(text)
+    project.git('add', str(f))
+
+    if version < 10:
+        project.configs['project']['requires-python'] = ">=3.10"
+        project.write_pyproject()
+        project.run.in_venv('uv', 'sync')
+        project.git.comp('Update python version to 3.10', '-a')
+
+    elif project.git.is_dirty():
+        project.git.comp('Fix .python-version', '-a')
 
 
 def upgrade(project):
