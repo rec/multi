@@ -11,6 +11,15 @@ def push_unpushed(project):
 
 
 def fix_single_file(project):
+    project.configs['build-system'] = {
+        'requires': ['hatchling'],
+        'build-backend': 'hatchling.build',
+    }
+    project.write_pyproject()
+    project.git.comp('Fix uv sync', 'pyproject.toml')
+
+
+def old_fix_single_file(project):
     single_file = project.path / (project.name + '.py')
     if single_file.exists():
         project.p()
@@ -23,7 +32,7 @@ def fix_single_file(project):
         project.git.comp(f'Rename {src} to {target}')
 
 
-def update(project):
+def update_to_310(project):
     p = project.python_version
     if not (v := p.partition(",")[0].partition('3.')[2].partition(".")[0]):
         return

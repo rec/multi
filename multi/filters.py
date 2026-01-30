@@ -35,3 +35,11 @@ def has_test_deps(project):
     except KeyError:
         return False
     return deps.intersection(('pytest', 'tdir', 'ruff', 'mypy', 'isort', 'black'))
+
+
+def bad_sync(project):
+    try:
+        if project.manager:
+            project.run.in_venv('uv', 'sync', out=True, no_error=True)
+    except Exception as e:
+        return True

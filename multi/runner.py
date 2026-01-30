@@ -11,7 +11,7 @@ RUN_BASH = str(SCRIPTS / 'run.sh')
 class Runner:
     path: Path | None = None
 
-    def __call__(self, *args, out=False, complete=False, **kwargs):
+    def __call__(self, *args, out=False, complete=False, no_error=False, **kwargs):
         if len(args) == 1:
             args = args[0]
             if isinstance(args, str):
@@ -24,7 +24,7 @@ class Runner:
         if out or complete:
             kwargs.setdefault('stdout', subprocess.PIPE)
 
-        if complete and not out:
+        if no_error or complete and not out:
             kwargs.setdefault('stderr', subprocess.PIPE)
 
         kwargs.setdefault('check', not complete)
