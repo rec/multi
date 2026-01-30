@@ -29,6 +29,13 @@ class Git:
         self('commit', '-m', msg, *files, **kwargs)
         self('push', **kwargs)
 
+    def comp(self, msg, *files, **kwargs):
+        if not self.is_dirty(**kwargs):
+            return
+
+        self('commit', '-m', msg, *files, **kwargs)
+        self('push', **kwargs)
+
     def commits(self, *args, long=False, **kwargs):
         flags = LONG_LOG_FLAGS if long else LOG_FLAGS
         return self('log', *flags, *args, out=True, **kwargs).splitlines()

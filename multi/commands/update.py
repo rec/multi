@@ -10,8 +10,16 @@ def push_unpushed(project):
 
 
 def fix_single_file(project):
-    if (f := project.path / (project.name + '.py')).exists():
-        project.p(f)
+    single_file = project.path / (project.name + '.py')
+    if single_file.exists():
+        project.p()
+        if not True:
+            return
+        (project.path / project.name).mkdir()
+
+        src, target = str(single_file), f'{project.name}/__init__.py'
+        project.git('mv', src, target)
+        project.git.comp(f'Rename {src} to {target}')
 
 
 update = fix_single_file
@@ -20,8 +28,7 @@ update = fix_single_file
 def upgrade(project):
     project.run.in_venv('uv', 'sync', '--upgrade')
     if project.git.is_dirty():
-        project.git('commit', 'uv.lock', '-m', 'Upgrade dependencies')
-        project.git('push')
+        project.git.comp('Upgrade dependencies', 'uv.lock')
 
 
 def migrate_to_uv(project):
