@@ -9,7 +9,22 @@ def push_unpushed(project):
          project.git('push')
 
 
-def update(project):
+def fix_single_file(project):
+    if (f := project.path / (project.name + '.py')).exists():
+        project.p(f)
+
+
+update = fix_single_file
+
+
+def upgrade(project):
+    project.run.in_venv('uv', 'sync', '--upgrade')
+    if project.git.is_dirty():
+        project.git('commit', 'uv.lock', '-m', 'Upgrade dependencies')
+        project.git('push')
+
+
+def migrate_to_uv(project):
     if project.package_manager != 'poetry':
         return
 
