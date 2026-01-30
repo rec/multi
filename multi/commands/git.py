@@ -32,8 +32,6 @@ def status(project):
     project.git('status')
 
 
-git = state
-
 
 HEADER = """\
 # This workflow will install Python dependencies, run tests and lint with a variety of Python versions

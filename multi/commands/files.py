@@ -144,15 +144,5 @@ def remove_workflows(project):
         return
     package = project.path / '.github/workflows/python-package.yml'
     if package.exists():
-        project.p('remove_workflows', package)
-        return
-    else:
-        return
-    if p.exists():
-        project.git('rm', str(p))
+        project.git('rm', str(package))
         project.git('commit', '-m', 'Stop running github workflows')
-
-    it = project.path.glob(".github/**/*")
-    if not any(not p.is_dir() and p.name != ".DS_Store" for p in it):
-        shutil.rmtree(".github/")
-        print('removed .github/')
