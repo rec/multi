@@ -228,6 +228,7 @@ class Project:
         m = self.manager
         return m.get('requires-python') or m.get('dependencies', {}).get('python') or ''
 
+    @cached_property
     def is_old_python(self) -> bool:
         if not self.python_version:
             return False
