@@ -2,7 +2,7 @@ from .. projects import REC
 
 
 def resume():
-    from .. import resume
+    from .shared import resume
 
     src = REC.path / 'resume.md'
     assert src.exists()

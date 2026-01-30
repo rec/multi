@@ -1,5 +1,8 @@
-from multi.commands.get import get_or_call
+from multi.commands import get
 from multi.paths import PYPROJECT
+
+
+prop = get.get_or_call
 
 
 def exists(project, *args):
@@ -32,7 +35,3 @@ def has_test_deps(project):
     except KeyError:
         return False
     return deps.intersection(('pytest', 'tdir', 'ruff', 'mypy', 'isort', 'black'))
-
-
-
-prop = get_or_call

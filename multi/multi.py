@@ -11,8 +11,9 @@ app = Typer(
     add_completion=False,
     context_settings={'help_option_names': ['-h', '--help']},
 )
-
 command = app.command
+
+DEFAULT_FILTER = 'prop'
 
 
 @command()
@@ -140,15 +141,15 @@ def _get_callable(name):
             raise ValueError(*e.args, *f.args) from None
 
 
-def _make_filter(filter):
-    first, *args = filter.split(':')
-    filt = _get_callable('multi.filters.' + (first or 'tag'))
+def _make_filter(filter_desc):
+    name, *args = filter_desc.split(':')
+    f = _get_callable('multi.filters.' + (name or DEFAULT_FILTER))
 
-    @wraps(filt)
-    def wrapped(project):
-        return bool(filt(project, *args))
+    @wraps(f)
+    def filter(project):
+        return bool(f(project, *args))
 
-    return wrapped
+    return filter
 
 
 if __name__ == '__main__':

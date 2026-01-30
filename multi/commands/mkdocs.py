@@ -1,5 +1,6 @@
 from . import readme
-from .. import configs, tweak_index
+from .shared import tweak_index
+from .. import configs
 from .. paths import MKDOCS, MKDOCS_BINARY
 import shutil
 import threading
