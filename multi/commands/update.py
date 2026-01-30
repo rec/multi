@@ -1,4 +1,12 @@
 from contextlib import suppress
+import re
+
+MSG = 'use "git push" to publish your local commits'
+
+
+def push_unpushed(project):
+     if MSG in project.git('status', out=True):
+         project.git('push')
 
 
 def update(project):

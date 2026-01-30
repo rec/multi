@@ -20,6 +20,7 @@ class Runner:
                 assert isinstance(args, (list, tuple)), (args, type(args))
         args = [str(a) for a in args]
 
+        # TODO: this is awful
         if out or complete:
             kwargs.setdefault('stdout', subprocess.PIPE)
 
