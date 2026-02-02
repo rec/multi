@@ -35,16 +35,19 @@ multi = "multi.__main__:main"
 
 [dependency-groups]
 dev = [
-    "black",
-    "flake8",
     "mkdocs",
     "mkdocstrings[python]",
     "mkdocs-material",
+    "coverage>=7.13.2",
+    "pyupgrade>=3.21.2",
+    "ruff>=0.14.14",
+    "ty>=0.0.14",
 ]
 
 [tool.uv]
 package = true
 
+[tool.coverage]
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
