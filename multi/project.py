@@ -44,14 +44,15 @@ class Project:
         return CODE_ROOT / self.name
 
     def make_path(self, *path) -> Path:
-       return self.path.joinpath(*path)
+        return self.path.joinpath(*path)
 
     def read_lines(self, *path) -> list[str]:
         return self.make_path(*path).read_text().splitlines()
 
     @cached_property
     def pyproject_file(self) -> Path:
-        from . paths import PYPROJECT
+        from .paths import PYPROJECT
+
         return self.path / PYPROJECT
 
     @cached_property
@@ -80,7 +81,7 @@ class Project:
         self.pyproject_file.write_text(tomlkit.dumps(self.cfg))
 
     def commit_pyproject(self, msg, *files):
-        from . paths import PYPROJECT
+        from .paths import PYPROJECT
 
         self.write_pyproject()
         self.git.commit(msg, PYPROJECT, *files)
@@ -99,13 +100,13 @@ class Project:
 
     @cached_property
     def git(self):
-        from . git import Git
+        from .git import Git
 
         return Git(self.run)
 
     @cached_property
     def run(self):
-        from . runner import Runner
+        from .runner import Runner
 
         return Runner(self.path)
 
@@ -235,9 +236,9 @@ class Project:
     def is_old_python(self) -> bool:
         if not self.python_version:
             return False
-        comp, _, version = self.python_version.partition(",")[0].partition('3.')
+        comp, _, version = self.python_version.partition(',')[0].partition('3.')
         assert version, self.version
-        return comp == "^" or int(version.partition(".")[0]) < 10
+        return comp == '^' or int(version.partition('.')[0]) < 10
 
     @cached_property
     def comment(self):

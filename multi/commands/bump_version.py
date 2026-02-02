@@ -1,10 +1,10 @@
-from .. paths import PYPROJECT
+from ..paths import PYPROJECT
 
 
 def bump_version(project, rule_or_version):
     version = 'v' + project.version
     project.p(version)
-    assert False, "Fix this when I bump the version!"
+    assert False, 'Fix this when I bump the version!'
     project.run.poetry('version', rule_or_version)
     project.reload()
 
@@ -15,5 +15,5 @@ def bump_version(project, rule_or_version):
     project.git('push', '--tag', '--force-with-lease')
     project.run('gh', 'release', 'create', version, '--generate-notes')
 
-    assert False, "Fix this when I bump the version!"
+    assert False, 'Fix this when I bump the version!'
     project.run.poetry('publish', '--build')

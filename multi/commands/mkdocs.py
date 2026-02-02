@@ -1,7 +1,7 @@
 from . import readme
 from .shared import tweak_index
 from .. import configs
-from .. paths import MKDOCS, MKDOCS_BINARY
+from ..paths import MKDOCS, MKDOCS_BINARY
 import shutil
 import threading
 import time
@@ -98,9 +98,7 @@ def copy_and_edit_site(project):
 
 
 def push_site_changes(project):
-    lines = project.git(
-        'status', '--porcelain', out=True, cwd=project.gh_pages
-    )
+    lines = project.git('status', '--porcelain', out=True, cwd=project.gh_pages)
     if all(i.endswith('.gz') for i in lines):
         return
 

@@ -1,5 +1,5 @@
 from .. import configs
-from .. projects import DATA, PROJECTS, REC
+from ..projects import DATA, PROJECTS, REC
 import re
 import time
 
@@ -43,7 +43,7 @@ def _write_contents():
 
 
 def _commit_readme():
-    line, = REC.git.commits('-1')
+    (line,) = REC.git.commits('-1')
     if line.strip().endswith(MSG) and not configs.args:
         print('Amending')
         REC.git('commit', '--amend', README, '--no-edit')
@@ -144,7 +144,7 @@ def _row(projects):
 
 
 def make_table(name, projects):
-    pairs = (projects[i: i + 2] for i in range(0, len(projects), 2))
+    pairs = (projects[i : i + 2] for i in range(0, len(projects), 2))
     body = '\n'.join(_row(p) for p in pairs)
 
     label = f'<h2>{name.capitalize()}</h2>\n'

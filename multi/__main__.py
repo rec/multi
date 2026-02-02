@@ -1,4 +1,4 @@
-from . multi import app
+from .multi import app
 
 
 def main():

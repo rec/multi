@@ -1,7 +1,7 @@
 import configparser
 import shutil
-from .. projects import GITHUB_IO, MULTI
-from . bump_version import bump_version
+from ..projects import GITHUB_IO, MULTI
+from .bump_version import bump_version
 from ..paths import POETRY_PROJECT_FILES, PYPROJECT
 
 
@@ -29,8 +29,9 @@ def fix_coveragerc2(project):
     if first != second:
         return
 
-    project.git('commit', '--amend', '-m',
-                'Remove empty line in pyproject coverage section')
+    project.git(
+        'commit', '--amend', '-m', 'Remove empty line in pyproject coverage section'
+    )
     project.git('push', '--force-with-lease')
 
 
@@ -55,7 +56,6 @@ def move_coveragerc(project):
     project.write_pyproject()
     cov.unlink()
     project.git.commit(f'Move .coveragerc into {PYPROJECT}', PYPROJECT, cov)
-
 
 
 def get_url(text):

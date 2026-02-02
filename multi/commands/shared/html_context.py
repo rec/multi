@@ -4,7 +4,7 @@ from pathlib import Path
 import xmod
 import re
 
-DIGITS = re.compile(br'&#([12]\d\d);')
+DIGITS = re.compile(rb'&#([12]\d\d);')
 
 
 @xmod
@@ -14,7 +14,7 @@ def context(filename: Path):
     html = etree.HTML(contents)
     yield html
 
-    t = etree.tostring(html, pretty_print=True, method="html")
+    t = etree.tostring(html, pretty_print=True, method='html')
     fixed = fix(t)
     filename.write_bytes(fixed)
 

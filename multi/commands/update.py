@@ -8,48 +8,56 @@ MSG = 'use "git push" to publish your local commits'
 _COVERAGE_REPORT_DEFAULT = {
     'skip_covered': True,
     'exclude_lines': [
-        "pragma: no cover",
-        "if False:",
-        "if __name__ == .__main__.:",
-        "raise NotImplementedError",
+        'pragma: no cover',
+        'if False:',
+        'if __name__ == .__main__.:',
+        'raise NotImplementedError',
     ],
 }
 
+
 def fix_quote_style(p):
-    if not p.cfg or p.name == "test":
+    if not p.cfg or p.name == 'test':
         return
 
     format = p.sub_cfg('tool', 'ruff', 'format')
-    if format.get('quote-style') == "single":
+    if format.get('quote-style') == 'single':
         return
 
     p.p('fix_quote_style')
-    format['quote-style'] = "single"
+    format['quote-style'] = 'single'
     p.write_pyproject()
     p.run.in_venv('ruff', 'format')
-    p.git.comp("Return to using single quotes", '-a')
+    p.git.comp('Return to using single quotes', '-a')
 
 
 def classify(project):
-    minor = int(project.python_version.split(".")[1])
+    minor = int(project.python_version.split('.')[1])
     nums = ('3', *(f'3.{i}' for i in range(minor, 15)))
-    classifiers = [f"Programming Language :: Python :: {n}" for n in nums]
+    classifiers = [f'Programming Language :: Python :: {n}' for n in nums]
     project.cfg['project']['classifiers'] = classifiers
     project.write_pyproject()
     if project.git.is_dirty():
         project.p('classify!')
-        project.git('commit', '-m', 'Fix tools.classifiers section in pyproject.toml', 'pyproject.toml')
+        project.git(
+            'commit',
+            '-m',
+            'Fix tools.classifiers section in pyproject.toml',
+            'pyproject.toml',
+        )
         project.git('push', '--force-with-lease')
 
 
 def mypy_tool(project):
     try:
-        project.cfg["tool"].pop("mypy")
+        project.cfg['tool'].pop('mypy')
     except KeyError:
         pass
     else:
         project.write_pyproject()
-        project.git('commit', '-m', 'Remove tool.mypy from pyproject.toml', 'pyproject.toml')
+        project.git(
+            'commit', '-m', 'Remove tool.mypy from pyproject.toml', 'pyproject.toml'
+        )
         project.git('push', '--force-with-lease')
 
 
@@ -67,7 +75,7 @@ def uniform_toolchain(project):
 
     cfg = project.cfg
     dev = cfg.get('dependency-groups', {}).get('dev', [])
-    dev = {i.partition(">")[0].partition("^")[0] for i in dev}
+    dev = {i.partition('>')[0].partition('^')[0] for i in dev}
 
     if set(added) <= dev and not (set(removed) & dev):
         return
@@ -86,8 +94,8 @@ def uniform_toolchain(project):
 
 
 def push_unpushed(project):
-     if MSG in project.git('status', out=True):
-         project.git('push')
+    if MSG in project.git('status', out=True):
+        project.git('push')
 
 
 def fix_single_file(project):
@@ -114,7 +122,7 @@ def old_fix_single_file(project):
 
 def update_to_310(project):
     p = project.python_version
-    if not (v := p.partition(",")[0].partition('3.')[2].partition(".")[0]):
+    if not (v := p.partition(',')[0].partition('3.')[2].partition('.')[0]):
         return
     project.p('update')
     version = int(v)
@@ -145,7 +153,7 @@ def update_to_310(project):
     project.git('add', str(f))
 
     if version < 10:
-        project.cfg['project']['requires-python'] = ">=3.10"
+        project.cfg['project']['requires-python'] = '>=3.10'
         project.write_pyproject()
         project.run.in_venv('uv', 'sync')
         project.git.comp('Update python version to 3.10', '-a')

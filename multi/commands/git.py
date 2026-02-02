@@ -1,7 +1,7 @@
 from pathlib import Path
 import string
-from .. paths import PYPROJECT
-from .. projects import DATA, PROJECTS, REC
+from ..paths import PYPROJECT
+from ..projects import DATA, PROJECTS, REC
 import time
 from ruamel.yaml import YAML
 import copy
@@ -32,12 +32,12 @@ def status(project):
     project.git('status')
 
 
-
 HEADER = """\
 # This workflow will install Python dependencies, run tests and lint with a variety of Python versions
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
 
 """
+
 
 def fix_package(project):
     if (ci := (project.path / CI)).exists():
@@ -59,12 +59,10 @@ def add_github(project):
         return
 
     contents = ('/code/tdir' / CI).read_text()
-    replaced = contents.replace(
-        'test_tdir.py', 'test*'
-    ).replace(
-        'tdir', project.name
-    ).replace(
-        '\n\n\n', '\n\n'
+    replaced = (
+        contents.replace('test_tdir.py', 'test*')
+        .replace('tdir', project.name)
+        .replace('\n\n\n', '\n\n')
     )
     commit_msg = f'Add {CI}'
 
@@ -83,7 +81,6 @@ def fix_github_old(project):
     git('add', '.github')
     if git.is_dirty():
         git.commit('Add {CI}', CI)
-
 
 
 def fix_gitignore(project):
@@ -141,7 +138,7 @@ def remove_data(project):
     print(*(commits[i] for i in remove), sep='\n')
     print()
 
-    chars = string.ascii_lowercase[:remove[-1] + 2]
+    chars = string.ascii_lowercase[: remove[-1] + 2]
     remain = [c for i, c in enumerate(chars) if i not in remove]
     res = ''.join(remain)
     assert res

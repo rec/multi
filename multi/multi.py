@@ -1,5 +1,5 @@
 from . import configs
-from . projects import PROJECTS
+from .projects import PROJECTS
 from functools import wraps
 from typer import Argument, Option, Typer
 import importlib
@@ -18,49 +18,21 @@ DEFAULT_FILTER = 'prop'
 
 @command()
 def run(
-    command: str = Argument(
-        'name'
-    ),
-
-    argv: list[str] = Argument(
-        None
-    ),
-
-    continue_after_error: bool = Option(
-        False, '--continue-after-error', '-e'
-    ),
-
-    exclude: list[str] = Option(
-        (), '--exclude', '-x'
-    ),
-
-    filter: list[str] = Option(
-        None, '--filter', '-f'
-    ),
-
-    _open: bool = Option(
-        configs.open, '--open', '-o'
-    ),
-
-    negated_filter: list[str] = Option(
-        None, '--negated-filter', '-n'
-    ),
-
-    projects: list[str] = Option(
-        tuple(PROJECTS), '--projects', '-p'
-    ),
-
-    push: bool = Option(
-        False
-    ),
-
+    command: str = Argument('name'),
+    argv: list[str] = Argument(None),
+    continue_after_error: bool = Option(False, '--continue-after-error', '-e'),
+    exclude: list[str] = Option((), '--exclude', '-x'),
+    filter: list[str] = Option(None, '--filter', '-f'),
+    _open: bool = Option(configs.open, '--open', '-o'),
+    negated_filter: list[str] = Option(None, '--negated-filter', '-n'),
+    projects: list[str] = Option(tuple(PROJECTS), '--projects', '-p'),
+    push: bool = Option(False),
     sort: bool = Option(
-        False, '--sort', '-s',
+        False,
+        '--sort',
+        '-s',
     ),
-
-    verbose: bool = Option(
-        configs.verbose, '--verbose', '-v'
-    ),
+    verbose: bool = Option(configs.verbose, '--verbose', '-v'),
 ):
     configs.open = _open
     configs.push = push
@@ -127,7 +99,6 @@ def _get_callable(name):
         else:
             msg = f'ERROR: {name} is not callable ({module=}, {f=})'
         raise ValueError(msg)
-
 
     path, _, attr = name.rpartition('.')
 

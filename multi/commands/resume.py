@@ -1,4 +1,4 @@
-from .. projects import REC
+from ..projects import REC
 
 
 def resume():

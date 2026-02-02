@@ -10,7 +10,7 @@ def get_or_call(project, address, *args):
     if not (data := _getattr(project, address)):
         return
 
-    data, = data
+    (data,) = data
     if callable(data):
         try:
             data = data(*args)
@@ -28,7 +28,7 @@ def get_or_call(project, address, *args):
 
 
 def _getattr(data, a):
-    for part in (a and a.split('.')):
+    for part in a and a.split('.'):
         try:
             data = data[part]
         except Exception:

@@ -1,4 +1,4 @@
-from . project import DATA, Project
+from .project import DATA, Project
 import copy
 import tomlkit
 

@@ -6,7 +6,7 @@ import shlex
 import subprocess
 
 RUN_BASH = str(SCRIPTS / 'run.sh')
-ENV = os.environ | {"NO_COLOR": "1"}
+ENV = os.environ | {'NO_COLOR': '1'}
 
 
 @datacls
