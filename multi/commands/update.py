@@ -16,6 +16,17 @@ _COVERAGE_REPORT_DEFAULT = {
 }
 
 
+def mypy_tool(project):
+    try:
+        project.cfg["tool"].pop("mypy")
+    except KeyError:
+        pass
+    else:
+        project.write_pyproject()
+        project.git('commit', '-m', 'Remove tool.mypy from pyproject.toml', 'pyproject.toml')
+        project.git('push', '--force-with-lease')
+
+
 def duplicate_commits(project):
     s = project.git('l', '-2', '--format=%s', out=True).splitlines()
     if s[0] == s[1]:
