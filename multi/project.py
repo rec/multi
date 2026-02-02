@@ -7,6 +7,7 @@ import json
 import tomlkit
 import webbrowser
 import xmod
+from typing import Any
 
 CODE_ROOT = Path('~/code').expanduser()
 RUN_SH = str(SCRIPTS / 'run.sh')
@@ -63,6 +64,12 @@ class Project:
             return tomlkit.loads(self.pyproject_file.read_text())
         except FileNotFoundError:
             return {}
+
+    def sub_cfg(self, *args: str) -> dict[str, Any]:
+        cfg = self.cfg
+        for a in args:
+            cfg = cfg.setdefault(a, {})
+        return cfg
 
     @contextmanager
     def pyproject_writer(self):

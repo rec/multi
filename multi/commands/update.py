@@ -15,6 +15,20 @@ _COVERAGE_REPORT_DEFAULT = {
     ],
 }
 
+def fix_quote_style(p):
+    if not p.cfg or p.name == "test":
+        return
+
+    format = p.sub_cfg('tool', 'ruff', 'format')
+    if format.get('quote-style') == "single":
+        return
+
+    p.p('fix_quote_style')
+    format['quote-style'] = "single"
+    p.write_pyproject()
+    p.run.in_venv('ruff', 'format')
+    p.git.comp("Return to using single quotes", '-a')
+
 
 def classify(project):
     minor = int(project.python_version.split(".")[1])
