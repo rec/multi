@@ -58,7 +58,7 @@ class Project:
         return 'timedata-org' if self.name == 'loady' else 'rec'
 
     @cached_property
-    def configs(self):
+    def cfg(self):
         try:
             return tomlkit.loads(self.pyproject_file.read_text())
         except FileNotFoundError:
@@ -66,11 +66,11 @@ class Project:
 
     @contextmanager
     def pyproject_writer(self):
-        yield self.configs
+        yield self.cfg
         self.write_pyproject()
 
     def write_pyproject(self):
-        self.pyproject_file.write_text(tomlkit.dumps(self.configs))
+        self.pyproject_file.write_text(tomlkit.dumps(self.cfg))
 
     def commit_pyproject(self, msg, *files):
         from . paths import PYPROJECT
@@ -80,15 +80,15 @@ class Project:
 
     @cached_property
     def manager(self) -> dict:
-        return self.configs.get('project') or self.poetry
+        return self.cfg.get('project') or self.poetry
 
     @cached_property
     def poetry(self) -> dict:
-        return self.configs.get('tool', {}).get('poetry', {})
+        return self.cfg.get('tool', {}).get('poetry', {})
 
     @cached_property
     def package_manager(self) -> dict | None:
-        return 'uv' if 'project' in self.configs else 'poetry' if self.poetry else ''
+        return 'uv' if 'project' in self.cfg else 'poetry' if self.poetry else ''
 
     @cached_property
     def version(self) -> str:

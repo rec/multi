@@ -14,7 +14,7 @@ PREFIX = 'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2'
 
 def fix_coveragerc(project):
     try:
-        exclude_lines = project.configs['tool']['coverage']['report']['exclude_lines']
+        exclude_lines = project.cfg['tool']['coverage']['report']['exclude_lines']
     except KeyError:
         return
     if not exclude_lines[0]:
@@ -46,7 +46,7 @@ def move_coveragerc(project):
     if exclude_lines := c.get('report', {}).get('exclude_lines'):
         c['report']['exclude_lines'] = exclude_lines.split('\n')
 
-    project.configs['tool']['coverage'] = c
+    project.cfg['tool']['coverage'] = c
 
     if True:
         project.p()

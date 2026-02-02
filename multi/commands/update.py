@@ -28,7 +28,7 @@ def uniform_toolchain(project):
     added = 'coverage pyupgrade ruff ty'.split()
     removed = 'black doks flake8 isort mypy'.split()
 
-    cfg = project.configs
+    cfg = project.cfg
     dev = cfg.get('dependency-groups', {}).get('dev', [])
     dev = {i.partition(">")[0].partition("^")[0] for i in dev}
 
@@ -54,7 +54,7 @@ def push_unpushed(project):
 
 
 def fix_single_file(project):
-    project.configs['build-system'] = {
+    project.cfg['build-system'] = {
         'requires': ['hatchling'],
         'build-backend': 'hatchling.build',
     }
@@ -108,7 +108,7 @@ def update_to_310(project):
     project.git('add', str(f))
 
     if version < 10:
-        project.configs['project']['requires-python'] = ">=3.10"
+        project.cfg['project']['requires-python'] = ">=3.10"
         project.write_pyproject()
         project.run.in_venv('uv', 'sync')
         project.git.comp('Update python version to 3.10', '-a')

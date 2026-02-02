@@ -26,7 +26,7 @@ def tag(project, *tags):
 
 
 def has_old_data(project):
-    return 'multi' in project.configs['tool']
+    return 'multi' in project.cfg['tool']
 
 
 def has_test_deps(project):
