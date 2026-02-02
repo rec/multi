@@ -27,6 +27,7 @@ dependencies = [
     "pelican[markdown]",
     "typogrify",
     "ruamel.yaml",
+    "pyupgrade>=3.21.2",
 ]
 
 [project.scripts]
