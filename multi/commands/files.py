@@ -116,29 +116,6 @@ def grep(project):
         raise
 
 
-def update_python(project):
-    if not {'production-ready', 'beta'}.intersection(project.tags):
-        return
-
-    try:
-        dependencies = project.manager['dependencies']
-        if not dependencies['python'].endswith('3.7'):
-            return
-    except KeyError:
-        return
-
-    project.p('Updating', project.version)
-    if not True:
-        return
-    dependencies['python'] = '>=3.8'
-    project.write_pyproject()
-    project.run('poetry', 'lock', arm=True)
-
-    project.git.commit('Update minimum Python version to 3.8', *POETRY_PROJECT_FILES)
-    bump_version(project, 'minor')
-    project.p('Done', project.version)
-
-
 def remove_workflows(project):
     if not (project.path / '.github').exists():
         return

@@ -144,22 +144,3 @@ def upgrade(project):
     project.run.in_venv('uv', 'sync', '--upgrade')
     if project.git.is_dirty():
         project.git.comp('Upgrade dependencies', 'uv.lock')
-
-
-def migrate_to_uv(project):
-    if project.package_manager != 'poetry':
-        return
-
-    project.p('*** UPDATE ***')
-    project.run('uvx', 'migrate-to-uv', '--package-manager', 'poetry')
-    project.run('uv', 'venv')
-    project.run.in_venv('uv', 'sync')
-    project.run('uv', 'lock')
-    with suppress(FileNotFoundError):
-        project.make_path(".envrc").unlink()
-
-    if (p := project.make_path(".direnv")).exists():
-        p.rename(p.parent / 'old.direnv')
-
-    project.git('add', 'uv.lock')
-    project.git('commit', '-am', 'Migrate from poetry to uv')

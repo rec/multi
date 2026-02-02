@@ -80,15 +80,7 @@ class Project:
 
     @cached_property
     def manager(self) -> dict:
-        return self.cfg.get('project') or self.poetry
-
-    @cached_property
-    def poetry(self) -> dict:
-        return self.cfg.get('tool', {}).get('poetry', {})
-
-    @cached_property
-    def package_manager(self) -> dict | None:
-        return 'uv' if 'project' in self.cfg else 'poetry' if self.poetry else ''
+        return self.cfg.get('project', {})
 
     @cached_property
     def version(self) -> str:

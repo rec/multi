@@ -45,9 +45,6 @@ class Runner:
     def in_venv(self, *args, **kwargs):
         return self(RUN_BASH, *args, **kwargs)
 
-    def poetry(self, *args, **kwargs):
-        return self.in_venv('poetry', '--no-ansi', *args, **kwargs)
-
     def gh(self, *args, **kwargs):
         return self('gh', *args, **kwargs)
 
