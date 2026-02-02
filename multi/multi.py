@@ -94,6 +94,8 @@ def run(
             p = PROJECTS[name]
             try:
                 if all(f(p) for f in filt) and not any(f(p) for f in nfilt):
+                    if verbose:
+                        p.p(f'{cmd.__module__}.{cmd.__name__}')
                     if cmd(p, *argv):
                         wait_at_end = True
 

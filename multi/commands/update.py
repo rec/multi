@@ -1,8 +1,43 @@
 from contextlib import suppress
+from subprocess import CalledProcessError
 import re
 import safer
 
 MSG = 'use "git push" to publish your local commits'
+
+_COVERAGE_REPORT_DEFAULT = {
+    'skip_covered': True,
+    'exclude_lines': [
+        "pragma: no cover",
+        "if False:",
+        "if __name__ == .__main__.:",
+        "raise NotImplementedError",
+    ],
+}
+
+
+def uniform_toolchain(project):
+    added = 'coverage pyupgrade ruff ty'.split()
+    removed = 'black doks flake8 isort mypy'.split()
+
+    cfg = project.configs
+    dev = cfg.get('dependency-groups', {}).get('dev', [])
+    dev = {i.partition(">")[0].partition("^")[0] for i in dev}
+
+    if set(added) <= dev and not (set(removed) & dev):
+        return
+
+    coverage = cfg.setdefault('tool', {}).setdefault('coverage', {})
+    coverage.setdefault('run', {})['branch'] = True
+    coverage.setdefault('report', {}).update(_COVERAGE_REPORT_DEFAULT)
+    project.write_pyproject()
+
+    project.run.in_venv(*('uv add --dev coverage pyupgrade ruff ty'.split()))
+    for remove in removed:
+        if remove in dev:
+            project.run.in_venv(*(f'uv remove --dev {remove}'.split()))
+    msg = 'Make dev dependencies uniform between projects'
+    project.git.comp(msg, 'pyproject.toml', 'uv.lock')
 
 
 def push_unpushed(project):
