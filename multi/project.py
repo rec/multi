@@ -224,9 +224,13 @@ class Project:
         return self.run(str(self.bin('python')), *args, arm=True, **kwargs)
 
     @cached_property
-    def python_version(self) -> str:
+    def python_dependency(self) -> str:
         m = self.manager
         return m.get('requires-python') or m.get('dependencies', {}).get('python') or ''
+
+    @cached_property
+    def python_version(self) -> str:
+        return (self.path / '.python-version').read_text().strip()
 
     @cached_property
     def is_old_python(self) -> bool:

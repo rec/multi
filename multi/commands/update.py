@@ -16,6 +16,18 @@ _COVERAGE_REPORT_DEFAULT = {
 }
 
 
+def classify(project):
+    minor = int(project.python_version.split(".")[1])
+    nums = ('3', *(f'3.{i}' for i in range(minor, 15)))
+    classifiers = [f"Programming Language :: Python :: {n}" for n in nums]
+    project.cfg['project']['classifiers'] = classifiers
+    project.write_pyproject()
+    if project.git.is_dirty():
+        project.p('classify!')
+        project.git('commit', '-m', 'Fix tools.classifiers section in pyproject.toml', 'pyproject.toml')
+        project.git('push', '--force-with-lease')
+
+
 def mypy_tool(project):
     try:
         project.cfg["tool"].pop("mypy")
