@@ -10,7 +10,9 @@ LONG_LOG_FLAGS = '--pretty=format:%h|%cd|%s', '--date=format:%g/%m/%d %H:%M:%S'
 class Git:
     run: Callable
 
-    def __call__(self, *a, **ka):
+    def __call__(self, *a, no_color=False, **ka):
+        if no_color:
+            a = *a, '--no-color'
         return self.run('git', *a, **ka)
 
     def commit(self, msg, *files, **kwargs):

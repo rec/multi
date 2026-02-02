@@ -16,6 +16,14 @@ _COVERAGE_REPORT_DEFAULT = {
 }
 
 
+def duplicate_commits(project):
+    s = project.git('l', '-2', '--format=%s', out=True).splitlines()
+    if s[0] == s[1]:
+        project.p()
+        project.git('permute', 'ab', '-s')
+        project.git('push', '-f')
+
+
 def uniform_toolchain(project):
     added = 'coverage pyupgrade ruff ty'.split()
     removed = 'black doks flake8 isort mypy'.split()

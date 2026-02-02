@@ -1,10 +1,12 @@
 from . import SCRIPTS, configs
 from pathlib import Path
 import datacls
+import os
 import shlex
 import subprocess
 
 RUN_BASH = str(SCRIPTS / 'run.sh')
+ENV = os.environ | {"NO_COLOR": "1"}
 
 
 @datacls
@@ -33,7 +35,7 @@ class Runner:
 
         if configs.verbose:
             print('$', *args)
-        r = subprocess.run(args, **kwargs)
+        r = subprocess.run(args, env=ENV, **kwargs)
         return (r and r.stdout or '') if out else r
 
     def out(self, *args, out=True, **kwargs):
