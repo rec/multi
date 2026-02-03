@@ -1,6 +1,7 @@
-from . import html_context
-from lxml import etree
 import xmod
+from lxml import etree
+
+from . import html_context
 
 
 @xmod

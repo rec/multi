@@ -1,6 +1,5 @@
-from contextlib import suppress
 from subprocess import CalledProcessError
-import re
+
 import safer
 
 MSG = 'use "git push" to publish your local commits'
@@ -14,6 +13,14 @@ _COVERAGE_REPORT_DEFAULT = {
         'raise NotImplementedError',
     ],
 }
+
+
+def run_tests(p):
+    try:
+        p.run.in_venv('/Users/tom/code/dotfiles/bin/run-tests', '--fix')
+        p.git.comp('Many changes from the new toolchain', '-a')
+    except CalledProcessError:
+        pass
 
 
 def fix_quote_style(p):
@@ -131,6 +138,7 @@ def update_to_310(project):
     text = ignore_path.read_text()
     with safer.open(ignore_path, 'w') as fp:
         state = 0
+        prev = ''
         for line in text.splitlines(keepends=True):
             if line.startswith('# pyenv'):
                 state = 1

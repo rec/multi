@@ -1,5 +1,6 @@
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable
+
 import datacls
 
 LOG_FLAGS = '--pretty=format:%h|%cd|%s', '--date=format:%g/%m/%d'

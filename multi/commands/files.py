@@ -1,9 +1,7 @@
 import configparser
-import shutil
-from ..projects import GITHUB_IO, MULTI
-from .bump_version import bump_version
-from ..paths import POETRY_PROJECT_FILES, PYPROJECT
 
+from ..paths import PYPROJECT
+from ..projects import GITHUB_IO, MULTI
 
 FAVICON = GITHUB_IO.path / 'docs/favicon.ico'
 assert FAVICON.exists()

@@ -1,10 +1,9 @@
-from pathlib import Path
 import string
-from ..paths import PYPROJECT
-from ..projects import DATA, PROJECTS, REC
-import time
+from pathlib import Path
+
 from ruamel.yaml import YAML
-import copy
+
+from ..projects import PROJECTS
 
 yaml = YAML(typ='safe', pure='True')
 
@@ -33,8 +32,9 @@ def status(project):
 
 
 HEADER = """\
-# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+# This workflow will install Python dependencies, run tests and lint with a variety of
+# Python versions.  For more information see:
+# https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
 
 """
 
@@ -74,7 +74,7 @@ def add_github(project):
 
 
 def fix_github_old(project):
-    if not (ci := (project.path / CI)).exists():
+    if not (project.path / CI).exists():
         return
     git = project.git
     assert not git.is_dirty()

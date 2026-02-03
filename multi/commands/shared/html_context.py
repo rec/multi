@@ -1,8 +1,9 @@
-from contextlib import contextmanager
-from lxml import etree
-from pathlib import Path
-import xmod
 import re
+from contextlib import contextmanager
+from pathlib import Path
+
+import xmod
+from lxml import etree
 
 DIGITS = re.compile(rb'&#([12]\d\d);')
 

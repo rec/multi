@@ -1,9 +1,11 @@
-from . import SCRIPTS, configs
-from pathlib import Path
-import datacls
 import os
 import shlex
 import subprocess
+from pathlib import Path
+
+import datacls
+
+from . import SCRIPTS, configs
 
 RUN_BASH = str(SCRIPTS / 'run.sh')
 ENV = os.environ | {'NO_COLOR': '1'}

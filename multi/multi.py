@@ -1,11 +1,13 @@
-from . import configs
-from .projects import PROJECTS
-from functools import wraps
-from typer import Argument, Option, Typer
 import importlib
 import inspect
 import sys
 import time
+from functools import wraps
+
+from typer import Argument, Option, Typer
+
+from . import configs
+from .projects import PROJECTS
 
 app = Typer(
     add_completion=False,

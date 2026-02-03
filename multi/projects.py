@@ -1,6 +1,8 @@
-from .project import DATA, Project
 import copy
+
 import tomlkit
+
+from .project import DATA, Project
 
 BACK = copy.deepcopy(DATA)
 PROJECTS = {name: Project(name, tag, i) for i, (name, tag) in enumerate(DATA['ranked'])}
@@ -45,7 +47,7 @@ def _write_one(p, d):
 def write():
     if BACK != DATA:
         if BACK:
-            _write_one(BACK_FILE, BACK)
+            _write_one('BACK_FILE', BACK)
             BACK.clear()
 
-        _write_one(FILE, DATA)
+        _write_one('FILE', DATA)

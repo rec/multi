@@ -1,10 +1,11 @@
-from . import readme
-from .shared import tweak_index
-from .. import configs
-from ..paths import MKDOCS, MKDOCS_BINARY
 import shutil
 import threading
 import time
+
+from .. import configs
+from ..paths import MKDOCS, MKDOCS_BINARY
+from . import readme
+from .shared import tweak_index
 
 
 def fix(project):

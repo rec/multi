@@ -1,7 +1,8 @@
-from .. import configs
-from ..projects import DATA, PROJECTS, REC
 import re
 import time
+
+from .. import configs
+from ..projects import DATA, PROJECTS, REC
 
 CATEGORIES = (
     'production-ready',

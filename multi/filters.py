@@ -1,6 +1,4 @@
 from multi.commands import get
-from multi.paths import PYPROJECT
-
 
 prop = get.get_or_call
 
@@ -41,5 +39,5 @@ def bad_sync(project):
     try:
         if project.manager:
             project.run.in_venv('uv', 'sync', out=True, no_error=True)
-    except Exception as e:
+    except Exception:
         return True

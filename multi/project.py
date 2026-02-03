@@ -1,13 +1,15 @@
-from . import ROOT, SCRIPTS
+import json
+import webbrowser
 from contextlib import contextmanager
 from functools import cached_property
 from pathlib import Path
-import datacls
-import json
-import tomlkit
-import webbrowser
-import xmod
 from typing import Any
+
+import datacls
+import tomlkit
+import xmod
+
+from . import ROOT, SCRIPTS
 
 CODE_ROOT = Path('~/code').expanduser()
 RUN_SH = str(SCRIPTS / 'run.sh')
@@ -116,7 +118,7 @@ class Project:
             return p
         if p := list(self.path.glob('.direnv/python-3.*/bin')):
             return max(p)
-        raise ValueError(f'No binary path found in {self.path=}, {VENV_PATHS=}')
+        raise ValueError(f'No binary path found in {self.path=}')
 
     def bin(self, *parts):
         return self.bin_path / ('/'.join(parts))

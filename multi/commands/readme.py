@@ -1,5 +1,6 @@
-from .. import configs
 import safer
+
+from .. import configs
 
 
 def filename(project):
