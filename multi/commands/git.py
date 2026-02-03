@@ -10,6 +10,11 @@ yaml = YAML(typ='safe', pure='True')
 CI = Path('.github/workflows/python-package.yml')
 
 
+def commits(project, count=2):
+    project.p('\n' + project.git('l', f'-{count}', '--format=%s', out=True))
+    print()
+
+
 def recent_commits():
     it = ((k, v.git.commits('-1', long=True)[0]) for k, v in PROJECTS.items())
     it = ((k, v.split('|')) for k, v in it)
