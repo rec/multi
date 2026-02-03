@@ -36,10 +36,8 @@ class Project:
 
     RELOAD = 'description_parts', 'multi', 'pyproject_file', 'configs'
 
-    def reload(self):
-        for r in self.RELOAD:
-            if r in self.__dict__:
-                del self.__dict__[r]
+    def reload(self) -> 'Project':
+        return Project(self.name, self.tag, self.rank)
 
     @cached_property
     def path(self) -> Path:
@@ -111,6 +109,9 @@ class Project:
         from .runner import Runner
 
         return Runner(self.path)
+
+    def uv(self, *args: Any, **kwargs: Any) -> None:
+        self.run('uv', *args, '--color=never', **kwargs)
 
     @cached_property
     def bin_path(self) -> Path:

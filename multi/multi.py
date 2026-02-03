@@ -29,11 +29,7 @@ def run(
     negated_filter: list[str] = Option(None, '--negated-filter', '-n'),
     projects: list[str] = Option(tuple(PROJECTS), '--projects', '-p'),
     push: bool = Option(False),
-    sort: bool = Option(
-        False,
-        '--sort',
-        '-s',
-    ),
+    sort: bool = Option(False, '--sort', '-S'),
     verbose: bool = Option(configs.verbose, '--verbose', '-v'),
 ):
     configs.open = _open

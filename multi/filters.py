@@ -41,3 +41,7 @@ def bad_sync(project):
             project.run.in_venv('uv', 'sync', out=True, no_error=True)
     except Exception:
         return True
+
+
+def is_dirty(project):
+    return project.git.is_dirty()
