@@ -215,7 +215,7 @@ class Project:
     @cached_property
     def site_name(self):
         e1, desc, e2 = self.description_parts
-        return f'{e1}: `{self.name}`: {desc} {e2}'
+        return f'{e1} `{self.name}`: {desc} {e2}'
 
     def p(self, *args, **kwargs):
         if len(args) == 1 and isinstance(args[0], str):
