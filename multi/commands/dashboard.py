@@ -55,12 +55,9 @@ def _commit_readme():
 
 
 def _categories():
-    categories = {c: [] for c in CATEGORIES}
-    tags = DATA['tags']
+    categories = {}
     for p in PROJECTS.values():
-        for c in CATEGORIES:
-            if p.name in tags[c]:
-                categories[c].append(p)
+        categories.setdefault(p.tag, []).append(p)
 
     return categories
 
