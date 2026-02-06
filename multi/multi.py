@@ -2,6 +2,8 @@ import inspect
 import sys
 import time
 
+from pathlib import Path
+
 from typer import Argument, Option, Typer
 
 from multi.get_callable import get_callable, make_filter
@@ -19,13 +21,13 @@ command = app.command
 def run(
     command: str = Argument('name'),
     argv: list[str] = Argument(None),
-    all_: bool = Option(False, '--all', '-a', name=all),
+    all_: bool = Option(False, '--all', '-a'),
     continue_after_error: bool = Option(False, '--continue-after-error', '-e'),
     exclude: list[str] = Option((), '--exclude', '-x'),
     filter: list[str] = Option(None, '--filter', '-f'),
     _open: bool = Option(configs.open, '--open', '-o'),
     negated_filter: list[str] = Option(None, '--negated-filter', '-n'),
-    projects: list[str] = Option(tuple(PROJECTS), '--projects', '-p'),
+    projects: list[str] = Option((), '--projects', '-p'),
     push: bool = Option(False),
     sort: bool = Option(False, '--sort', '-S'),
     verbose: bool = Option(configs.verbose, '--verbose', '-v'),
@@ -51,7 +53,16 @@ def run(
         wait_at_end = cmd()
 
     else:
-        projects = [i for p in projects for i in p.split(':')]
+        if projects:
+            projects = [i for p in projects for i in p.split(':')]
+        elif all_:
+            projects = tuple(PROJECTS)
+        else:
+            cwd = Path().absolute()
+            try:
+                projects = [next(p.name for p in PROJECTS.values() if cwd.is_relative_to(p.path))]
+            except StopIteration:
+                sys.exit(f'{cwd} is not in a known project')
         projects = [p for p in projects if p not in exclude]
 
         if sort:
