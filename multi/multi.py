@@ -30,6 +30,7 @@ def run(
     projects: list[str] = Option((), '--projects', '-p'),
     push: bool = Option(False),
     sort: bool = Option(False, '--sort', '-S'),
+    stop_after_first_success: bool = Option(False, '--stop-after-first-success', '-t'),
     verbose: bool = Option(configs.verbose, '--verbose', '-v'),
 ):
     configs.open = _open
@@ -47,10 +48,10 @@ def run(
 
     filt = [make_filter(f) for f in filter or ()]
     nfilt = [make_filter(f) for f in negated_filter or ()]
-    wait_at_end = False
+    wait_at_end = False  # No longer used
 
     if not inspect.signature(cmd).parameters:
-        wait_at_end = cmd()
+        cmd()
 
     else:
         if projects:
@@ -60,7 +61,9 @@ def run(
         else:
             cwd = Path().absolute()
             try:
-                projects = [next(p.name for p in PROJECTS.values() if cwd.is_relative_to(p.path))]
+                projects = [
+                    next(p.name for p in PROJECTS.values() if cwd.is_relative_to(p.path))
+                ]
             except StopIteration:
                 sys.exit(f'{cwd} is not in a known project')
         projects = [p for p in projects if p not in exclude]
@@ -74,8 +77,8 @@ def run(
                 if all(f(p) for f in filt) and not any(f(p) for f in nfilt):
                     if verbose:
                         p.p(f'{cmd.__module__}.{cmd.__name__}')
-                    if cmd(p, *argv):
-                        wait_at_end = True
+                    if cmd(p, *argv) and stop_after_first_success:
+                        break
 
             except Exception as e:
                 if not continue_after_error:

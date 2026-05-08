@@ -14,6 +14,45 @@ _COVERAGE_REPORT_DEFAULT = {
     ],
 }
 
+BUILD_SYSTEM = {'requires': ['hatchling'], 'build-backend': 'hatchling.build'}
+
+
+def poetry(p):
+    if not p.cfg:
+        return
+
+    if 'poetry' in p.cfg['tool']:
+        p.p('poetry.tool exists')
+        return
+
+    assert not p.git.is_dirty()
+
+    with p.project_writer() as cfg:
+        cfg['tool'].get('uv', {}).pop('build-backend', None)
+        if not cfg['tool'].get('uv'):
+            cfg['tool'].pop('uv', None)
+
+        p.cfg.pop('build-system')
+
+    p.run('poetry', 'init', '-n')
+
+    with p.reload().project_writer() as cfg:
+        cfg['build-system'] = BUILD_SYSTEM
+        poetry = cfg['tool']['poetry']
+        poetry['dependencies']['python'] = cfg['project']['requires-python']
+        poetry['description'] = cfg['project']['description']
+
+    p.run('poetry', 'lock')
+    p.git('add', 'poetry.lock')
+    try:
+        p.git.comp('Make project compatible with uv and poetry', '-a')
+    except Exception:
+        assert not p.git.is_dirty()
+        p.git('fetch')
+        p.git('rebase', 'origin/main')
+        p.git('push')
+    return True
+
 
 def run_tests(p):
     try:

@@ -73,7 +73,7 @@ class Project:
         return cfg
 
     @contextmanager
-    def pyproject_writer(self):
+    def project_writer(self):
         yield self.cfg
         self.write_pyproject()
 
