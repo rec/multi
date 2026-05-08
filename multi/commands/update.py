@@ -17,6 +17,12 @@ _COVERAGE_REPORT_DEFAULT = {
 BUILD_SYSTEM = {'requires': ['hatchling'], 'build-backend': 'hatchling.build'}
 
 
+def test(p):
+    p.p()
+    import random
+    return random.random() > 0.75
+
+
 def poetry(p):
     if not p.cfg:
         return
