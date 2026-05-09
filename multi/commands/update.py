@@ -31,14 +31,17 @@ def poetry(p):
         p.p('poetry.tool exists')
         return
 
-    assert not p.git.is_dirty()
+    if p.git.is_dirty():
+        p.p('Dirty!')
+        return
 
+    p.p()
     with p.project_writer() as cfg:
         cfg['tool'].get('uv', {}).pop('build-backend', None)
         if not cfg['tool'].get('uv'):
             cfg['tool'].pop('uv', None)
 
-        p.cfg.pop('build-system')
+        p.cfg.pop('build-system', None)
 
     p.run('poetry', 'init', '-n')
 
