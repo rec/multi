@@ -16,33 +16,37 @@ def name_dirname(p):
         p.p(p.name, p.manager["name"])
 
 
-def bump_version(project, rule_or_version='minor'):
-    if not (pv := project.version):
+def bump_version(p, rule_or_version='minor'):
+    if not p.version:
         return
-    msg = project.git('l', '-1', '--format=%s', out=True).strip()
+    msg = p.git('l', '-1', '--format=%s', out=True).strip()
     if msg.startswith('Update version to '):
         return
-    if project.git.is_dirty():
-        project.p('Dirty!')
+    if p.git.is_dirty():
+        p.p('Dirty!')
         return
     if not True:
-        project.p()
+        p.p()
         return
     print()
     print()
-    project.p('bump_version')
+
+    p.p('bump_version')
     print()
-    project.run('rm', '-rf', 'dist/')
-    project.p('v' + pv)
-    project.uv('version', '--bump', rule_or_version)
-    project = project.reload()
-    assert pv != project.version, pv
+    p.run('rm', '-rf', 'dist/')
+    p.p('v' + p.version)
+    p.uv('version', '--bump', rule_or_version)
+    pv = p.version
+    p = p.reload()
+    assert pv != p.version, f'{pv=} != {p.version=} failed'
+    with p.project_writer() as cfg:
+        cfg['tool']['poetry']['version'] = p.version
 
-    version = 'v' + project.version
-    project.git.commit(f'Update version to {version}', '-a')
-    project.git('tag', version)
-    project.git('push', '--tag', '--force-with-lease')
-    project.run('gh', 'release', 'create', version, '--generate-notes')
+    version_tag = 'v' + p.version
+    p.git.commit(f'Update version to {version_tag}', '-a')
+    p.git('tag', version_tag)
+    p.git('push', '--tag', '--force-with-lease')
+    p.run('gh', 'release', 'create', version_tag, '--generate-notes')
 
-    project.uv('build')
-    project.uv('publish')
+    p.uv('build')
+    p.uv('publish')

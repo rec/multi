@@ -3,6 +3,7 @@ from subprocess import CalledProcessError
 import safer
 
 MSG = 'use "git push" to publish your local commits'
+COMPAT_MSG = 'Make project compatible with uv and poetry'
 
 _COVERAGE_REPORT_DEFAULT = {
     'skip_covered': True,
@@ -17,10 +18,13 @@ _COVERAGE_REPORT_DEFAULT = {
 BUILD_SYSTEM = {'requires': ['hatchling'], 'build-backend': 'hatchling.build'}
 
 
-def test(p):
-    p.p()
-    import random
-    return random.random() > 0.75
+def bump_version_poetry(p):
+    if not p.version:
+        return
+    m = p.git('l', '-1', '--format=%s', out=True).strip()
+    p.p(m.startswith(COMPAT_MSG))
+    if not m.startswith(COMPAT_MSG):
+        return
 
 
 def poetry(p):
@@ -54,7 +58,7 @@ def poetry(p):
     p.run('poetry', 'lock')
     p.git('add', 'poetry.lock')
     try:
-        p.git.comp('Make project compatible with uv and poetry', '-a')
+        p.git.comp(COMPAT_MSG, '-a')
     except Exception:
         assert not p.git.is_dirty()
         p.git('fetch')
