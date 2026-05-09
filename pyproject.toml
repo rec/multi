@@ -3,7 +3,7 @@ name = "multi"
 version = "0.1.1"
 description = "📚 Manage all my other projects 📚"
 authors = [{ name = "Tom Ritchford", email = "tom@swirly.com" }]
-requires-python = ">=3.10"
+requires-python = ">=3.14"
 readme = "README.md"
 license = "MIT"
 classifiers = ["Programming Language :: Python :: 3", "Programming Language :: Python :: 3.10", "Programming Language :: Python :: 3.11", "Programming Language :: Python :: 3.12", "Programming Language :: Python :: 3.13", "Programming Language :: Python :: 3.14"]
@@ -48,4 +48,3 @@ quote-style = "single"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
-
