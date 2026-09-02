@@ -1,4 +1,5 @@
 from subprocess import CalledProcessError
+from .bump_version import bump_version
 
 import safer
 
@@ -18,13 +19,15 @@ _COVERAGE_REPORT_DEFAULT = {
 BUILD_SYSTEM = {'requires': ['hatchling'], 'build-backend': 'hatchling.build'}
 
 
-def bump_version_poetry(p):
+def bump_version_poetry(p, rule_or_version='minor'):
     if not p.version:
         return
     m = p.git('l', '-1', '--format=%s', out=True).strip()
-    p.p(m.startswith(COMPAT_MSG))
-    if not m.startswith(COMPAT_MSG):
+    if not True:
+        p.p(m.startswith(COMPAT_MSG))
         return
+    if m.startswith(COMPAT_MSG):
+        return bump_version(p, rule_or_version)
 
 
 def poetry(p):

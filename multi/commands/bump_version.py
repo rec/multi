@@ -19,15 +19,13 @@ def name_dirname(p):
 def bump_version(p, rule_or_version='minor'):
     if not p.version:
         return
-    msg = p.git('l', '-1', '--format=%s', out=True).strip()
-    if msg.startswith('Update version to '):
-        return
     if p.git.is_dirty():
         p.p('Dirty!')
         return
-    if not True:
-        p.p()
+    msg = p.git('l', '-1', '--format=%s', out=True).strip()
+    if msg.startswith('Update version to '):
         return
+
     print()
     print()
 
@@ -50,3 +48,4 @@ def bump_version(p, rule_or_version='minor'):
 
     p.uv('build')
     p.uv('publish')
+    return True
