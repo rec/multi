@@ -5,6 +5,7 @@ from .. import configs
 from ..projects import DATA, PROJECTS, REC
 
 CATEGORIES = (
+    'vibe',
     'production-ready',
     'beta',
     'experimental',
@@ -15,7 +16,7 @@ LOG_FLAGS = '--pretty=format:%h|%cd|%s', '--date=format:%g/%m/%d'
 README = 'README.md'
 TIME_FORMAT = '%y/%m/%d, %H:%M:%S'
 
-VERSION = re.compile(r'ersion (to )?v\d+\.\d+\.\d+$').search
+VERSION = re.compile(r'(?:^|\|)Release v\d+\.\d+\.\d+$').search
 SPLIT = '<!--- Automatically generated content below -->'
 
 MSG = f'Automatically update {README}'
@@ -127,7 +128,7 @@ def summary(project):
         release_line = ''
 
     lines = desc_line, desc_line2, release_line, latest_line
-    summary = '\n<br>\n'.join(lines)
+    summary = '\n<br>\n'.join(x for x in lines if x)
     return summary
 
 
